@@ -6,6 +6,7 @@
 #ifndef PROTEINMORPH_SSE_CORRESPONDENCE_SEARCH_NODE2_H
 #define PROTEINMORPH_SSE_CORRESPONDENCE_SEARCH_NODE2_H
 
+#include <iterator>
 #include <vector>
 #include <algorithm>
 #include <Foundation/GraphBase.h>
@@ -65,14 +66,14 @@ namespace wustl_mm {
 					set_intersection(
 						cliqueFeaturesP[i].begin(), cliqueFeaturesP[i].end(), 
 						cliqueFeaturesP[cliqueHistory[j]].begin(), cliqueFeaturesP[cliqueHistory[j]].end(), 
-						inserter(intersection, intersection.begin()));
+						std::inserter(intersection, intersection.begin()));
 					conflicts = conflicts || (intersection.size() > 0);
 					intersection.clear();
 
 					set_intersection(
 						cliqueFeaturesQ[i].begin(), cliqueFeaturesQ[i].end(), 
 						cliqueFeaturesQ[cliqueHistory[j]].begin(), cliqueFeaturesQ[cliqueHistory[j]].end(), 
-						inserter(intersection, intersection.begin()));
+						std::inserter(intersection, intersection.begin()));
 					conflicts = conflicts || (intersection.size() > 0);					
 					intersection.clear();
 				}
