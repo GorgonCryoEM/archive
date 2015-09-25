@@ -28,12 +28,16 @@
 #include <Gorgon/CAlphaRenderer.h>
 #include <MathTools/Vector3D.h>
 #include <MathTools/LinearSolver.h>
+#include <MathTools/Matrix.h>
 #include <GraphMatch/PDBAtom.h>
 #include <GraphMatch/LinkedNode.h>
 #include <GraphMatch/PDBBond.h>
 #include <GraphMatch/SEQReader.h>
+#include <ProteinMorph/NonManifoldMesh.h>
 #include <ProteinMorph/SSEHunter.h>
 #include <ProteinMorph/SSECorrespondenceNode.h>
+#include <ProteinMorph/SSECorrespondenceFeature.h>
+#include <ProteinMorph/SSECorrespondenceFinder.h>
 #include <boost/python.hpp>
 #include <boost/python/enum.hpp>
 #include <boost/python/tuple.hpp>
@@ -55,6 +59,16 @@ using wustl_mm::MathTools::LinearSolver;
 namespace python = boost::python;
 
 
+template <class T>
+struct vector_to_python : python::to_python_converter<vector<T>, vector_to_python<T> > {
+	static PyObject* convert(vector<T> const& v) {
+		python::list result;
+		for (size_t i = 0; i < v.size(); i++) {
+			result.append(v[i]);
+		}
+		return python::incref(python::list(result).ptr());
+	}
+};
 
 template <class T>
 struct vector_from_python {
@@ -143,32 +157,30 @@ struct tuple3_to_python : python::to_python_converter<T, tuple3_to_python<T> > {
 
 // **************************************************************************************
 
-#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
-BOOST_PYTHON_MODULE(lib${legacy_trgt_name})
+BOOST_PYTHON_MODULE(libpyGORGON)
 {
 	
+	vector_to_python<float>();
 	vector_from_python<float>();
-	class_<std::vector<float> >("std::vector<float>")
-	        .def(vector_indexing_suite<std::vector<float> >() );
-	class_<std::vector<std::vector<float> > >("std::vector<std::vector<float> >")
-	        .def(vector_indexing_suite<std::vector<std::vector<float> > >() );
-
-	class_<std::vector<int> >("std::vector<int>")
-	        .def(vector_indexing_suite<std::vector<int> >() );
-	class_<std::vector<std::vector<int> > >("std::vector<std::vector<int> >")
-	        .def(vector_indexing_suite<std::vector<std::vector<int> > >() );
-
+	vector_to_python< std::vector<float> >();
 	vector_from_python< std::vector<float> >();
 
+	vector_to_python<int>();
 	vector_from_python<int>();
+	vector_to_python< std::vector<int> >();
 	vector_from_python< std::vector<int> >();
 
+	vector_to_python<bool>();
 	vector_from_python<bool>();
+	vector_to_python< std::vector<bool> >();
 	vector_from_python< std::vector<bool> >();
 
+    vector_to_python<unsigned long long>();
     vector_from_python<unsigned long long>();
 
+	vector_to_python<Vector3DFloat>();
 	vector_from_python<Vector3DFloat>();
+	vector_to_python< std::vector<Vector3DFloat> >();
 	vector_from_python< std::vector<Vector3DFloat> >();
 
 
@@ -177,13 +189,16 @@ BOOST_PYTHON_MODULE(lib${legacy_trgt_name})
 	tuple3_from_python<Vector3DInt, int>();
 	tuple3_from_python<Vector3DFloat, float>();
 
-	class_<Vector3DFloat>("Vector3DFloat", init<float, float, float>())
+	void (Vector3DFloat::*Normalize1)() = &Vector3DFloat::Normalize;
+	
+    class_<Vector3DFloat>("Vector3DFloat", init<float, float, float>())
 		.def("x", &Vector3DFloat::X)
 		.def("y", &Vector3DFloat::Y)
 		.def("z", &Vector3DFloat::Z)
 		.def("length", &Vector3DFloat::Length)
 		.def("Transform", &Vector3DFloat::Transform)
 		.def("rotate", &Vector3DFloat::Rotate)
+		.def("normalize", Normalize1)
 		.def("Print", &Vector3DFloat::Print)
 		.def(self * double())
 		.def(self + self)
@@ -193,7 +208,6 @@ BOOST_PYTHON_MODULE(lib${legacy_trgt_name})
 		.def(self -= self)
 		//Vector3DTemplate<T> operator-();
 		//Vector3DTemplate<T>& operator=(const Vector3DTemplate<T>& d);
-
 	;
 
 	class_<Vector3DInt>("Vector3DInt", init<int, int, int>())
@@ -207,19 +221,21 @@ BOOST_PYTHON_MODULE(lib${legacy_trgt_name})
 		.def(self ^ self)
 		.def(self += self)
 		.def(self -= self)
-		
 	;
 
-	class_<MatrixFloat>("MatrixFloat", init<int, int>())
+	class_<MatrixFloat>("MatrixFloat", init<float, float>())
+		.def("getRowCount", &MatrixFloat::GetRowCount)
+		.def("getColCount", &MatrixFloat::GetColCount)
 		.def("getValue", &MatrixFloat::GetValue)
 		.def("setValue", &MatrixFloat::SetValue)
+		.def("singularValueDecomposition", &MatrixFloat::SingularValueDecomposition)
+		.def("transpose", &MatrixFloat::Transpose)
+		.def("printSelf", &MatrixFloat::Print)
 		.def(self * float())
 		.def(self * self)
 		.def(self + self)
 	;
 	
-
-
 	class_<PDBAtom>("PDBAtom", init<string, char, unsigned int, string>())
 		.def("getPDBId", &PDBAtom::GetPDBId)
 		.def("getSerial", &PDBAtom::GetSerial)
@@ -272,7 +288,6 @@ BOOST_PYTHON_MODULE(lib${legacy_trgt_name})
 		.def("setNextCAHash", &PDBAtom::SetNextCAHash)
 	;
 	
-
 	class_<PDBBond>("PDBBond", init<>())
 		.def("getAtom0Ix", &PDBBond::GetAtom0Ix)
 		.def("getAtom1Ix", &PDBBond::GetAtom1Ix)
@@ -299,10 +314,11 @@ BOOST_PYTHON_MODULE(lib${legacy_trgt_name})
 		.def("getDataAt", getDataAt1)
 		.def("buildHistogram", &Volume::buildHistogram)
 		.def("getHistogramBinValue", &Volume::getHistogramBinValue)
-
 	;
 
-	class_<NonManifoldMesh_Annotated>("NonManifoldMesh_Annotated", init<>())
+    class_<NonManifoldMesh_Annotated>("NonManifoldMesh_Annotated", init<>())
+        .def("getSurfaceVertices", &NonManifoldMesh_Annotated::GetSurfaceVertices)
+        .def("getNonSurfaceVertices", &NonManifoldMesh_Annotated::GetNonSurfaceVertices)
 	;
 	
 	class_<Renderer>("Renderer", init<>())
@@ -547,13 +563,15 @@ BOOST_PYTHON_MODULE(lib${legacy_trgt_name})
 		.def("clearOtherHighlights", &CAlphaRenderer::ClearOtherHighlights)
 		.def("setFeatureVecs", &CAlphaRenderer::SetFeatureVecs)
 		.def("setHelixColor", &CAlphaRenderer::SetHelixColor)
+		.def("clearHelixColors", &CAlphaRenderer::ClearHelixColors)
 		.def("startHelix", &CAlphaRenderer::StartHelix)
 		.def("addHelixElement", &CAlphaRenderer::AddHelixElement)
 		.def("startStrand", &CAlphaRenderer::StartStrand)
 		.def("addStrandElement", &CAlphaRenderer::AddStrandElement)
 		.def("startLoop", &CAlphaRenderer::StartLoop)
 		.def("addLoopElement", &CAlphaRenderer::AddLoopElement)
-		.def("cleanSecondaryStructures", &CAlphaRenderer::CleanSecondaryStructures)
+//		.def("addSkeletonFittingVector", &CAlphaRenderer::AddSkeletonFittingVector)
+        .def("cleanSecondaryStructures", &CAlphaRenderer::CleanSecondaryStructures)
 		.def("setNumSegments", &CAlphaRenderer::SetNumSegments)
 		.def("setNumSlices", &CAlphaRenderer::SetNumSlices)
 		.def("setHltRValue", &CAlphaRenderer::SetHltRValue)
@@ -616,7 +634,6 @@ BOOST_PYTHON_MODULE(lib${legacy_trgt_name})
 		.def("setTranslation", &InteractiveLoopBuilderEngine::SetTranslation)
 		.def("setScaling", &InteractiveLoopBuilderEngine::SetScaling)
 		.def("finishLoopBuilding", &InteractiveLoopBuilderEngine::FinishLoopBuilding)
-		
 	;
 
 	class_<SSECorrespondenceResult>("SSECorrespondenceResult", init<>())
@@ -628,6 +645,26 @@ BOOST_PYTHON_MODULE(lib${legacy_trgt_name})
 		.def("getSkeletonNode", &SSECorrespondenceResult::GetSkeletonNode)
 		.def("nodeToHelix", &SSECorrespondenceResult::NodeToHelix)		
 	;
+
+    MatrixFloat (SSECorrespondenceFinder::*GetTransform1)(vector<SSECorrespondenceNode>, int) = &SSECorrespondenceFinder::GetTransform;
+    MatrixFloat (SSECorrespondenceFinder::*GetTransform2)(vector<Vector3DFloat>, vector<Vector3DFloat>, int) = &SSECorrespondenceFinder::GetTransform;
+
+    class_<SSECorrespondenceFinder>("SSECorrespondenceFinder", init<>())
+        .def("initializeFeatures", &SSECorrespondenceFinder::InitializeFeatures)
+        .def("initializeFeaturesFromPDBFiles", &SSECorrespondenceFinder::InitializeFeaturesFromPDBFiles)
+        .def("initializeConstants", &SSECorrespondenceFinder::InitializeConstants)
+        .def("printFeatureListsMathematica", &SSECorrespondenceFinder::PrintFeatureListsMathematica)
+        .def("getAStarCliqueBasedFeatureCorrespondence", &SSECorrespondenceFinder::GetAStarCliqueBasedFeatureCorrespondence)
+        .def("getAStarTriangleBasedFeatureCorrespondence", &SSECorrespondenceFinder::GetAStarTriangleBasedFeatureCorrespondence)
+        .def("getAStarTriangleBasedCliqueDistanceFeatureCorrespondence", &SSECorrespondenceFinder::GetAStarTriangleBasedCliqueDistanceFeatureCorrespondence)
+        .def("getCliquesFirstAStarTriangleBasedCliqueDistanceFeatureCorrespondence", &SSECorrespondenceFinder::GetCliquesFirstAStarTriangleBasedCliqueDistanceFeatureCorrespondence)
+        .def("getValenceBasedFeatureCorrespondence", &SSECorrespondenceFinder::GetValenceBasedFeatureCorrespondence)
+        .def("getValenceTriangleBasedFeatureCorrespondence", &SSECorrespondenceFinder::GetValenceTriangleBasedFeatureCorrespondence)
+        .def("getMultiCorrespondence", &SSECorrespondenceFinder::GetMultiCorrespondence)
+        .def("printTimes", &SSECorrespondenceFinder::PrintTimes)
+        .def("getTransform", GetTransform1)
+        .def("getTransform", GetTransform2)
+    ;
 
 	class_<SecondaryStructure>("SecondaryStructure", init<>())
 		.def("isHelix", &SecondaryStructure::IsHelix)
@@ -732,55 +769,63 @@ BOOST_PYTHON_MODULE(lib${legacy_trgt_name})
 	;
 	
 	class_<FlexibleFittingEngine>("FlexibleFittingEngine")
-		.def("startPDBHelix", &FlexibleFittingEngine::StartPDBHelix)
-		.def("addPDBAtomLocation", &FlexibleFittingEngine::AddPDBAtomLocation)
-		.def("endPDBHelix", &FlexibleFittingEngine::EndPDBHelix)
-		.def("addSSEHelix", &FlexibleFittingEngine::AddSSEHelix)		
-		.def("startSearch", &FlexibleFittingEngine::StartSearch)		
-		.def("getRigidTransform", &FlexibleFittingEngine::GetRigidTransform)		
-		.def("getHelixFlexibleTransform", &FlexibleFittingEngine::GetHelixFlexibleTransform)		
-		.def("getCorrespondenceCount", &FlexibleFittingEngine::GetCorrespondenceCount)		
-		.def("getClusterCount", &FlexibleFittingEngine::GetClusterCount)		
-		.def("getHelixCount", &FlexibleFittingEngine::GetHelixCount)		
-		.def("getCorrespondenceNode", &FlexibleFittingEngine::GetCorrespondenceNode)
-		.def("resetEngine", &FlexibleFittingEngine::ResetEngine)
-		.def("Deform", &FlexibleFittingEngine::Deform)
-		.def("addAtomLocation", &FlexibleFittingEngine::addAtomLocation)
-		.def("addHardHandleLocation", &FlexibleFittingEngine::addHardHandleLocation)
-		.def("addSoftHandleLocation", &FlexibleFittingEngine::addSoftHandleLocation)
-		.def("returnFlattenedLocations", &FlexibleFittingEngine::returnFlattenedLocations)
-		.def("prepareDeform", &FlexibleFittingEngine::prepareDeform)
-		.def("setLaplacainW", &FlexibleFittingEngine::setLaplacainW)
-		.def("setHardHandleW", &FlexibleFittingEngine::setHardHandleW)
-		.def("setSoftHandleW", &FlexibleFittingEngine::setSoftHandleW)
-		.def("addCorrespondence", &FlexibleFittingEngine::AddCorrespondence)
-		.def("getCorrespondenceFlips", &FlexibleFittingEngine::GetCorrespondenceFlips)
-		.def("getAllCorrespondencesFlat", &FlexibleFittingEngine::GetAllCorrespondencesFlat)
-		.def("flipCorrespondencePair", &FlexibleFittingEngine::FlipCorrespondencePair)
-		.def("saveCorrs", &FlexibleFittingEngine::SaveCorrs)
-		.def("loadSavedCorrs", &FlexibleFittingEngine::LoadSavedCorrs)
-		.def("getRigidTransform2", &FlexibleFittingEngine::GetRigidTransform2)
-		.def("mergeClusters", &FlexibleFittingEngine::MergeClusters)
-		.def("getAllCAlphaFeatureVecsFlat", &FlexibleFittingEngine::GetAllCAlphaFeatureVecsFlat)	
-		.def("getIsForward", &FlexibleFittingEngine::GetIsForward)	
-		.def("getPairRigidTransform", &FlexibleFittingEngine::GetPairRigidTransform)
-		.def("getSideChainTransform", &FlexibleFittingEngine::GetSideChainTransform)
-	;
-
-
-
+        .def("resetCorrespondence", &FlexibleFittingEngine::resetCorrespondence)
+        .def("resetDeformation", &FlexibleFittingEngine::resetDeformation)
+        .def("resetDeformationVertices", &FlexibleFittingEngine::resetDeformationVertices)
+        .def("resetDeformationEdges", &FlexibleFittingEngine::resetDeformationEdges)
+        .def("resetDeformationHandles", &FlexibleFittingEngine::resetDeformationHandles)
+        .def("resetDeformationOptions", &FlexibleFittingEngine::resetDeformationOptions)
+        .def("addCorrespondenceSourceFeature", &FlexibleFittingEngine::addCorrespondenceSourceFeature)
+        .def("addCorrespondenceTargetFeature", &FlexibleFittingEngine::addCorrespondenceTargetFeature)
+        .def("addCorrespondenceManual", &FlexibleFittingEngine::addCorrespondenceManual)
+        .def("addDeformationOriginalVertex", &FlexibleFittingEngine::addDeformationOriginalVertex)
+        .def("addDeformationVertex", &FlexibleFittingEngine::addDeformationVertex)
+        .def("addDeformationEdge", &FlexibleFittingEngine::addDeformationEdge)
+        .def("addDeformationHandle", &FlexibleFittingEngine::addDeformationHandle)
+        .def("addDeformationRigidInitializationTransformation", &FlexibleFittingEngine::addDeformationRigidInitializationTransformation)
+        .def("setCorrespondenceOptions", &FlexibleFittingEngine::setCorrespondenceOptions)
+        .def("setCorrespondenceDirection", &FlexibleFittingEngine::setCorrespondenceDirection)
+        .def("setDeformationRigidInitialization", &FlexibleFittingEngine::setDeformationRigidInitialization)
+        .def("setDeformationNeighborhoodSizes", &FlexibleFittingEngine::setDeformationNeighborhoodSizes)
+        .def("setDeformationWeights", &FlexibleFittingEngine::setDeformationWeights)
+        .def("setDeformationVerticesToOriginalVertices", &FlexibleFittingEngine::setDeformationVerticesToOriginalVertices)
+        .def("setDeformationVerticesToDeformedVertices", &FlexibleFittingEngine::setDeformationVerticesToDeformedVertices)
+        .def("mergeCorrespondenceClusters", &FlexibleFittingEngine::mergeCorrespondenceClusters)
+        .def("getCorrespondenceAlignmentCount", &FlexibleFittingEngine::getCorrespondenceAlignmentCount)
+        .def("getCorrespondenceClusterCount", &FlexibleFittingEngine::getCorrespondenceClusterCount)
+        .def("getCorrespondenceFeatureCount", &FlexibleFittingEngine::getCorrespondenceFeatureCount)
+        .def("getCorrespondence", &FlexibleFittingEngine::getCorrespondence)
+        .def("getCorrespondenceAlignmentTransformation", &FlexibleFittingEngine::getCorrespondenceAlignmentTransformation)
+        .def("getCorrespondenceClusterTransformation", &FlexibleFittingEngine::getCorrespondenceClusterTransformation)
+        .def("getCorrespondenceFeatureTransformation", &FlexibleFittingEngine::getCorrespondenceFeatureTransformation)
+        .def("getDeformedVertices", &FlexibleFittingEngine::getDeformedVertices)
+        .def("getDeformationTransformation", &FlexibleFittingEngine::getDeformationTransformation)
+        .def("calculateCorrespondences", &FlexibleFittingEngine::calculateCorrespondences)
+        .def("calculateNeighborVertexIndicesCaches", &FlexibleFittingEngine::calculateNeighborVertexIndicesCaches)
+        .def("calculateDeformationTransformations", &FlexibleFittingEngine::calculateDeformationTransformations)
+        .def("deformLaplacian", &FlexibleFittingEngine::deformLaplacian)
+    ;
 
 	class_<SSECorrespondenceNode>("SSECorrespondenceNode")
 		.def("getPIndex", &SSECorrespondenceNode::GetPIndex)
 		.def("getQIndex", &SSECorrespondenceNode::GetQIndex)
 		.def("isForward", &SSECorrespondenceNode::IsForward)
 	;
+	
+    class_<SSECorrespondenceFeature>("SSECorrespondenceFeature", init<Vector3DFloat, Vector3DFloat>())
+        .def("getEndPoint", &SSECorrespondenceFeature::GetEndPoint)
+        .def("getCentroid", &SSECorrespondenceFeature::GetCentroid)
+        .def("getFeatureVector", &SSECorrespondenceFeature::GetFeatureVector)
+        .def("length", &SSECorrespondenceFeature::Length)
+    ;
 
     class_<LinearSolver>("LinearSolver")
         .def("findBestFitLine", &LinearSolver::FindBestFitLine)
         .staticmethod("findBestFitLine")
         .def("sumDistSqrd", LinearSolver::SumDistSqrd)
         .staticmethod("sumDistSqrd")
+        .def("findRotationTranslation", &LinearSolver::FindRotationTranslation)
+        .staticmethod("findRotationTranslation")
     ;
 }
 

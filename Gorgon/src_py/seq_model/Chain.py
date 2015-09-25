@@ -71,6 +71,7 @@ of Residue objects
     self.secelList={}
     self.selectedResidues=[]
     self.atoms = {}
+    self.bonds = []
 
     self.helices = {}
     self.sheets = {}
@@ -202,10 +203,17 @@ object. If no chain ID is specified, it loads the first chain.
                 print 'Chain.__loadFromPDB--no coordinates', 
 
         elif line[0:6].strip()=='HELIX':
-            Helix.parsePDB(line,result)
+            Helix.parsePDB(line,result,whichChainID)
         elif line[0:6].strip()=='SHEET':
-            Sheet.parsePDB(line,result)
-            
+            Sheet.parsePDB(line,result,whichChainID)
+    
+    for sheetIndex, sheet in result.sheets.items():
+        validBonds = []
+        for bond in sheet.bonds:
+            if bond[0] in result.residueRange() and bond[1] in result.residueRange():
+                validBonds.append(bond)
+        sheet.bonds = validBonds
+
     #Setting up coils
     startList = []
     endList = []
@@ -353,19 +361,12 @@ first one.
     """
     extension = filename.split('.')[-1].lower()
     if extension == 'pdb':
-        linelist = []
+        linelist = set()
         for line in open(filename, 'U'):
-            if line[:6] == 'COMPND' and line[10:70].split(':')[0].strip() == 'CHAIN':
-                linelist = line[17:].split(', ')
-                linelist[0] = linelist[0].strip()
-                if ';' in linelist[-1]:
-                    linelist[-1] = linelist[-1].split(';')[0]	#removes the terminating semicolon and extra whitespace
-                    while True:
-                        try: linelist.remove('NULL')
-                        except: break
-                return linelist
-        if linelist == []:
-            return []
+            if line[0:4]=='ATOM':
+                chainID = line[21:22]
+                linelist.add(chainID)     
+        return sorted(list(linelist))
     else:
       raise NotImplementedError, 'NYI'
 
@@ -598,6 +599,7 @@ residue.
             bond.setAtom0Ix(atom0.getHashKey())
             bond.setAtom1Ix(atom1.getHashKey())
             viewer.renderer.addBond(bond)
+            self.bonds.append((res0num, res0num+1)) 
             cnt = cnt + 1
             
   def addSideChainBonds(self):
@@ -626,9 +628,22 @@ residue.
                 bond.setAtom0Ix(atom0.getHashKey())
                 bond.setAtom1Ix(atom1.getHashKey())
                 viewer.renderer.addSideChainBond(bond)
+
+  def addSheetBonds(self):
+    try: 
+        viewer = Chain.getViewer()
+    except:
+        print 'Error: No viewer is set for Chain!'
+        return
+    for sheet in self.sheets.values():
+        for bond in sheet.bonds:
+            atom0 = self[bond[0]].getAtom('CA')
+            atom1 = self[bond[1]].getAtom('CA')
             
-                                  
-    
+            bond = PDBBond()
+            bond.setAtom0Ix(atom0.getHashKey())
+            bond.setAtom1Ix(atom1.getHashKey())
+            viewer.renderer.addBond(bond)
 
   def addSecel(self, secel):
     '''

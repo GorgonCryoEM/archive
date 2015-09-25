@@ -28,9 +28,15 @@ class Strand(Secel):
         """
 This returns a 'SHEET' line for this strand for a PDB file.
         """
-        startResName=self.chain.residueList[self.startIndex].symbol3
+        if self.startIndex in self.chain.residueList:
+            startResName=self.chain.residueList[self.startIndex].symbol3
+        else:
+            startResName=''
         startChainID=self.chain.chainID
-        stopResName=self.chain.residueList[self.stopIndex].symbol3
+        if self.stopIndex in self.chain.residueList:
+            stopResName=self.chain.residueList[self.stopIndex].symbol3
+        else:
+            stopResName=''
         nStrands=len(sheet.strandList)
     
     

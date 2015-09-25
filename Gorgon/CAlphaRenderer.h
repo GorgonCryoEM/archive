@@ -204,6 +204,7 @@ namespace wustl_mm {
 			void ClearOtherHighlights();
 			void SetFeatureVecs(vector<Vector3DFloat> flatFeatureVecs);
 			void SetHelixColor(int helixNum, float r, float g, float b);
+            void ClearHelixColors();
 		private:
 			void DrawBackboneModel(int subSceneIndex, bool selectEnabled);
 			void DrawRibbonModel(int subSceneIndex, bool selectEnabled);
@@ -229,7 +230,7 @@ namespace wustl_mm {
 			vector<int> selectedSSEHelices;
 			vector< boost::tuple<Vector3DFloat, Vector3DFloat> > featureVecs;
 
-			map<int,boost::tuple<float, float, float> > helixColors;
+			map<int, boost::tuple<float, float, float> > helixColors;
 
 			int renderingType;
 			float thinRibbThickness;
@@ -423,7 +424,7 @@ namespace wustl_mm {
 						glMaterialfv(GL_FRONT, GL_EMISSION, emissionColor);
 						glMaterialfv(GL_BACK, GL_EMISSION, emissionColor);
 					}
-					map<int, boost::tuple<float,float,float> >::iterator iter = helixColors.begin();
+					map<int, boost::tuple<float, float, float> >::iterator iter = helixColors.begin();
 					iter = helixColors.find(i);
 					if(iter != helixColors.end()){
 
@@ -581,7 +582,7 @@ namespace wustl_mm {
 						glPopAttrib();
 						Vector3DFloat pos1 = atoms[aHelices[i].atomHashes[0]].GetPosition();
 						Vector3DFloat pos2 = atoms[aHelices[i].atomHashes[aHelices[i].atomHashes.size()-1]].GetPosition();
-						printf("Drawing PDB Spheres at PDB ID %d with end #1 [%f, %f, %f] and #2 [%f, %f, %f]\n", i+1, pos1.X(), pos1.Y(), pos1.Z(), pos2.X(), pos2.Y(), pos2.Z());
+						//printf("Drawing PDB Spheres at PDB ID %d with end #1 [%f, %f, %f] and #2 [%f, %f, %f]\n", i+1, pos1.X(), pos1.Y(), pos1.Z(), pos2.X(), pos2.Y(), pos2.Z());
 
 						fflush(stdout);
 					}
@@ -756,7 +757,7 @@ namespace wustl_mm {
 
 						Vector3DFloat pos1 = atoms[currentSecel.atomHashes[0]].GetPosition();
 						Vector3DFloat pos2 = atoms[currentSecel.atomHashes[currentSecel.atomHashes.size()-1]].GetPosition();
-						printf("Drawing PDB Spheres at PDB ID %d with end #1 [%f, %f, %f] and #2 [%f, %f, %f]\n", i+1, pos1.X(), pos1.Y(), pos1.Z(), pos2.X(), pos2.Y(), pos2.Z());
+						//printf("Drawing PDB Spheres at PDB ID %d with end #1 [%f, %f, %f] and #2 [%f, %f, %f]\n", i+1, pos1.X(), pos1.Y(), pos1.Z(), pos2.X(), pos2.Y(), pos2.Z());
 
 						/*if(featureVecs.size() > 0){
 						OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
@@ -962,7 +963,7 @@ namespace wustl_mm {
 
 						Vector3DFloat pos1 = atoms[currentSecel.atomHashes[0]].GetPosition();
 						Vector3DFloat pos2 = atoms[currentSecel.atomHashes[currentSecel.atomHashes.size()-1]].GetPosition();
-						printf("Drawing PDB Spheres at PDB ID %d with end #1 [%f, %f, %f] and #2 [%f, %f, %f]\n", i+1, pos1.X(), pos1.Y(), pos1.Z(), pos2.X(), pos2.Y(), pos2.Z());
+						//printf("Drawing PDB Spheres at PDB ID %d with end #1 [%f, %f, %f] and #2 [%f, %f, %f]\n", i+1, pos1.X(), pos1.Y(), pos1.Z(), pos2.X(), pos2.Y(), pos2.Z());
 
 						/*if(featureVecs.size() > 0){
 						OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
@@ -1562,7 +1563,7 @@ namespace wustl_mm {
 			switch(subsceneIndex) {
 				case(0):
 					if((ix0 >= 0) && (ix0 <= (int)atoms.size())) {
-						PDBAtom * a =  & (atoms [ix0]);
+						PDBAtom * a = (PDBAtom*)ix0;
 						position = a->GetPosition();
 					}
 					break;
@@ -1624,7 +1625,7 @@ namespace wustl_mm {
 			else
 				corrs.clear();
 			for(int i=0; i < flatCorrespondences.size(); i = i+2){
-				corrs.push_back(boost::tuple<int, int>(flatCorrespondences[i], flatCorrespondences[i+1]));
+				corrs.push_back(boost::tuple<int, int>(flatCorrespondences[i], flatCorrespondences[i + 1]));
 			}
 		}
 
@@ -1634,7 +1635,7 @@ namespace wustl_mm {
 			else
 				featureVecs.clear();
 			for(int i=0; i < flatFeatureVecs.size(); i = i+2){
-				featureVecs.push_back(boost::tuple<Vector3DFloat, Vector3DFloat>(flatFeatureVecs[i], flatFeatureVecs[i+1]));
+				featureVecs.push_back(boost::tuple<Vector3DFloat, Vector3DFloat>(flatFeatureVecs[i], flatFeatureVecs[i + 1]));
 			}
 
 		}
@@ -1644,10 +1645,14 @@ namespace wustl_mm {
 		}
 
 		void CAlphaRenderer::SetHelixColor(int helixNum, float r, float g, float b){
-			cout << "setting helix color " << helixNum << " to (" << r << ", " << g << ", " << b << ")" <<endl;
+			//cout << "setting helix color " << helixNum << " to (" << r << ", " << g << ", " << b << ")" <<endl;
 			helixColors.erase(helixNum);
-			helixColors.insert(pair<int, boost::tuple<float, float, float> >(helixNum, boost::tuple<float, float, float>(r,g,b)));
+			helixColors.insert(pair<int, boost::tuple<float, float, float> >(helixNum, boost::tuple<float, float, float>(r, g, b)));
 		}
+
+        void CAlphaRenderer::ClearHelixColors() {
+            helixColors.clear();
+        }
 
 		// creates a vector of Vector3DFloats that represents the locations of all the PDBAtoms
 		// starting with start and ending with end; it does not error check, so incorrectly

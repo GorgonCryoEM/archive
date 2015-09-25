@@ -186,7 +186,7 @@ namespace wustl_mm {
 			helices2.clear();
 		}
 
-		void SSECorrespondenceFinder::InitializeConstants(float rigidityThreshold, float featureChangeThreshold, float rigidityAngleCoeff, float rigidityCentroidDistanceCoeff, float featureChangeCoeff, float rigidComponentCoeff, float intraComponentCoeff, float jointAngleThreshold, float dihedralAngleThreshold, float centroidDistanceThreshold, unsigned int maxSolutionCount, float maxCostMatrixError) {
+		void SSECorrespondenceFinder::InitializeConstants(float rigidityThreshold, float featureChangeThreshold, float rigidityAngleCoeff, float rigidityCentroidDistanceCoeff, float rigidityFeatureChangeCoeff, float rigidComponentCoeff, float intraComponentCoeff, float jointAngleThreshold, float dihedralAngleThreshold, float centroidDistanceThreshold, unsigned int maxSolutionCount, float maxCostMatrixError) {
 			this->rigidityThreshold = rigidityThreshold;
 			this->featureChangeThreshold = featureChangeThreshold;
 			this->rigidityAngleCoeff = rigidityAngleCoeff;
@@ -602,7 +602,7 @@ namespace wustl_mm {
 			
 			tm.PushCurrentTime();
 			vector< set<unsigned long long> > allCliques = parentGraph.GetAllCliquesTriangleApprox(smallestCliqueSize);
-			printf("(*%d cliques found ", (int)allCliques.size());
+			//printf("(*%d cliques found ", allCliques.size());
 			tm.PopAndDisplayTime("%f seconds!*)\n");
 
 			tm.PushCurrentTime();
@@ -789,39 +789,39 @@ namespace wustl_mm {
 			}
 
 
-			printf("corrs = {\n");
-			for(unsigned int k = 0; k < corr.size(); k++) {
-				corrItem = corr[k];
-				if(k != 0) {
-					printf(",\n");
-				}
-				printf("\t{\n");
+			//printf("corrs = {\n");
+			//for(unsigned int k = 0; k < corr.size(); k++) {
+			//	corrItem = corr[k];
+			//	if(k != 0) {
+			//		printf(",\n");
+			//	}
+			//	printf("\t{\n");
 
-				for(unsigned int i = 0; i < corrItem.size(); i++) {
-					if(i != 0) {
-						printf(",\n");
-					}
-					printf("\t\t{");
-					for(unsigned int j = 0; j < corrItem[i].size(); j++) {
-						if(j != 0) {
-							printf(", ");
-						}
-						if(useDirection) {
-							if(corrItem[i][j].IsForward()) {
-								printf("{{%d, %d}, {%d, %d}}", corrItem[i][j].GetPIndex(), 0, corrItem[i][j].GetQIndex(), 0);
-							} else {
-								printf("{{%d, %d}, {%d, %d}}", corrItem[i][j].GetPIndex(), 0, corrItem[i][j].GetQIndex(), 1);
-							}
-						} else {
-							printf("{%d, %d}", corrItem[i][j].GetPIndex(), corrItem[i][j].GetQIndex());
-						}
-					}
-					printf("}");
-				}
-				printf("}");
-			}
-			printf("};\n");			
-			printf("printFinalMultiOutput[corrs, fl1, fl2, 1, groundTruth]\n");
+			//	for(unsigned int i = 0; i < corrItem.size(); i++) {
+			//		if(i != 0) {
+			//			printf(",\n");
+			//		}
+			//		printf("\t\t{");
+			//		for(unsigned int j = 0; j < corrItem[i].size(); j++) {
+			//			if(j != 0) {
+			//				printf(", ");
+			//			}
+			//			if(useDirection) {
+			//				if(corrItem[i][j].IsForward()) {
+			//					printf("{{%d, %d}, {%d, %d}}", corrItem[i][j].GetPIndex(), 0, corrItem[i][j].GetQIndex(), 0);
+			//				} else {
+			//					printf("{{%d, %d}, {%d, %d}}", corrItem[i][j].GetPIndex(), 0, corrItem[i][j].GetQIndex(), 1);
+			//				}
+			//			} else {
+			//				printf("{%d, %d}", corrItem[i][j].GetPIndex(), corrItem[i][j].GetQIndex());
+			//			}
+			//		}
+			//		printf("}");
+			//	}
+			//	printf("}");
+			//}
+			//printf("};\n");			
+			//printf("printFinalMultiOutput[corrs, fl1, fl2, 1, groundTruth]\n");
 
 			return corr;
 		}

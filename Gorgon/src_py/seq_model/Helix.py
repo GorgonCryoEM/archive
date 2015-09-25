@@ -25,17 +25,20 @@ class Helix(Secel):
         self.axisPoint2 = None
 
     @classmethod
-    def parsePDB(cls,line,chain):
+    def parsePDB(cls,line,chain,whichChainID):
         """
 Given a line of a PDB file and a chain, this builds a Helix and adds it
 to the chain. 
         """
         serialNo     =         int(line[7:10].strip())
         helixID     =     line[11:14].strip()
-        #chainID     =         line[19:20]
+        chainID     =         line[19:20].strip()
         start     =         int(line[21:25].strip())
         stop     =         int(line[33:37].strip())
     
+        if chainID != whichChainID:
+            return
+        
         if helixID in chain.helices.keys():
             raise ValueError, 'Duplicate Helix entries in PDB'
         else:
@@ -102,10 +105,16 @@ This sets the coordinates for the two endpoints of the helical axis.
 This returns a "HELIX" line of this helix for a PDB file.
         """
         Helix.serialNo=Helix.serialNo+1
-        init_res_name=self.chain.residueList[self.startIndex].symbol3
+        if self.startIndex in self.chain.residueList:
+            init_res_name=self.chain.residueList[self.startIndex].symbol3
+        else:
+            init_res_name=''
         init_chainID=self.chain.chainID
         init_seq_num=self.startIndex
-        end_res_name=self.chain.residueList[self.stopIndex].symbol3
+        if self.stopIndex in self.chain.residueList:
+            end_res_name=self.chain.residueList[self.stopIndex].symbol3
+        else:
+            end_res_name=''
         end_seq_num=self.stopIndex
     
         s= "HELIX  "

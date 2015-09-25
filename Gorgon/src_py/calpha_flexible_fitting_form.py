@@ -3,20 +3,22 @@
 # Description:   A widget to fit a calpha backbone to the density
 
 
+from math import sqrt
 from PyQt4 import QtCore, QtGui
-from ui_dialog_calpha_flexible_fitting import Ui_DialogCAlphaFlexibleFitting
+from seq_model.Chain import Chain
 from base_dock_widget import BaseDockWidget
-from libpyGORGON import FlexibleFittingEngine, SSECorrespondenceNode
-from math import pi
-from copy import deepcopy
+from calpha_choose_chain_model import CAlphaChooseChainModel
+from calpha_choose_chain_to_load_form import CAlphaChooseChainToLoadForm
+from ui_dialog_calpha_flexible_fitting import Ui_DialogCAlphaFlexibleFitting
+from libpyGORGON import Vector3DFloat, LinearSolver, SSECorrespondenceFinder, SSECorrespondenceFeature, FlexibleFittingEngine, MatrixFloat
 
 class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
         
     def __init__(self, main, viewer, parent=None):
         BaseDockWidget.__init__(self, 
                                 main, 
-                                "Fit to density", 
-                                "Fit CAlpha atoms to density", 
+                                "Fit to Volume", 
+                                "Fit CAlpha Atoms to Volume", 
                                 "perform_CAlphaFlexibleFitting", 
                                 "actions-calpha-flexiblefitting", 
                                 "actions-calpha", 
@@ -24,723 +26,1074 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
                                 QtCore.Qt.RightDockWidgetArea, 
                                 parent)
         self.app = main
-        self.viewer = viewer
-        self.cAlphaViewer = viewer
-        self.volumeViewer = self.app.viewers["volume"]
-        self.sseViewer = self.app.viewers["sse"]     
-        self.rigidDone = False   
-        self.createUI()
-        self.enableDisableWindowElements()
-        self.engine = FlexibleFittingEngine()
-        self.chainHelixMapping = {}
-        self.invChainHelixMapping = {}
-        self.backupPositions = {}
 
-        
-        
+        self.calphaViewer   = viewer
+        self.volumeViewer   = self.app.viewers["volume"]
+        self.sseViewer      = self.app.viewers["sse"]
+        self.skeletonViewer = self.app.viewers["skeleton"]
+
+        self.linearSolver            = LinearSolver()
+        self.sseCorrespondenceFinder = SSECorrespondenceFinder()
+        self.flexibleFittingEngine   = FlexibleFittingEngine()
+
+        self.sseViewer.renderer.setObjectSpecificColoring(True)
+
+        self.alignToClusterStatus         = False
+        self.previewCorrespondencesStatus = False
+
+        self.createUI()
+
+        self.stage = "loadFiles"
+        self.updateVisibility()
 
     def createUI(self):
         self.setupUi(self)    
-        self.connect(self.pushButtonLoadHelices, QtCore.SIGNAL("clicked (bool)"), self.loadHelices)
-        self.connect(self.pushButtonLoadCAlpha, QtCore.SIGNAL("clicked (bool)"), self.loadBackbone)
-        self.connect(self.cAlphaViewer, QtCore.SIGNAL("modelLoaded()"), self.enableDisableWindowElements)
-        self.connect(self.cAlphaViewer, QtCore.SIGNAL("modelUnloaded()"), self.enableDisableWindowElements)
-        self.connect(self.sseViewer, QtCore.SIGNAL("modelLoaded()"), self.enableDisableWindowElements)
-        self.connect(self.sseViewer, QtCore.SIGNAL("modelUnloaded()"), self.enableDisableWindowElements)
-        self.connect(self.comboBoxAlignment, QtCore.SIGNAL("currentIndexChanged (int)"), self.loadAlignment)
-        self.connect(self.comboBoxCluster, QtCore.SIGNAL("currentIndexChanged (int)"), self.alignToCluster)
-        self.connect(self.cAlphaViewer, QtCore.SIGNAL("ribbonSelected (int, PyQt_PyObject, PyQt_PyObject, QMouseEvent)"), self.processElementSelected)
-        self.connect(self.sseViewer, QtCore.SIGNAL("SSE selected"), self.processElementSelected)
-        self.connect(self.sseViewer, QtCore.SIGNAL("SSERightClicked(PyQt_PyObject, PyQt_PyObject, QMouseEvent)"), self.sseRightClicked)
-        self.tableWidget.setColumnWidth(0,80)
-        self.tableWidget.setColumnWidth(1,80)
-        self.tableWidget.setColumnWidth(2,80)
-        self.connect(self.displayAct, QtCore.SIGNAL("toggled (bool)"), self.visibilityChanged)        
+       
+        # Load Files
+        self.connect(self.calphaViewer, QtCore.SIGNAL("modelLoaded()"), self.fileLoaded)
+        self.connect(self.calphaViewer, QtCore.SIGNAL("modelUnloaded()"), self.fileLoaded)
+        self.connect(self.sseViewer, QtCore.SIGNAL("modelLoaded()"), self.fileLoaded)
+        self.connect(self.sseViewer, QtCore.SIGNAL("modelUnloaded()"), self.fileLoaded)
+        self.connect(self.skeletonViewer, QtCore.SIGNAL("modelLoaded()"), self.fileLoaded)
+        self.connect(self.skeletonViewer, QtCore.SIGNAL("modelUnloaded()"), self.fileLoaded)
+        self.connect(self.pushButtonLoadFilesCAlphaAtoms, QtCore.SIGNAL("clicked (bool)"), self.loadCalphaAtoms)
+        self.connect(self.pushButtonLoadFilesHelixAnnotations, QtCore.SIGNAL("clicked (bool)"), self.loadHelixAnnotations)
+        self.connect(self.pushButtonLoadFilesSkeleton, QtCore.SIGNAL("clicked (bool)"), self.loadSkeleton)
+        self.connect(self.pushButtonRigidDeformationPrincipalComponentTarget, QtCore.SIGNAL("clicked (bool)"), self.loadPrincipalComponentTargetChain)
+    
+        # Calculate Correspondence
+        self.connect(self.pushButtonCorrespondenceOptionsCalculate, QtCore.SIGNAL("clicked (bool)"), self.calculateCorrespondences)
+
+        # Alignment Selection
+        self.connect(self.comboBoxAlignment, QtCore.SIGNAL("activated (int)"), self.updateCorrespondencesDisplay)
+
+        # Align to Cluster
+        self.connect(self.pushButtonCorrespondencesAlignToCluster, QtCore.SIGNAL("clicked (bool)"), self.alignToCluster)
+
+        # Merge Clusters
+        self.connect(self.pushButtonCorrespondencesMerge, QtCore.SIGNAL("clicked (bool)"), self.mergeClusters)
+
+        # Manual Correspondence
+        self.connect(self.pushButtonCorrespondencesManualCorrespondence, QtCore.SIGNAL("clicked (bool)"), self.manualCorrespondence)
+
+        # Flip Correspondence
+        self.connect(self.pushButtonCorrespondencesFlipCorrespondence, QtCore.SIGNAL("clicked (bool)"), self.flipCorrespondence)
+
+        # Review Correspondence
+        self.connect(self.pushButtonCorrespondencesPreview, QtCore.SIGNAL("clicked (bool)"), self.previewCorrespondences)
+        self.connect(self.pushButtonCorrespondencesAccept, QtCore.SIGNAL("clicked (bool)"), self.acceptCorrespondences)
+        self.connect(self.pushButtonCorrespondencesReject, QtCore.SIGNAL("clicked (bool)"), self.rejectCorrespondences)
+
+        # Perform Deformation
+        self.connect(self.pushButtonDeformationRigidDeform, QtCore.SIGNAL("clicked (bool)"), self.performRigidDeformation)
+        self.connect(self.pushButtonDeformationFlexibleDeform, QtCore.SIGNAL("clicked (bool)"), self.performFlexibleDeformation)
+
+        # Review Deformation
+        self.connect(self.pushButtonDeformationAccept, QtCore.SIGNAL("clicked (bool)"), self.acceptDeformation)
+        self.connect(self.pushButtonDeformationReject, QtCore.SIGNAL("clicked (bool)"), self.rejectDeformation)
+
+    def updateVisibility(self):
+        self.bringToFront()
+        
+        if self.stage == "loadFiles":
+            self.pushButtonLoadFilesCAlphaAtoms.setEnabled(not self.calphaViewer.loaded)
+            self.pushButtonLoadFilesHelixAnnotations.setEnabled(not self.sseViewer.loaded)
+            self.pushButtonLoadFilesSkeleton.setEnabled(not self.skeletonViewer.loaded)
+
+            self.tabLoadFiles.setEnabled(True)
+            self.tabCorrespondenceOptions.setEnabled(False)
+            self.tabCorrespondences.setEnabled(False)
+            self.tabDeformation.setEnabled(False)
+            self.tabDeformation.setEnabled(False)
             
-    def visibilityChanged(self, visible):
-        self.sseViewer.renderer.setObjectSpecificColoring(visible)
-        if(visible):
-            self.getBackupCopy()
-        self.sseViewer.emitModelChanged()
-                    
-    def enableDisableWindowElements(self):
-        self.pushButtonLoadHelices.setVisible(not self.sseViewer.loaded)
-        self.pushButtonLoadCAlpha.setVisible(not self.cAlphaViewer.loaded)
-        allLoaded = self.sseViewer.loaded and self.cAlphaViewer.loaded
-        self.tabWidget.setEnabled(allLoaded)
-        self.tabAlignments.setEnabled(self.rigidDone)
-        self.tabFlexibleFit.setEnabled(self.rigidDone)
-        self.pushButtonOk.setEnabled(allLoaded)
-        self.pushButtonReset.setEnabled(allLoaded)
+            self.tabWidget.setCurrentWidget(self.tabLoadFiles)
+        elif self.stage == "correspondenceOptions":
+            self.tabLoadFiles.setEnabled(False)
+            self.tabCorrespondenceOptions.setEnabled(True)
+            self.tabCorrespondences.setEnabled(False)
+            self.tabDeformationOptions.setEnabled(False)
+            self.tabDeformation.setEnabled(False)
+            
+            self.tabWidget.setCurrentWidget(self.tabCorrespondenceOptions)
+        elif self.stage == "correspondences":
+            self.tabLoadFiles.setEnabled(False)
+            self.tabCorrespondenceOptions.setEnabled(False)
+            self.tabCorrespondences.setEnabled(True)
+            self.tabDeformationOptions.setEnabled(False)
+            self.tabDeformation.setEnabled(False)
+            
+            self.tabWidget.setCurrentWidget(self.tabCorrespondences)
 
-    def loadVolume(self, temp):
-        self.app.actions.getAction("load_Volume").trigger()
-        self.bringToFront()
+            self.calphaViewer.setDisplayStyle(self.calphaViewer.DisplayStyleRibbon)
+        elif self.stage == "deformationOptions":
+            self.tabLoadFiles.setEnabled(False)
+            self.tabCorrespondenceOptions.setEnabled(False)
+            self.tabCorrespondences.setEnabled(False)
+            self.tabDeformationOptions.setEnabled(True)
+            self.tabDeformation.setEnabled(False)
+            
+            self.tabWidget.setCurrentWidget(self.tabDeformationOptions)
+            
+            self.calphaViewer.setDisplayStyle(self.calphaViewer.DisplayStyleRibbon)
+            self.calphaViewer.setStrandVisibility(True)
+            self.calphaViewer.setLoopVisibility(True)
+        elif self.stage == "deformation":
+            self.tabLoadFiles.setEnabled(False)
+            self.tabCorrespondenceOptions.setEnabled(False)
+            self.tabCorrespondences.setEnabled(False)
+            self.tabDeformationOptions.setEnabled(False)
+            self.tabDeformation.setEnabled(True)
+            
+            self.tabWidget.setCurrentWidget(self.tabDeformation)
+            
+            self.calphaViewer.setDisplayStyle(self.calphaViewer.DisplayStyleRibbon)
+            self.calphaViewer.setStrandVisibility(True)
+            self.calphaViewer.setLoopVisibility(True)
 
-    def loadHelices(self, temp):
-        self.app.actions.getAction("load_SSE_Helix").trigger()
-        self.bringToFront()
-
-    def loadBackbone(self, temp):
+    def loadCalphaAtoms(self, temp):
         self.app.actions.getAction("load_CAlpha").trigger()
-        self.bringToFront()
-        self.getBackupCopy()
+        self.fileLoaded()
         
-    def getColor(self, clusterIx, clusterCount):
-        seed = clusterIx % 6
-        loc =  float(clusterIx/6)/float(max(1,clusterCount/6))
-        r = 0
-        g = 0
-        b = 0
-        if(seed == 0):
-            r = 1
-            g = loc
-        elif(seed == 1):
-            r = 1.0 - loc
-            g = 1
-        elif(seed == 2):
-            g = 1
-            b = loc
-        elif(seed == 3):
-            g = 1.0 - loc
-            b = 1
-        elif(seed == 4):
-            r = loc
-            b = 1
-        elif(seed == 5):
-            r = 1
-            b = 1.0 - loc;            
-        
-        return QtGui.QColor.fromRgba(QtGui.qRgba(r*255, g*255, b*255, 255))
-    
-    def getBackupCopy(self):
-        self.backupPositions = {}
-        for chain in self.cAlphaViewer.loadedChains:           
-            for i in chain.residueRange():
-                if i in chain.residueList:
-                    for atomName in chain[i].getAtomNames():
-                        atom = chain[i].getAtom(atomName)
-                        self.backupPositions[atom.getHashKey()] = atom.getPosition()
-                        
-    def revertToBackupCopy(self):
-        for hash, position in self.backupPositions.items():
-            self.cAlphaViewer.renderer.getAtom(hash).setPosition(position)
-        self.cAlphaViewer.renderer.updateBoundingBox()
-        self.cAlphaViewer.emitModelChanged()     
-        self.rigidDone = False   
-        self.enableDisableWindowElements()
-        
+        self.chain = self.calphaViewer.loadedChains[0]
 
-    def loadAlignment(self, alignmentIx):
-        self.tableWidget.clearContents ()
-        self.comboBoxCluster.clear()
-        self.comboBoxMerge1.clear()
-        self.comboBoxMerge2.clear()
-        if(self.comboBoxAlignment.count() > 0):
-            for i in range(self.sseViewer.renderer.getHelixCount()):
-                self.sseViewer.renderer.setHelixColor(i, 0.3, 0.3, 0.3, 1.0)
-            
-            clusterCount = self.engine.getClusterCount(alignmentIx)
-            self.tableWidget.setRowCount(0)            
-            for clusterIx in range(clusterCount):
-                self.comboBoxCluster.addItem(str(clusterIx+1))
-                self.comboBoxMerge1.addItem(str(clusterIx+1))
-                self.comboBoxMerge2.addItem(str(clusterIx+1))
-                
-                clusterColor = self.getColor(clusterIx, clusterCount)
-                firstRow = True
-                for helixIx in range(self.engine.getHelixCount(alignmentIx, clusterIx)):
-                    rowIx = self.tableWidget.rowCount()
-                    corr = self.engine.getCorrespondenceNode(alignmentIx, clusterIx, helixIx)
-                    self.tableWidget.insertRow(rowIx)
-                    self.tableWidget.setRowHeight(rowIx, 20)
-                    if(firstRow):
-                        self.tableWidget.setItem(rowIx, 0, QtGui.QTableWidgetItem(str(clusterIx+1)))
-                    else:
-                        self.tableWidget.setItem(rowIx, 0, QtGui.QTableWidgetItem(" "))
-                        
-                    self.tableWidget.setItem(rowIx, 1, QtGui.QTableWidgetItem(str(corr.getQIndex())))
-                    self.tableWidget.setItem(rowIx, 2, QtGui.QTableWidgetItem(str(self.invChainHelixMapping[corr.getPIndex()])))
-                                        
-                    self.tableWidget.item(rowIx, 0).setBackgroundColor(clusterColor)
-                    self.tableWidget.item(rowIx, 1).setBackgroundColor(clusterColor)
-                    self.tableWidget.item(rowIx, 2).setBackgroundColor(clusterColor)
-                    self.sseViewer.renderer.setHelixColor(corr.getQIndex(), clusterColor.redF(), clusterColor.greenF(), clusterColor.blueF(), clusterColor.alphaF())
-                    self.cAlphaViewer.renderer.setHelixColor(corr.getPIndex(), clusterColor.redF(), clusterColor.greenF(), clusterColor.blueF())
-                    firstRow = False
-                    
-                    
-                
-            flips = self.engine.getCorrespondenceFlips(alignmentIx)
-            self.sseViewer.renderer.setSSEOrientationFlips(flips)           
-            self.cAlphaViewer.setStrandVisibility(False)
-            self.cAlphaViewer.setLoopVisibility(False)
-            self.cAlphaViewer.setDisplayStyle(self.viewer.DisplayStyleRibbon)  
-            self.cAlphaViewer.renderer.updateBoundingBox()
-            self.sseViewer.emitModelChanged()
-        
-    def accept(self):
-        self.engine.resetEngine()
-        # pushing in PDB Helices to the engine
-        self.chainHelixMapping = {}
-        self.invChainHelixMapping = {}
-        cppIndex = 0
-        for chain in self.cAlphaViewer.loadedChains:
-            for helixIx, helix in chain.helices.items():
-                self.chainHelixMapping[helixIx] = cppIndex
-                self.invChainHelixMapping[cppIndex] = helixIx
-                self.engine.startPDBHelix()
-                for i in range(helix.startIndex, helix.stopIndex+1):
-                    self.engine.addPDBAtomLocation(chain[i].getAtom('CA').getPosition())
-                self.engine.endPDBHelix()
-                cppIndex = cppIndex + 1
-                
-        # pushing in SSEHunter helices to the engine
-        for i in range(self.sseViewer.renderer.getHelixCount()):
-            pt1 = self.sseViewer.renderer.getHelixCorner(i, 0)
-            pt2 = self.sseViewer.renderer.getHelixCorner(i, 1)
-            self.engine.addSSEHelix(pt1, pt2)
-                    
-        self.engine.startSearch(self.spinBoxJointAngleThreshold.value()* pi / 180.0, self.spinBoxDihedralAngleThreshold.value()* pi / 180.0, self.spinBoxHelixLengthThreshold.value(), self.spinBoxHelixCentroidThreshold.value(), self.spinBoxMaxAlignments.value())
-        corrCount = self.engine.getCorrespondenceCount()
-        self.comboBoxAlignment.clear()           
-        if(corrCount > 0):
-            self.tabAlignments.setEnabled(True)
-            for i in range(corrCount):
-                self.comboBoxAlignment.addItem(str(i+1))
-            self.comboBoxAlignment.setCurrentIndex(0)
-            self.tabWidget.setCurrentIndex(1)
-        else:
-            self.tabAlignments.setEnabled(False)
-            print "No alignments found :( "
-                                                    
-        self.viewer.emitModelChanged()
-        self.rigidDone = True
-        self.enableDisableWindowElements()
+    def loadHelixAnnotations(self, temp):
+        self.app.actions.getAction("load_SSE_Helix").trigger()
+        self.fileLoaded()
 
+    def loadSkeleton(self, temp):
+        self.app.actions.getAction("load_Skeleton").trigger()
+        self.fileLoaded()
+ 
+    def loadPrincipalComponentTargetChain(self, temp, filename=None, chainID=None):
+        # Get Filename
+        if not filename:
+            filename = unicode(QtGui.QFileDialog.getOpenFileName(self, self.tr("Open Data"), "", self.tr('Atom Positions (*.pdb)\nFASTA (*.fas *.fa *.fasta)')))
         
-        
-    def on_pushButtonRunFlexible_released(self):
-        try:
-            alignmentIx = int(self.comboBoxAlignment.itemText(self.comboBoxAlignment.currentIndex()))-1
-        except:
-            return
+        # Get Chain ID
+        if not chainID:
+            form = CAlphaChooseChainToLoadForm(filename)
+            form.exec_()
+            chainID = form.whichChainID
 
-        self.engine.saveCorrs()
-        self.engine.resetEngine()           
-          
-        self.chainHelixMapping = {}
-        self.invChainHelixMapping = {}
-        cppIndex = 0
-        for chain in self.cAlphaViewer.loadedChains:
-            for helixIx, helix in chain.helices.items():
-                self.chainHelixMapping[helixIx] = cppIndex
-                self.invChainHelixMapping[cppIndex] = helixIx
-                self.engine.startPDBHelix()
-                for i in range(helix.startIndex, helix.stopIndex+1):
-                    self.engine.addPDBAtomLocation(chain[i].getAtom('CA').getPosition())
-                self.engine.endPDBHelix()
-                cppIndex = cppIndex + 1
-                
-        # pushing in SSEHunter helices to the engine
-        for i in range(self.sseViewer.renderer.getHelixCount()):
-            pt1 = self.sseViewer.renderer.getHelixCorner(i, 0)
-            pt2 = self.sseViewer.renderer.getHelixCorner(i, 1)
-            self.engine.addSSEHelix(pt1, pt2)
-                
-        self.engine.startSearch(self.spinBoxJointAngleThreshold.value()* pi / 180.0, self.spinBoxDihedralAngleThreshold.value()* pi / 180.0, self.spinBoxHelixLengthThreshold.value(), self.spinBoxHelixCentroidThreshold.value(), self.spinBoxMaxAlignments.value())
-        self.engine.loadSavedCorrs();
-        
-        if(self.radioButtonInterpolation.isChecked()):
-            self.showInterpolation(alignmentIx)                    
-        else :
-            self.doFlexibleDeformationPiecewise(alignmentIx)
-        self.cAlphaViewer.renderer.updateBoundingBox()
-        self.cAlphaViewer.setStrandVisibility(True)
-        self.cAlphaViewer.setLoopVisibility(True)
-
-
-        self.sseViewer.renderer.updateBoundingBox()
-        self.sseViewer.emitModelChanged()     
-        
-  
-    
-    def showInterpolation(self, alignmentIx):
-        softHandleLocs = self.doInterpolation(alignmentIx)
-        for chain in self.cAlphaViewer.loadedChains:
-            for i in chain.residueRange():
-                chain[i].getAtom('CA').setPosition(softHandleLocs[i])
-    
-    def doFlexibleDeformationPiecewise(self, alignmentIx):
-        engine = self.engine
-        # Getting all helix transformations        
-        transforms = {}
-        origChain = []
-        count = 0
-        for chain in self.cAlphaViewer.loadedChains:  
-            origChain.append({})
-            for i in chain.residueRange():
-                #debug code
-                print "i:", i
-                temp1 = chain[i]
-                print "temp1:", temp1
-                temp2 = temp1.getAtom('CA')
-                print "temp2:", temp2
-                temp3 = temp2.getPosition()
-                print "temp3:", temp3
-                origChain[count][i] = temp3
-                #origChain[count][i] = chain[i].getAtom('CA').getPosition()
-            count = count +1          
-            for helixIx, helix in chain.helices.items():
-                transform = self.engine.getHelixFlexibleTransform(alignmentIx, self.chainHelixMapping[helixIx]) 
-                if(transform.getValue(3,3) > 0.5): # Checking if a transformation was found for this helix
-                    transforms[helixIx] =  transform
-    
-        
+        # Load Chain
+        if chainID != "ALL":
+            self.principalComponentTargetChain = Chain.load(filename, None, chainID)
        
-        #Getting curve interpolated points
-        softHandleLocs = self.doInterpolation(alignmentIx)
-        if( not self.useSoftHandlesCheckBox.isChecked()):
-            for ind in softHandleLocs.keys():
-                softHandleLocs[ind] = [0,0,0]
-                
-        doingRigid = self.doRigidInitializationCheckBox.isChecked()
-        
-        # START NEW DEFORMATION HERE!
-       
-        #Setting weights
-        engine.setLaplacainW(self.laplacianWeightDoubleSpinBox.value())
-        engine.setHardHandleW(self.hardHandleWeightDoubleSpinBox.value())
-        engine.setSoftHandleW(self.softHandleWeightDoubleSpinBox.value())
-        
-        #---Ends---#
-        #Ends are done separately from the middle section of the chain.  Each the first and last vertices are given the same
-        #transformation as the closest helix        
-        for chain in self.cAlphaViewer.loadedChains:
-            #Front
-            engine.prepareDeform();
-            helixIx = min(transforms.keys())
-            minIndex = min(chain.residueRange())
-            trans = transforms[helixIx]
-            helix = chain.helices[helixIx]
-            for i in range(minIndex, helix.stopIndex+1):
-                engine.addAtomLocation(chain[i].getAtom('CA').getPosition())
-                if i == minIndex or i in range(helix.startIndex, helix.stopIndex+1):
-                    newpt = chain[i].getAtom('CA').getPosition().Transform(trans)
-                    engine.addHardHandleLocation(newpt)
-                    engine.addSoftHandleLocation([0,0,0])
-                else:
-                    engine.addHardHandleLocation([0,0,0])
-                    newpt = softHandleLocs[i]
-                    engine.addSoftHandleLocation(newpt)
-                    
-            rigidInit = engine.getPairRigidTransform(alignmentIx, self.chainHelixMapping[helixIx], self.chainHelixMapping[helixIx])
-            flatVertices = engine.Deform(self.neighborhoodSizeSpinBox.value(), rigidInit, doingRigid)
-            finalVertices = [];
-#            for j in range(0, len(flatVertices), 3):
-#                finalVertices.append(tuple([flatVertices[j], flatVertices[j+1], flatVertices[j+2]]));
-                
-            count = 0
-            for k in range(minIndex, helix.stopIndex+1):
-                if k not in range(helix.startIndex, helix.stopIndex+1):
-                    chain[k].getAtom('CA').setPosition(flatVertices[count])
-                count = count +1
-                
-            #back   
-            engine.prepareDeform();
-            helixIx = max(transforms.keys())
-            maxIndex = max(chain.residueRange())
-            trans = transforms[helixIx]
-            helix = chain.helices[helixIx]
-            for i in range(helix.startIndex,maxIndex+1):
-                engine.addAtomLocation(chain[i].getAtom('CA').getPosition())
-                if i == maxIndex or i in range(helix.startIndex, helix.stopIndex+1):
-                    newpt = chain[i].getAtom('CA').getPosition().Transform(trans)
-                    engine.addHardHandleLocation(newpt)
-                    engine.addSoftHandleLocation([0,0,0])
-                else:
-                    engine.addHardHandleLocation([0,0,0])
-                    newpt = softHandleLocs[i]
-                    engine.addSoftHandleLocation(newpt)
-                    
-            rigidInit = engine.getPairRigidTransform(alignmentIx, self.chainHelixMapping[helixIx], self.chainHelixMapping[helixIx])
-            flatVertices = engine.Deform(self.neighborhoodSizeSpinBox.value(), rigidInit, doingRigid)
-            finalVertices = []
-#            for j in range(0, len(flatVertices), 3):
-#                finalVertices.append(tuple([flatVertices[j], flatVertices[j+1], flatVertices[j+2]]));
-                
-            count = 0
-            for k in range(helix.startIndex, maxIndex+1):
-                if k not in range(helix.startIndex, helix.stopIndex+1):
-                    chain[k].getAtom('CA').setPosition(flatVertices[count])
-                count = count +1
-            
-        
-        #All middle Chains
-        for chain in self.cAlphaViewer.loadedChains:
-            for helixIx, trans in transforms.items():
-                nextHelixIx = helixIx+1
-                if helixIx == max(transforms.keys()):
-                    break
-                while nextHelixIx not in transforms.keys():
-                    nextHelixIx = nextHelixIx+1
-                helix1 = chain.helices[helixIx]
-                helix2 = chain.helices[nextHelixIx]
-                              
-                engine.prepareDeform();               
-                for i in range(helix1.startIndex, helix2.stopIndex+1):
-                    engine.addAtomLocation(chain[i].getAtom('CA').getPosition())
-                    if i in range(helix1.startIndex, helix1.stopIndex+1):
-                        newpt = chain[i].getAtom('CA').getPosition().Transform(trans)
-                        engine.addHardHandleLocation(newpt)
-                        engine.addSoftHandleLocation([0,0,0])
-                    elif i in range(helix2.startIndex, helix2.stopIndex+1):
-                        newpt = chain[i].getAtom('CA').getPosition().Transform(transforms[nextHelixIx])
-                        engine.addHardHandleLocation(newpt)
-                        engine.addSoftHandleLocation([0,0,0])
-                    else:
-                        engine.addHardHandleLocation([0,0,0])
-                        newpt = softHandleLocs[i]
-                        engine.addSoftHandleLocation(newpt)        
-                rigidInit = engine.getPairRigidTransform(alignmentIx, self.chainHelixMapping[helixIx], self.chainHelixMapping[nextHelixIx])
-                flatVertices = engine.Deform(self.neighborhoodSizeSpinBox.value(), rigidInit, doingRigid)
-                finalVertices = [];
-#                for j in range(0, len(flatVertices), 3):
-#                    zz = tuple([flatVertices[j], flatVertices[j+1], flatVertices[j+2]]);
-#                    finalVertices.append(zz);
-                
-                #Only change the non-helix locations.  Helices have to stay in original locations in order to accurately
-                #calculate all transforms.  Helices get moved at the end    
-                count = 0
-                for k in range(helix1.startIndex, helix2.stopIndex+1):
-                    if k not in range(helix1.startIndex, helix1.stopIndex+1) and k not in range(helix2.startIndex, helix2.stopIndex+1):
-                        chain[k].getAtom('CA').setPosition(flatVertices[count])
-                    count = count +1
-                    
-        #move the handle points
-        for chain in self.cAlphaViewer.loadedChains:
-            for helixIx, trans in transforms.items():
-                helix = chain.helices[helixIx]
-                for i in range(helix.startIndex, helix.stopIndex+1):
-                    newpt = chain[i].getAtom('CA').getPosition() 
-                    newpt = newpt.Transform(trans)                
-                    chain[i].getAtom('CA').setPosition(newpt)        
-                                  
-        self.updateEngineFeatureLists(alignmentIx)
-        
-        #transforming side chains
-        scTransforms = {}
-        for chainIx in range(0, len(origChain)):
-            chain1 = origChain[chainIx]
-            chain2 = self.cAlphaViewer.loadedChains[chainIx]
-            locations1 = []
-            locations2 = []
-            chainMin = min(origChain[chainIx].keys())
-            chainMax = max(origChain[chainIx].keys())
-            for i in range(chainMin,chainMax +1):
-                locations1 = []
-                locations2 = []
-                minIndex = i-2
-                maxIndex = i+2
-                if minIndex < chainMin:
-                    minIndex = chainMin
-                if maxIndex > chainMax:
-                    maxIndex = chainMax
-                for j in range(minIndex, maxIndex+1):
-                    locations1.append(chain1[i])
-                    locations2.append(chain2[i].getAtom('CA').getPosition())
-                trans = self.engine.getSideChainTransform(locations1, locations2)
-                scTransforms[i] = trans;
-            for i in range(chainMin,chainMax +1):
-                atomTrans = scTransforms[i]
-                for atomName in self.cAlphaViewer.loadedChains[chainIx][i].getAtomNames():                    
-                    if atomName != 'CA':
-                        chain2[i].getAtom(atomName).transform(atomTrans)                        
-                        pass
-        self.cAlphaViewer.emitModelChanged()
-              
-                            
-                   
-    def doInterpolation(self, alignmentIx):                    
-         # TODO: This method can be refactored using the chain.secels dictionary... this would stop the need to search for previous and next helices..        
-        # Getting all helix transformations
-        transforms = {}
-        for chain in self.cAlphaViewer.loadedChains:
-            for helixIx, helix in chain.helices.items():
-                transform = self.engine.getHelixFlexibleTransform(alignmentIx, self.chainHelixMapping[helixIx]) 
-                if(transform.getValue(3,3) > 0.5): # Checking if a transformation was found for this helix
-                    transforms[helixIx] =  transform
-                        
-        # finding what the previous and next helices of each PDB atom is
-        helixStarts = [];
-        helixEnds = [];            
-        prevHelices = {};
-        nextHelices = {};            
-        for chain in self.cAlphaViewer.loadedChains:
-            for i in range(min(chain.residueRange()), max(chain.residueRange())+1):
-                if not (i in prevHelices):
-                    prevHelices[i] = -1
-                    nextHelices[i] = -1            
-            for helixIx, helix in chain.helices.items():                
-                if helixIx in transforms:
-                    helixStarts.append(helix.startIndex)
-                    helixEnds.append(helix.stopIndex)
-                    
-                    #Marking helix sections                
-                    for i in range(helix.startIndex, helix.stopIndex+1):
-                        prevHelices[i] = helixIx
-                        nextHelices[i] = helixIx
-                    #Marking region before current helix
-                    found = False
-                    for i in range(min(chain.residueRange()), helix.startIndex)[::-1]:
-                        found = found or ((prevHelices[i] == nextHelices[i]) and (prevHelices[i] != -1))
-                        if found:
-                            break;
-                        else:
-                            nextHelices[i] = helixIx
-                    #Marking region after current helix
-                    found = False
-                    for i in range(helix.stopIndex+1, max(chain.residueRange())+1):
-                        found = found or ((prevHelices[i] == nextHelices[i]) and (prevHelices[i] != -1))
-                        if found:
-                            break;
-                        else:
-                            prevHelices[i] = helixIx                                                  
-        
-        # Building coefficient numbers
-        helixStarts.sort()
-        helixEnds.sort()
-        coeff = {}        
-        for i in range(len(helixStarts)-1):
-            loopLength = helixStarts[i+1] - helixEnds[i] - 2;
-            for j in range(helixEnds[i]+1, helixStarts[i+1]):
-                if loopLength <= 0:
-                    coeff[j] = 0.5
-                else:
-                    coeff[j] =  float(j-helixEnds[i]+1)/float(loopLength)
-                    
-         
-        transformedAtoms = {} 
-        # Flexible deformation of each atom
-        for chain in self.cAlphaViewer.loadedChains:
-            for i in chain.residueRange():
-                if i in chain.residueList:
-                    if (prevHelices[i] == -1) and (nextHelices[i] == -1) : #No helices in structure
-                        pass
-                    elif (prevHelices[i] == nextHelices[i]) : # We are working with a helix atom
-                        transform = transforms[prevHelices[i]]
-                        transformedAtoms[i] = (chain[i].getAtom('CA').getPosition().Transform(transform))
-                    elif (prevHelices[i] == -1): # We are working with the beginning of the sequence
-                        transform = transforms[nextHelices[i]]
-                        transformedAtoms[i] = (chain[i].getAtom('CA').getPosition().Transform(transform))
-                    elif (nextHelices[i] == -1): # We are working with the end of the sequence
-                        transform = transforms[prevHelices[i]]
-                        transformedAtoms[i] = (chain[i].getAtom('CA').getPosition().Transform(transform))
-                    else: # We are working with a loop segment between two helices                    
-                        transform1 = transforms[prevHelices[i]]
-                        transform2 = transforms[nextHelices[i]]
-                        transformedAtoms[i] = (chain[i].getAtom('CA').getInterpolateTransformLocation(transform1, transform2, coeff[i]))    
-        return transformedAtoms 
-                                  
-                    
-    def reject(self):
-        self.engine.resetEngine()
-        self.chainHelixMapping = {}
-        self.invChainHelixMapping = {}
-
-        self.comboBoxAlignment.clear()           
-        self.tabWidget.setCurrentIndex(0)
-        self.tableWidget.clearContents()
-        
-        helixColor = self.sseViewer.getModelColor()
-        for helixIx in range(self.sseViewer.renderer.getHelixCount()):
-            self.sseViewer.renderer.setHelixColor(helixIx, helixColor.redF(), helixColor.greenF(), helixColor.blueF(), helixColor.alphaF())
-        self.sseViewer.emitModelChanged()
-                
-        self.revertToBackupCopy()
-        
-        
-        
-    def on_pushButtonMatchHelices_clicked(self):
-        sseHelices = self.sseViewer.renderer.getSelectedHelixIndices()
-        calphaHelices = self.cAlphaViewer.renderer.getSelectedHelixIndices()
-        if len(sseHelices) != 1 or len(calphaHelices) != 1:
-            print "please select exactly one sseHelix and one cAlphaHelix"
+    def fileLoaded(self):
+        if not self.calphaViewer.loaded or not self.sseViewer.loaded or not self.skeletonViewer.loaded:
+            self.stage = "loadFiles"
         else:
-            alignmentIx = int(self.comboBoxAlignment.itemText(self.comboBoxAlignment.currentIndex()))-1
-            self.engine.addCorrespondence(alignmentIx, sseHelices[0], calphaHelices[0])
-            self.updateTable(alignmentIx)
-            crrs = self.engine.getAllCorrespondencesFlat(alignmentIx)
-            self.cAlphaViewer.renderer.setHelixCorrs(crrs)
-            self.sseViewer.renderer.setHelixCorrs(crrs)
-            self.cAlphaViewer.emitModelChanged()
-            self.sseViewer.emitModelChanged()
-            
-    def on_pushButtonMergeClusters_clicked(self):
-        
-        try:
-            cluster1 = int(self.comboBoxMerge1.itemText(self.comboBoxMerge1.currentIndex()))-1
-            cluster2 = int(self.comboBoxMerge2.itemText(self.comboBoxMerge2.currentIndex()))-1
-            alignmentIx = int(self.comboBoxAlignment.itemText(self.comboBoxAlignment.currentIndex()))-1
-        except:
-            return
-        if cluster1 != cluster2:
-            self.engine.mergeClusters(alignmentIx, cluster1, cluster2)
-        self.updateTable(alignmentIx)
-        crrs = self.engine.getAllCorrespondencesFlat(alignmentIx)
-        self.cAlphaViewer.renderer.setHelixCorrs(crrs)
-        self.sseViewer.renderer.setHelixCorrs(crrs)
-        self.sseViewer.emitModelChanged()
-        self.cAlphaViewer.emitModelChanged()
+            self.stage = "correspondenceOptions"
 
+        self.updateVisibility()
+
+    def calculateCorrespondences(self, temp):
+        # Create Correspondence Index Mapping
+        self.correspondencePIndexToCalphaHelixIndex = {}
         
-        
-    def ribbonClicked(self, subsceneIx, sseIx, subSseIx, event):
-        self.processElementSelected()
-        print "Ribbon", subsceneIx, sseIx, subSseIx
-        
-        
-        
-    def updateTable(self, alignmentIx):
-        self.tableWidget.clearContents()
-        self.comboBoxMerge1.clear()
-        self.comboBoxMerge2.clear()
-        self.comboBoxCluster.clear()
-        if(self.comboBoxAlignment.count() > 0):
-            for i in range(self.sseViewer.renderer.getHelixCount()):
-                self.sseViewer.renderer.setHelixColor(i, 0.3, 0.3, 0.3, 1.0)
-            
-            clusterCount = self.engine.getClusterCount(alignmentIx)
-            self.tableWidget.setRowCount(0)            
-            for clusterIx in range(clusterCount):
-                self.comboBoxCluster.addItem(str(clusterIx+1))
-                self.comboBoxMerge1.addItem(str(clusterIx+1))
-                self.comboBoxMerge2.addItem(str(clusterIx+1))
-                clusterColor = self.getColor(clusterIx, clusterCount)
-                firstRow = True
-                for helixIx in range(self.engine.getHelixCount(alignmentIx, clusterIx)):
-                    rowIx = self.tableWidget.rowCount()
-                    corr = self.engine.getCorrespondenceNode(alignmentIx, clusterIx, helixIx)
-                    self.tableWidget.insertRow(rowIx)
-                    self.tableWidget.setRowHeight(rowIx, 20)
-                    if(firstRow):
-                        self.tableWidget.setItem(rowIx, 0, QtGui.QTableWidgetItem(str(clusterIx+1)))
-                    else:
-                        self.tableWidget.setItem(rowIx, 0, QtGui.QTableWidgetItem(" "))
-                        
-                    self.tableWidget.setItem(rowIx, 1, QtGui.QTableWidgetItem(str(corr.getQIndex())))
-                    self.tableWidget.setItem(rowIx, 2, QtGui.QTableWidgetItem(str(self.invChainHelixMapping[corr.getPIndex()])))
-                                        
-                    self.tableWidget.item(rowIx, 0).setBackgroundColor(clusterColor)
-                    self.tableWidget.item(rowIx, 1).setBackgroundColor(clusterColor)
-                    self.tableWidget.item(rowIx, 2).setBackgroundColor(clusterColor)
-                    self.sseViewer.renderer.setHelixColor(corr.getQIndex(), clusterColor.redF(), clusterColor.greenF(), clusterColor.blueF(), clusterColor.alphaF())
-                    self.cAlphaViewer.renderer.setHelixColor(corr.getPIndex(), clusterColor.redF(), clusterColor.greenF(), clusterColor.blueF())
-                    firstRow = False
-                    
-    def processElementSelected(self):
-        inds = self.sseViewer.renderer.getSelectedHelixIndices()
-        inds2 = self.cAlphaViewer.renderer.getSelectedHelixIndices()
-        try:
-            alignmentIx = int(self.comboBoxAlignment.itemText(self.comboBoxAlignment.currentIndex()))-1
-        except:
-            return
-        crrs = self.engine.getAllCorrespondencesFlat(alignmentIx)
-        self.cAlphaViewer.renderer.setHelixCorrs(crrs)
-        self.cAlphaViewer.renderer.setSelectedSSEHelices(inds)
-        
-        self.sseViewer.renderer.setHelixCorrs(crrs)
-        self.sseViewer.renderer.setSelectedPDBHelices(inds2)
-        self.sseViewer.emitModelChanged()
-        self.cAlphaViewer.emitModelChanged()
-        
-        
-    def sseRightClicked(self, subscene, index, event):
-        print "right click registered"
-        inds = self.sseViewer.renderer.getSelectedHelixIndices()
-        if(index in inds):
-            menu = QtGui.QMenu(self.tr("Flip SSE " + str(index) ))
-            flipAction = QtGui.QAction(self.tr("Flip SSE # " + str(index) ), self)
-            self.flippingIndex = index
-            self.connect(flipAction, QtCore.SIGNAL("triggered()"), self.flipSSE)       
-            menu.addAction(flipAction)
-            menu.exec_(self.app.mainCamera.mapToGlobal(self.app.mainCamera.mouseDownPoint))
-            self.app.mainCamera.updateGL()
-            
-    def flipSSE(self):
-        print "flipping sse"
-        print self.flippingIndex
-        try:
-            alignmentIx = int(self.comboBoxAlignment.itemText(self.comboBoxAlignment.currentIndex()))-1
-        except:
-            return
-        self.engine.flipCorrespondencePair(alignmentIx, self.flippingIndex)
-        flips = self.engine.getCorrespondenceFlips(alignmentIx)
-        self.sseViewer.renderer.setSSEOrientationFlips(flips)
-        self.sseViewer.emitModelChanged()
-        
-    def alignToCluster(self, index):
-        try:
-            alignmentIx = int(self.comboBoxAlignment.itemText(self.comboBoxAlignment.currentIndex()))-1
-        except:
-            return
-        
-        if index != -1:
-            self.engine.saveCorrs()
-            self.engine.resetEngine()           
-              
-            self.chainHelixMapping = {}
-            self.invChainHelixMapping = {}
-            cppIndex = 0
-            for chain in self.cAlphaViewer.loadedChains:
-                for helixIx, helix in chain.helices.items():
-                    self.chainHelixMapping[helixIx] = cppIndex
-                    self.invChainHelixMapping[cppIndex] = helixIx
-                    self.engine.startPDBHelix()
-                    for i in range(helix.startIndex, helix.stopIndex+1):
-                        self.engine.addPDBAtomLocation(chain[i].getAtom('CA').getPosition())
-                    self.engine.endPDBHelix()
-                    cppIndex = cppIndex + 1
-                    
-            # pushing in SSEHunter helices to the engine
-            for i in range(self.sseViewer.renderer.getHelixCount()):
-                pt1 = self.sseViewer.renderer.getHelixCorner(i, 0)
-                pt2 = self.sseViewer.renderer.getHelixCorner(i, 1)
-                self.engine.addSSEHelix(pt1, pt2)
-                    
-            self.engine.startSearch(self.spinBoxJointAngleThreshold.value()* pi / 180.0, self.spinBoxDihedralAngleThreshold.value()* pi / 180.0, self.spinBoxHelixLengthThreshold.value(), self.spinBoxHelixCentroidThreshold.value(), self.spinBoxMaxAlignments.value())
-            self.engine.loadSavedCorrs();
-            self.viewer.renderer.transformAllAtomLocations(self.engine.getRigidTransform2(alignmentIx, index))
-        
+        # Load Calpha Helixes
+        correspondenceIndex = 0
+        for helixIndex, helix in self.chain.helices.items():
+            # Get Atom Positions
+            atomPositions = []
+            for residueIndex in range(helix.startIndex, helix.stopIndex + 1):
+                if residueIndex in self.chain.residueRange():
+                    atomPositions.append(self.chain[residueIndex].getAtom('CA').getPosition())
+
+            if atomPositions:
+                # Calculate Best Fit Line
+                startPosition = Vector3DFloat(0, 0, 0)
+                endPosition   = Vector3DFloat(0, 0, 0)
+                self.linearSolver.findBestFitLine(startPosition, endPosition, atomPositions)
+
+                # Add to Correspondence Index Mapping 
+                self.correspondencePIndexToCalphaHelixIndex[correspondenceIndex] = helixIndex
+                correspondenceIndex += 1
+
+                # Add to Engine
+                self.flexibleFittingEngine.addCorrespondenceSourceFeature(startPosition, endPosition)
+
+        # Load Helix Annotations
+        for helixIndex in range(self.sseViewer.renderer.getHelixCount()):
+            # Get Volume Helix Line
+            startPosition = self.sseViewer.renderer.getHelixCorner(helixIndex, 0)
+            endPosition   = self.sseViewer.renderer.getHelixCorner(helixIndex, 1)
+
+            # Add to Engine
+            self.flexibleFittingEngine.addCorrespondenceTargetFeature(startPosition, endPosition)
+
+        # Initialize Correspondence Options
+        self.flexibleFittingEngine.setCorrespondenceOptions(
+            self.spinBoxMaximumAlignments.value(), 
+            self.spinBoxHelixLengthDifference.value(), 
+            self.spinBoxHelixCentroidDifference.value(), 
+            self.spinBoxJointAngleDifference.value(), 
+            self.spinBoxDihedralAngleDifference.value()
+        )
+
+        # Calculate Correspondences
+        self.flexibleFittingEngine.calculateCorrespondences()
+
+        # Update Correspondences Display
+        self.updateCorrespondencesDisplay()
+
+        # Update Visibility
+        self.stage = "correspondences"
+        self.updateVisibility()
+
+    def updateCorrespondencesDisplay(self, temp = None):
+        # Get Previous Alignment Index 
+        previousAlignmentIndex = self.comboBoxAlignment.currentIndex() 
+       
+        # Calculate Renderer Calpha Helix Index Mapping
+        rendererCalphaHelixIndexMapping = {}
+        for rendererCalphaHelixIndex, calphaHelixIndex in enumerate(self.chain.helices.keys()):
+            rendererCalphaHelixIndexMapping[calphaHelixIndex] = rendererCalphaHelixIndex
+
+        # Set All Helixes to Unmatched Color
+        unmatchedColor = QtGui.QColor()
+        unmatchedColor.setRgbF(1.0, 1.0, 1.0)
+        for calphaHelixIndex in self.chain.helices.keys():
+            self.calphaViewer.renderer.setHelixColor(rendererCalphaHelixIndexMapping[calphaHelixIndex], unmatchedColor.redF(), unmatchedColor.greenF(), unmatchedColor.blueF())
+        for volumeHelixIndex in range(self.sseViewer.renderer.getHelixCount()):
+            self.sseViewer.renderer.setHelixColor(volumeHelixIndex, unmatchedColor.redF(), unmatchedColor.greenF(), unmatchedColor.blueF(), 1.0)
+     
+        # Clear Combo Box Alignment
+        self.comboBoxAlignment.clear()
    
-        self.cAlphaViewer.visualizationOptions.updateFromViewer()
-        self.cAlphaViewer.emitModelChanged()
+        # Clear Combo Box Cluster
+        self.comboBoxCluster.clear()
+        self.comboBoxFirstCluster.clear()
+        self.comboBoxSecondCluster.clear()
+   
+        # Clear Table Widget Correspondences
+        self.tableWidgetCorrespondences.clearContents()
+        self.tableWidgetCorrespondences.setRowCount(0)
+    
+        # Set Header Resize Mode 
+        self.tableWidgetCorrespondences.horizontalHeader().setResizeMode(QtGui.QHeaderView.Stretch)
+     
+        # Get Alignment Count 
+        alignmentCount = self.flexibleFittingEngine.getCorrespondenceAlignmentCount()
+        if alignmentCount != 0:
+            # Update Combo Box Alignment
+            for alignmentIndex in range(alignmentCount):
+                self.comboBoxAlignment.addItem(str(alignmentIndex))
+            if previousAlignmentIndex != -1:
+                self.comboBoxAlignment.setCurrentIndex(previousAlignmentIndex)
+            
+            # Get Selected Alignment Index
+            selectedAlignmentIndex = int(self.comboBoxAlignment.currentText())
 
+            # Update Table Widget Correspondences
+            correspondenceIndex = 0
+            clusterCount        = self.flexibleFittingEngine.getCorrespondenceClusterCount(selectedAlignmentIndex)
+            for clusterIndex in range(clusterCount):
+                # Update Combo Box Cluster
+                self.comboBoxCluster.addItem(str(clusterIndex))
+                self.comboBoxFirstCluster.addItem(str(clusterIndex))
+                self.comboBoxSecondCluster.addItem(str(clusterIndex))
+
+                # Cluster Color
+                clusterColor = QtGui.QColor()
+                clusterColor.setHsvF(float(clusterIndex) / float(clusterCount), 1.0, 1.0)
+                clusterBrush = QtGui.QBrush(clusterColor)
+
+                featureCount = self.flexibleFittingEngine.getCorrespondenceFeatureCount(selectedAlignmentIndex, clusterIndex)
+                for featureIndex in range(featureCount):
+                    # Get Correspondence
+                    correspondence = self.flexibleFittingEngine.getCorrespondence(selectedAlignmentIndex, clusterIndex, featureIndex)
+                   
+                    # Get Helix Indices and Direction 
+                    calphaHelixIndex = self.correspondencePIndexToCalphaHelixIndex[correspondence.getPIndex()]
+                    volumeHelixIndex = correspondence.getQIndex()
+                    isForward        = correspondence.isForward()
+
+                    # Determine Direction
+                    if isForward:
+                        direction = "Forward"
+                    else:
+                        direction = "Backward"
+
+                    # Update Helix Colors
+                    self.calphaViewer.renderer.setHelixColor(rendererCalphaHelixIndexMapping[calphaHelixIndex], clusterColor.redF(), clusterColor.greenF(), clusterColor.blueF())
+                    self.sseViewer.renderer.setHelixColor(volumeHelixIndex, clusterColor.redF(), clusterColor.greenF(), clusterColor.blueF(), 1.0)
+            
+                    # Insert Table Row 
+                    self.tableWidgetCorrespondences.insertRow(correspondenceIndex)
+                   
+                    # Create Table Items
+                    clusterIndexItem     = QtGui.QTableWidgetItem(str(clusterIndex))
+                    calphaHelixIndexItem = QtGui.QTableWidgetItem(str(calphaHelixIndex))
+                    volumeHelixIndexItem = QtGui.QTableWidgetItem(str(volumeHelixIndex))
+                    directionItem        = QtGui.QTableWidgetItem(str(direction))
+
+                    # Set Background Colors              
+                    clusterIndexItem.setBackground(clusterBrush)
+                    calphaHelixIndexItem.setBackground(clusterBrush)
+                    volumeHelixIndexItem.setBackground(clusterBrush)
+                    directionItem.setBackground(clusterBrush)
+                    
+                    # Set Table Items
+                    self.tableWidgetCorrespondences.setItem(correspondenceIndex, 0, clusterIndexItem)
+                    self.tableWidgetCorrespondences.setItem(correspondenceIndex, 1, calphaHelixIndexItem)
+                    self.tableWidgetCorrespondences.setItem(correspondenceIndex, 2, volumeHelixIndexItem)
+                    self.tableWidgetCorrespondences.setItem(correspondenceIndex, 3, directionItem)
+
+                    correspondenceIndex += 1
+    
+        # Rerender
+        self.calphaViewer.emitModelChanged()
+        self.sseViewer.emitModelChanged()
+
+    def manualCorrespondence(self, temp):
+        # Get Manual Correspondence
+        selectedAlignmentIndex     = int(self.comboBoxAlignment.currentText())
+        selectedCalphaHelixIndices = self.calphaViewer.renderer.getSelectedHelixIndices()
+        selectedVolumeHelixIndices = self.sseViewer.renderer.getSelectedHelixIndices()
+
+        if len(selectedCalphaHelixIndices) == 1 and len(selectedVolumeHelixIndices) == 1:
+            # Add Manual Correspondence
+            self.flexibleFittingEngine.addCorrespondenceManual(selectedAlignmentIndex, selectedCalphaHelixIndices[0], selectedVolumeHelixIndices[0], False)
+
+            # Update Correspondences Display
+            self.updateCorrespondencesDisplay()
+
+    def flipCorrespondence(self, temp):
+        # Get Selected Alignment and Volume Helix Indices
+        selectedAlignmentIndex     = int(self.comboBoxAlignment.currentText())
+        selectedCalphaHelixIndices = self.calphaViewer.renderer.getSelectedHelixIndices()
+        selectedVolumeHelixIndices = self.sseViewer.renderer.getSelectedHelixIndices()
+        numSelectedHelixIndices    = len(selectedCalphaHelixIndices) + len(selectedVolumeHelixIndices)
+
+        if len(selectedCalphaHelixIndices) == 1 and len(selectedVolumeHelixIndices) == 1:
+            clusterCount = self.flexibleFittingEngine.getCorrespondenceClusterCount(selectedAlignmentIndex)
+            for clusterIndex in range(clusterCount):
+                featureCount = self.flexibleFittingEngine.getCorrespondenceFeatureCount(selectedAlignmentIndex, clusterIndex)
+                for featureIndex in range(featureCount):
+                    # Get Correspondence
+                    correspondence = self.flexibleFittingEngine.getCorrespondence(selectedAlignmentIndex, clusterIndex, featureIndex)
+                   
+                    # Get Helix Indices and Direction
+                    calphaHelixIndex = correspondence.getPIndex()
+                    volumeHelixIndex = correspondence.getQIndex()
+                    isForward        = correspondence.isForward()
+
+                    # Flip Correspondence
+                    if selectedCalphaHelixIndices[0] == calphaHelixIndex and selectedVolumeHelixIndices[0] == volumeHelixIndex:
+                        self.flexibleFittingEngine.setCorrespondenceDirection(selectedAlignmentIndex, clusterIndex, featureIndex, not isForward)
+
+            # Update Correspondences Display
+            self.updateCorrespondencesDisplay()
+
+    def alignToCluster(self, temp = None):
+        # Disable Preview Correspondences
+        if self.previewCorrespondencesStatus:
+            self.previewCorrespondences()
+
+        # Check Align To Cluster Status 
+        if self.alignToClusterStatus:
+            # Restore Chain
+            self.restoreChain()
+        else:
+            # Backup Chain
+            self.backupChain()
+
+            # Get Selected Alignment Index
+            selectedAlignmentIndex = int(self.comboBoxAlignment.currentText())
+            
+            # Get Selected Cluster Index
+            selectedClusterIndex = int(self.comboBoxCluster.currentText())
+            
+            # Get Correspondence Transformation
+            correspondenceTransformation = self.flexibleFittingEngine.getCorrespondenceClusterTransformation(selectedAlignmentIndex, selectedClusterIndex)
+
+            # Show Align To Cluster 
+            for residueIndex in self.chain.residueRange():
+                for atomName in self.chain[residueIndex].getAtomNames():
+                    self.chain[residueIndex].getAtom(atomName).transform(correspondenceTransformation)
+
+        # Update Align To Cluster Status
+        self.alignToClusterStatus = not self.alignToClusterStatus
+
+        # Rerender
+        self.calphaViewer.emitModelChanged()
+        self.sseViewer.emitModelChanged()
+   
+    def mergeClusters(self, temp = None):
+        # Get Selected Alignment Index
+        selectedAlignmentIndex = int(self.comboBoxAlignment.currentText())
+            
+        # Get Selected Cluster Indices 
+        selectedFirstClusterIndex  = int(self.comboBoxFirstCluster.currentText())
+        selectedSecondClusterIndex = int(self.comboBoxSecondCluster.currentText())
+ 
+        if selectedFirstClusterIndex != selectedSecondClusterIndex:
+            # Merge Clusters 
+            self.flexibleFittingEngine.mergeCorrespondenceClusters(selectedAlignmentIndex, selectedFirstClusterIndex, selectedSecondClusterIndex)
+      
+            # Update Correspondences Display
+            self.updateCorrespondencesDisplay()
+   
+    def previewCorrespondences(self, temp = None):
+        # Disable Align To Cluster
+        if self.alignToClusterStatus:
+            self.alignToCluster()
+
+        # Check Preview Correspondences Status
+        if self.previewCorrespondencesStatus:
+            # Restore Chain
+            self.restoreChain()
+        else:
+            # Backup Chain
+            self.backupChain()
+
+            # Calculate Missing Residue Indices 
+            (missingResidueIndices, missingResidueIndexMapping) = self.calculateMissingResidueIndices()
         
-    def updateEngineFeatureLists(self, corrIx):
-        self.engine.saveCorrs()
-        self.engine.resetEngine()           
+            # Calculate Correspondence Transformations 
+            (correspondences, correspondenceTransformations, correspondenceTargets) = self.calculateCorrespondenceTransformations()
+            
+            # Calculate Rigid Initialization Transformations
+            rigidInitializationTransformations = self.calculateRigidInitializationTransformations(correspondences, correspondenceTransformations, correspondenceTargets, missingResidueIndexMapping)
+
+            # Show Rigid Initialization
+            for residueIndex in self.chain.residueRange():
+                for atomName in self.chain[residueIndex].getAtomNames():
+                    self.chain[residueIndex].getAtom(atomName).transform(rigidInitializationTransformations[residueIndex])
+
+        # Update Preview Correspondences Status
+        self.previewCorrespondencesStatus = not self.previewCorrespondencesStatus
+
+        # Rerender
+        self.calphaViewer.emitModelChanged()
+        self.sseViewer.emitModelChanged()
+        
+    def acceptCorrespondences(self, temp):
+        # Update Visibility
+        self.stage = "deformationOptions"
+        self.updateVisibility()
+
+    def rejectCorrespondences(self, temp):
+        # Disable Align To Cluster
+        if self.alignToClusterStatus:
+            self.alignToCluster()
+
+        # Disable Preview Correspondeinces
+        if self.previewCorrespondencesStatus:
+            self.previewCorrespondences()
+        
+        # Reset Correspondences 
+        self.flexibleFittingEngine.resetCorrespondence()
+
+        # Update Correspondences Display
+        self.updateCorrespondencesDisplay()
+        
+        # Update Visibility
+        self.stage = "correspondenceOptions"
+        self.updateVisibility()
+
+    def performRigidDeformation(self, temp, selectedRigidFittingMethod=None):
+        # Disable Align To Cluster
+        if self.alignToClusterStatus:
+            self.alignToCluster()
+
+        # Disable Preview Correspondeinces
+        if self.previewCorrespondencesStatus:
+            self.previewCorrespondences()
+       
+        # Backup Chain
+        self.backupChain()
+
+        # Get Selected Alignment Index
+        selectedAlignmentIndex = int(self.comboBoxAlignment.currentText())
+
+        # Get Transformnation for Selected Rigid Fitting Method
+        if not selectedRigidFittingMethod:
+            selectedRigidFittingMethod = str(self.comboBoxDeformationRigidFittingMethod.currentText())
+        if selectedRigidFittingMethod == "Alignment":
+            # Calculate Alignment Transformation
+            transformation = self.flexibleFittingEngine.getCorrespondenceAlignmentTransformation(selectedAlignmentIndex)
+        elif selectedRigidFittingMethod == "Largest Cluster":
+            # Get Largest Cluster Index
+            largestClusterIndex = None
+            for clusterIndex in range(self.flexibleFittingEngine.getCorrespondenceClusterCount(selectedAlignmentIndex)):
+                clusterSize = self.flexibleFittingEngine.getCorrespondenceFeatureCount(selectedAlignmentIndex, clusterIndex)
+
+                if largestClusterIndex == None or clusterSize > largestClusterSize:
+                    largestClusterIndex = clusterIndex
+                    largestClusterSize  = clusterSize
+
+            # Calculate Largest Cluster Transformation
+            transformation = self.flexibleFittingEngine.getCorrespondenceClusterTransformation(selectedAlignmentIndex, largestClusterIndex)
+        elif selectedRigidFittingMethod == "Principal Components":
+            # Calculate Principal Component Transformation
+            transformation = self.calculatePrincipalComponentTransformation()
+
+        # Transform Backbone and Side Chains
+        for residueIndex in self.chain.residueRange():
+            for atomName in self.chain[residueIndex].getAtomNames():
+                self.chain[residueIndex].getAtom(atomName).transform(transformation)
+
+        # Rerender
+        self.calphaViewer.emitModelChanged()
+        self.sseViewer.emitModelChanged()
+        
+        # Update Visibility
+        self.stage = "deformation"
+        self.updateVisibility()
+
+    def performFlexibleDeformation(self, temp):
+        # Disable Align To Cluster
+        if self.alignToClusterStatus:
+            self.alignToCluster()
+
+        # Disable Preview Correspondeinces
+        if self.previewCorrespondencesStatus:
+            self.previewCorrespondences()
+       
+        # Backup Chain
+        self.backupChain()
+        
+        # Calculate Missing Residue Indices 
+        (missingResidueIndices, missingResidueIndexMapping) = self.calculateMissingResidueIndices()
+        
+        # Calculate Missing Residue Bonds
+        missingResidueBonds = []
+        for currentResidueIndex, nextResidueIndex in self.ntuples(self.chain.residueRange(), 2):
+            bond = (currentResidueIndex, nextResidueIndex)
+            if bond not in self.chain.bonds and currentResidueIndex not in missingResidueIndices and nextResidueIndex not in missingResidueIndices:
+                missingResidueBonds.append(bond)
+
+        # Calculate Correspondence Transformations 
+        (correspondences, correspondenceTransformations, correspondenceTargets) = self.calculateCorrespondenceTransformations()
+
+        ### Global Fitting Options ###
+
+        # Set Deformation Parameters
+        self.flexibleFittingEngine.setDeformationNeighborhoodSizes(self.spinBoxLaplacianNeighborhoodSize.value(), self.spinBoxTransformationNeighborhoodSize.value(), 3)
+        
+        # Add Deformation Original Vertices
+        for residueIndex in self.chain.residueRange():
+            if residueIndex not in missingResidueIndices: 
+                self.flexibleFittingEngine.addDeformationOriginalVertex(self.chain[residueIndex].getAtom('CA').getPosition())
+
+        # Add Deformation Edges and Calculate Neighbor Vertex Indices Cache
+        numResidues      = len(self.chain) - len(missingResidueIndices)
+        deformationEdges = set()
+        for bond in self.chain.bonds:
+            deformationEdges.add((missingResidueIndexMapping[bond[0]], missingResidueIndexMapping[bond[1]]))
+        for bond in missingResidueBonds:
+            deformationEdges.add((missingResidueIndexMapping[bond[0]], missingResidueIndexMapping[bond[1]]))
+        for sheet in self.chain.sheets.values():
+            for bond in sheet.bonds:
+                deformationEdges.add((missingResidueIndexMapping[bond[0]], missingResidueIndexMapping[bond[1]]))
+        for deformationEdge in deformationEdges:
+            self.flexibleFittingEngine.addDeformationEdge(deformationEdge[0], deformationEdge[1])
+        self.flexibleFittingEngine.calculateNeighborVertexIndicesCaches(numResidues)
+
+        ### Start Helix Fitting ###
+
+        # Set Deformation Vertices
+        self.flexibleFittingEngine.setDeformationVerticesToOriginalVertices()
+
+        # Calculate and Add Rigid Initialization Transformations
+        self.flexibleFittingEngine.setDeformationRigidInitialization(self.checkBoxRigidInitialization.isChecked())
+        if self.checkBoxRigidInitialization.isChecked():
+            rigidInitializationTransformations = self.calculateRigidInitializationTransformations(correspondences, correspondenceTransformations, correspondenceTargets, missingResidueIndexMapping)
+            
+            for residueIndex in self.chain.residueRange():
+                if residueIndex not in missingResidueIndices:
+                    self.flexibleFittingEngine.addDeformationRigidInitializationTransformation(rigidInitializationTransformations[residueIndex])
+      
+        # Add Deformation Handles
+        for calphaHelixIndex in sorted(correspondenceTargets.keys()):
+            for residueIndex in sorted(correspondenceTargets[calphaHelixIndex].keys()):
+                self.flexibleFittingEngine.addDeformationHandle(missingResidueIndexMapping[residueIndex], correspondenceTargets[calphaHelixIndex][residueIndex])
+
+        # Perform Deformation
+        self.flexibleFittingEngine.deformLaplacian()
+      
+        ### End Helix Fitting ###
+        
+        ### Start Skeleton Fitting ###
+        
+        # Set Deformation Parameters
+        self.flexibleFittingEngine.setDeformationRigidInitialization(False)
+        self.flexibleFittingEngine.setDeformationWeights(self.doubleSpinBoxSkeletonFittingWeight.value(), self.doubleSpinBoxSkeletonDistortionWeight.value())
+  
+        # Iterative Skeleton Fitting
+        skeletonMesh                       = self.skeletonViewer.renderer.getMesh()
+        originalSkeletonSurfaceVertices    = skeletonMesh.getSurfaceVertices(4)
+        originalSkeletonNonSurfaceVertices = skeletonMesh.getNonSurfaceVertices()
+        skeletonFittingIterations          = self.spinBoxSkeletonFittingIterations.value()
+        skeletonFittingDistanceThreshold   = self.spinBoxSkeletonFittingDistanceThreshold.value()
+        for skeletonFittingIteration in range(skeletonFittingIterations):
+            # Get Deformed Vertices
+            deformedCalphaPositions = self.flexibleFittingEngine.getDeformedVertices()
+
+            # Set Deformation Vertices
+            self.flexibleFittingEngine.setDeformationVerticesToDeformedVertices()
+        
+            # Reset Deformation Handles
+            self.flexibleFittingEngine.resetDeformationHandles()
+ 
+            # Copy Original Skeleton Vertices
+            skeletonSurfaceVertices    = list(originalSkeletonSurfaceVertices)
+            skeletonNonSurfaceVertices = list(originalSkeletonNonSurfaceVertices)
+  
+            # Add Skeleton Deformation Handles
+            for residueIndex in self.chain.residueRange():
+                if residueIndex not in missingResidueIndices:
+                    isHelix = False
+                    isSheet = False
+                    for helixIndex, helix in self.chain.helices.items():
+                        if helixIndex in correspondenceTargets and helix.startIndex <= residueIndex and residueIndex <= helix.stopIndex:
+                            isHelix                  = True
+                            correspondenceHelixIndex = helixIndex
+                    for sheet in self.chain.sheets.values():
+                        for strand in sheet.strandList.values():
+                            if strand.startIndex <= residueIndex and residueIndex <= strand.stopIndex:
+                                isSheet = True
+
+                    calphaAtomPosition = deformedCalphaPositions[missingResidueIndexMapping[residueIndex]]
+                   
+                    if isHelix:
+                        closestSkeletonVertex = correspondenceTargets[correspondenceHelixIndex][residueIndex]
+                    elif isSheet:
+                        closestSkeletonVertex = self.getClosestVertex(calphaAtomPosition, skeletonSurfaceVertices, skeletonFittingDistanceThreshold, False)
+                        if closestSkeletonVertex == None:
+                            closestSkeletonVertex = self.getClosestVertex(calphaAtomPosition, skeletonNonSurfaceVertices, skeletonFittingDistanceThreshold, False)
+                    else:
+                        closestSkeletonVertex = self.getClosestVertex(calphaAtomPosition, skeletonNonSurfaceVertices, skeletonFittingDistanceThreshold, False)
+
+                    if closestSkeletonVertex != None:
+                        self.flexibleFittingEngine.addDeformationHandle(missingResidueIndexMapping[residueIndex], closestSkeletonVertex)
+                        
+                        #if skeletonFittingIteration == (skeletonFittingIterations - 1):
+                        #    self.calphaViewer.renderer.addSkeletonFittingVector(self.chain[residueIndex].getAtom('CA').getPosition(), closestSkeletonVertex)
+            
+            # Perform Deformation
+            self.flexibleFittingEngine.deformLaplacian()
+
+        ### End Skeleton Fitting ###
+
+        # Calculate Deformation Transformations
+        self.flexibleFittingEngine.calculateDeformationTransformations(numResidues)
+
+        # Transform Backbone and Side Chains
+        for residueIndex in self.chain.residueRange():
+            deformationTransformation = self.flexibleFittingEngine.getDeformationTransformation(missingResidueIndexMapping[residueIndex])
+            for atomName in self.chain[residueIndex].getAtomNames():
+                self.chain[residueIndex].getAtom(atomName).transform(deformationTransformation)
+
+        # Rerender
+        self.calphaViewer.emitModelChanged()
+        self.sseViewer.emitModelChanged()
+        
+        # Update Visibility
+        self.stage = "deformation"
+        self.updateVisibility()
+
+    def acceptDeformation(self, temp):
+        # Clear Calpha Helix Colors
+        self.calphaViewer.renderer.clearHelixColors()
+
+        unmatchedColor = QtGui.QColor()
+        unmatchedColor.setRgbF(0.0, 1.0, 0.0)
+        for volumeHelixIndex in range(self.sseViewer.renderer.getHelixCount()):
+            self.sseViewer.renderer.setHelixColor(volumeHelixIndex, unmatchedColor.redF(), unmatchedColor.greenF(), unmatchedColor.blueF(), 1.0)
+
+        # Rerender
+        self.calphaViewer.emitModelChanged()
+        self.sseViewer.emitModelChanged()
+
+        self.close()
+
+    def rejectDeformation(self, temp):
+        # Restore Chain
+        self.restoreChain()
+
+        # Reset Flexible Fitting Engine
+        self.flexibleFittingEngine.resetDeformation()
+
+        # Rerender
+        self.calphaViewer.emitModelChanged()
+        self.sseViewer.emitModelChanged()
+        
+        # Update Visibility
+        self.stage = "deformationOptions"
+        self.updateVisibility()
+
+    def calculateMissingResidueIndices(self):
+        missingResidueIndices      = {}
+        missingResidueIndexMapping = {}
+
+        mappedResidueIndex = 0
+        for originalResidueIndex in self.chain.residueRange():
+            calphaAtom = self.chain[originalResidueIndex].getAtom('CA')
+            if calphaAtom:
+                missingResidueIndexMapping[originalResidueIndex] = mappedResidueIndex
+                mappedResidueIndex += 1
+            else:
+                missingResidueIndices[originalResidueIndex] = True
+
+        for missingResidueIndex in missingResidueIndices.keys():
+            for direction in (-1, 1):
+                residueIndexIterator = missingResidueIndex
+                while (residueIndexIterator >= self.chain.getFirstResidueIndex()):
+                    residueIndexIterator += direction
+                    if residueIndexIterator in missingResidueIndexMapping:
+                        missingResidueIndexMapping[missingResidueIndex] = missingResidueIndexMapping[residueIndexIterator]
+                        break
+
+                if missingResidueIndex in missingResidueIndexMapping:
+                    break
+
+        return (missingResidueIndices, missingResidueIndexMapping)
+
+    def calculatePrincipalComponentTransformation(self):
+        # Options
+        numAxes = 3
+
+        # Get Source and Target Calpha Atoms
+        sourceChain = self.chain
+        targetChain = self.principalComponentTargetChain 
+
+        # Check Target Chain
+        if targetChain == None:
+            return
+
+        # Calculate Source Centroid and Number of Residues
+        sourceCentroid    = Vector3DFloat(0.0, 0.0, 0.0)
+        numSourceResidues = 0
+        for residueIndex in sourceChain.residueRange():
+            sourceCalphaAtom = sourceChain[residueIndex].getAtom('CA')
+            if sourceCalphaAtom:
+                sourceCentroid += sourceCalphaAtom.getPosition()
+                numSourceResidues += 1
+        sourceCentroid = sourceCentroid * (1.0 / numSourceResidues)
+
+        # Construct Source Position Variances
+        sourcePositionVariances = MatrixFloat(3, numSourceResidues)
+        for residueNum, residueIndex in enumerate(sourceChain.residueRange()):
+            sourceCalphaAtom = sourceChain[residueIndex].getAtom('CA')
+            if sourceCalphaAtom:
+                positionVariance = sourceCalphaAtom.getPosition() - sourceCentroid
+                sourcePositionVariances.setValue(positionVariance.x(), 0, residueNum) 
+                sourcePositionVariances.setValue(positionVariance.y(), 1, residueNum) 
+                sourcePositionVariances.setValue(positionVariance.z(), 2, residueNum)
+
+        # Perform Source Principal Component Analysis
+        sourceAxes             = MatrixFloat(3, 3)
+        sourceAxesRankings     = MatrixFloat(3, numSourceResidues)
+        sourceAxesCoefficients = MatrixFloat(numSourceResidues, numSourceResidues)
+        sourcePositionVariances.singularValueDecomposition(sourceAxes, sourceAxesRankings, sourceAxesCoefficients)
+
+        # Compute Third Souce Axis
+        sourceFirstAxis  = Vector3DFloat(sourceAxes.getValue(0, 0), sourceAxes.getValue(1, 0), sourceAxes.getValue(2, 0))
+        sourceSecondAxis = Vector3DFloat(sourceAxes.getValue(0, 1), sourceAxes.getValue(1, 1), sourceAxes.getValue(2, 1))
+        sourceThirdAxis  = sourceFirstAxis ^ sourceSecondAxis
+        sourceThirdAxis.normalize()
+        sourceAxes.setValue(sourceThirdAxis.x(), 0, 2)
+        sourceAxes.setValue(sourceThirdAxis.y(), 1, 2)
+        sourceAxes.setValue(sourceThirdAxis.z(), 2, 2)
+
+        # Calculate Target Centroid and Number of Residues
+        targetCentroid    = Vector3DFloat(0.0, 0.0, 0.0)
+        numTargetResidues = 0
+        for residueIndex in targetChain.residueRange():
+            targetCalphaAtom = targetChain[residueIndex].getAtom('CA')
+            if targetCalphaAtom:
+                targetCentroid += targetCalphaAtom.getPosition()
+                numTargetResidues += 1
+        targetCentroid = targetCentroid * (1.0 / numTargetResidues)
+        
+        # Construct Target Position Variances
+        targetPositionVariances = MatrixFloat(3, numTargetResidues)
+        for residueNum, residueIndex in enumerate(targetChain.residueRange()):
+            targetCalphaAtom = targetChain[residueIndex].getAtom('CA')
+            if targetCalphaAtom:
+                positionVariance = targetCalphaAtom.getPosition() - targetCentroid
+                targetPositionVariances.setValue(positionVariance.x(), 0, residueNum) 
+                targetPositionVariances.setValue(positionVariance.y(), 1, residueNum) 
+                targetPositionVariances.setValue(positionVariance.z(), 2, residueNum)
+
+        # Perform Target Principal Component Analysis
+        targetAxes             = MatrixFloat(3, 3)
+        targetAxesRankings     = MatrixFloat(3, numTargetResidues)
+        targetAxesCoefficients = MatrixFloat(numTargetResidues, numTargetResidues)
+        targetPositionVariances.singularValueDecomposition(targetAxes, targetAxesRankings, targetAxesCoefficients)
+
+        # Compute Third Target Axis
+        targetFirstAxis  = Vector3DFloat(targetAxes.getValue(0, 0), targetAxes.getValue(1, 0), targetAxes.getValue(2, 0))
+        targetSecondAxis = Vector3DFloat(targetAxes.getValue(0, 1), targetAxes.getValue(1, 1), targetAxes.getValue(2, 1))
+        targetThirdAxis  = targetFirstAxis ^ targetSecondAxis
+        targetThirdAxis.normalize()
+        targetAxes.setValue(targetThirdAxis.x(), 0, 2)
+        targetAxes.setValue(targetThirdAxis.y(), 1, 2)
+        targetAxes.setValue(targetThirdAxis.z(), 2, 2)
+
+        # Translation To Origin
+        translationToOrigin = MatrixFloat(4, 4)
+        translationToOrigin.setValue(1.0                , 0, 0)
+        translationToOrigin.setValue(1.0                , 1, 1)
+        translationToOrigin.setValue(1.0                , 2, 2)
+        translationToOrigin.setValue(1.0                , 3, 3)
+        translationToOrigin.setValue(-sourceCentroid.x(), 0, 3)
+        translationToOrigin.setValue(-sourceCentroid.y(), 1, 3)
+        translationToOrigin.setValue(-sourceCentroid.z(), 2, 3)
+
+        # Translation From Origin
+        translationFromOrigin = MatrixFloat(4, 4)
+        translationFromOrigin.setValue(1.0               , 0, 0)
+        translationFromOrigin.setValue(1.0               , 1, 1)
+        translationFromOrigin.setValue(1.0               , 2, 2)
+        translationFromOrigin.setValue(1.0               , 3, 3)
+        translationFromOrigin.setValue(targetCentroid.x(), 0, 3)
+        translationFromOrigin.setValue(targetCentroid.y(), 1, 3)
+        translationFromOrigin.setValue(targetCentroid.z(), 2, 3)
+
+        # Get Selected Orientation
+        selectedOrientation = self.comboBoxRigidDeformationPrincipalComponentOrientation.currentText()
+        orientations        = [[1, 1, 1], [1, -1, -1], [-1, -1, 1], [-1, 1, -1]]
+        if selectedOrientation == "1":
+            orientations = [orientations[0]]
+        elif selectedOrientation == "2":
+            orientations = [orientations[1]]
+        elif selectedOrientation == "3":
+            orientations = [orientations[2]]
+        elif selectedOrientation == "4":
+            orientations = [orientations[3]]
+
+        # Rotation
+        bestRotation = None
+        for orientation in orientations:
+            # Construct Transposed Oriented Source Axes
+            orientedSourceAxes = MatrixFloat(3, 3)
+            for axisIndex in range(numAxes):
+                orientedSourceAxes.setValue(orientation[axisIndex] * sourceAxes.getValue(0, axisIndex), 0, axisIndex)
+                orientedSourceAxes.setValue(orientation[axisIndex] * sourceAxes.getValue(1, axisIndex), 1, axisIndex)
+                orientedSourceAxes.setValue(orientation[axisIndex] * sourceAxes.getValue(2, axisIndex), 2, axisIndex)
+            
+            # Calculate Rotation and Angle
+            rotation = targetAxes * orientedSourceAxes.transpose()
+
+            # Convert Rotation to Homogeneous Coordinates
+            homogeneousRotation = MatrixFloat(4 ,4)
+            for axisIndex in range(numAxes):
+                homogeneousRotation.setValue(rotation.getValue(0, axisIndex), 0, axisIndex)
+                homogeneousRotation.setValue(rotation.getValue(1, axisIndex), 1, axisIndex)
+                homogeneousRotation.setValue(rotation.getValue(2, axisIndex), 2, axisIndex)
+            homogeneousRotation.setValue(1.0, 3, 3)
+
+            # Get Transformed Source Positions
+            transformedSourcePositions = []
+            for residueIndex in sourceChain.residueRange():
+                sourceCalphaAtom = sourceChain[residueIndex].getAtom('CA')
+                if sourceCalphaAtom:
+                    transformedSourcePositions.append(sourceCalphaAtom.getPosition().Transform(translationFromOrigin * homogeneousRotation * translationToOrigin))
+
+            # Get Target Positions
+            targetPositions = []
+            for residueIndex in targetChain.residueRange():
+                targetCalphaAtom = targetChain[residueIndex].getAtom('CA')
+                if targetCalphaAtom:
+                    targetPositions.append(targetCalphaAtom.getPosition())
+
+            # Calculate RMSD
+            rmsd = self.calculateRMSD(transformedSourcePositions, targetPositions, None, False)
+            
+            # Check Against Best RMSD
+            if bestRotation == None or rmsd < bestRMSD:
+                bestRotation = homogeneousRotation
+                bestRMSD     = rmsd 
+            
+        # Calcuate Transformation
+        principalComponentTransformation = translationFromOrigin * bestRotation * translationToOrigin
+
+        return principalComponentTransformation
+
+    def calculateCorrespondenceTransformations(self):
+        correspondences               = {}
+        correspondenceTransformations = {}
+        correspondenceTargets         = {}
+        selectedAlignmentIndex = int(self.comboBoxAlignment.currentText())
+        clusterCount = self.flexibleFittingEngine.getCorrespondenceClusterCount(selectedAlignmentIndex)
+        for clusterIndex in range(clusterCount):
+            featureCount = self.flexibleFittingEngine.getCorrespondenceFeatureCount(selectedAlignmentIndex, clusterIndex)
+            for featureIndex in range(featureCount):
+                # Get Correspondence
+                correspondence = self.flexibleFittingEngine.getCorrespondence(selectedAlignmentIndex, clusterIndex, featureIndex)
+                
+                # Get Indices
+                calphaHelixIndex = self.correspondencePIndexToCalphaHelixIndex[correspondence.getPIndex()]
+                volumeHelixIndex = correspondence.getQIndex()
+
+                # Get Transformation
+                correspondenceTransformation = self.flexibleFittingEngine.getCorrespondenceFeatureTransformation(selectedAlignmentIndex, clusterIndex, featureIndex)
+
+                # Cache Correpondence
+                correspondences[calphaHelixIndex] = volumeHelixIndex
+
+                # Cache Correspondence Transformation
+                correspondenceTransformations[calphaHelixIndex] = correspondenceTransformation
+               
+                # Cache Correspondence Targets
+                helix = self.chain.helices[calphaHelixIndex]
+                for residueIndex in range(helix.startIndex, helix.stopIndex + 1):
+                    if residueIndex in self.chain.residueRange():
+                        if calphaHelixIndex not in correspondenceTargets:
+                            correspondenceTargets[calphaHelixIndex] = {}
+
+                        correspondenceTargets[calphaHelixIndex][residueIndex] = self.chain[residueIndex].getAtom('CA').getPosition().Transform(correspondenceTransformation)
+
+        return (correspondences, correspondenceTransformations, correspondenceTargets)
+
+    def calculateRigidInitializationTransformations(self, correspondences, correspondenceTransformations, correspondenceTargets, missingResidueIndexMapping):
+        rigidInitializationTransformations = {}
+        
+        correspondedCalphaHelixIndices = sorted(correspondences.keys())
+        
+        # Loops
+        for currentCalphaHelixIndex, nextCalphaHelixIndex in self.ntuples(correspondedCalphaHelixIndices, 2):
+            # Get Helices
+            currentCalphaHelix = self.chain.helices[currentCalphaHelixIndex]
+            nextCalphaHelix    = self.chain.helices[nextCalphaHelixIndex]
+
+            # Get Source/Target Positions
+            sourceCalphaHelixPositions = []
+            targetCalphaHelixPositions = []
+            for currentResidueIndex in range(currentCalphaHelix.startIndex, currentCalphaHelix.stopIndex + 1):
+                if currentResidueIndex in self.chain.residueRange():
+                    sourceCalphaHelixPositions.append(self.chain[currentResidueIndex].getAtom('CA').getPosition())
+                    targetCalphaHelixPositions.append(correspondenceTargets[currentCalphaHelixIndex][currentResidueIndex])
+            for nextResidueIndex in range(nextCalphaHelix.startIndex, nextCalphaHelix.stopIndex + 1):
+                if nextResidueIndex in self.chain.residueRange():
+                    sourceCalphaHelixPositions.append(self.chain[nextResidueIndex].getAtom('CA').getPosition())
+                    targetCalphaHelixPositions.append(correspondenceTargets[nextCalphaHelixIndex][nextResidueIndex])
           
-        self.chainHelixMapping = {}
-        self.invChainHelixMapping = {}
-        cppIndex = 0
-        for chain in self.cAlphaViewer.loadedChains:
-            for helixIx, helix in chain.helices.items():
-                self.chainHelixMapping[helixIx] = cppIndex
-                self.invChainHelixMapping[cppIndex] = helixIx
-                self.engine.startPDBHelix()
-                for i in range(helix.startIndex, helix.stopIndex+1):
-                    self.engine.addPDBAtomLocation(chain[i].getAtom('CA').getPosition())
-                self.engine.endPDBHelix()
-                cppIndex = cppIndex + 1
-                
-        # pushing in SSEHunter helices to the engine
-        for i in range(self.sseViewer.renderer.getHelixCount()):
-            pt1 = self.sseViewer.renderer.getHelixCorner(i, 0)
-            pt2 = self.sseViewer.renderer.getHelixCorner(i, 1)
-            self.engine.addSSEHelix(pt1, pt2)
-                
-        self.engine.startSearch(self.spinBoxJointAngleThreshold.value()* pi / 180.0, self.spinBoxDihedralAngleThreshold.value()* pi / 180.0, self.spinBoxHelixLengthThreshold.value(), self.spinBoxHelixCentroidThreshold.value(), self.spinBoxMaxAlignments.value())
-        self.engine.loadSavedCorrs();
-        fvecs = self.engine.getAllCAlphaFeatureVecsFlat()
-        self.cAlphaViewer.renderer.setFeatureVecs(fvecs)
+            # Calculate Rigid Initialization Transformation
+            rigidInitializationTransformation = self.linearSolver.findRotationTranslation(sourceCalphaHelixPositions, targetCalphaHelixPositions)
+
+            # Store Rigid Initialization Transformation
+            if currentCalphaHelixIndex == correspondedCalphaHelixIndices[0]:
+                startResidueIndex = self.chain.getFirstResidueIndex()
+            else:
+                startResidueIndex = currentCalphaHelix.startIndex
+
+            if nextCalphaHelixIndex == correspondedCalphaHelixIndices[-1]:
+                stopResidueIndex = self.chain.getLastResidueIndex() + 2
+            else:
+                stopResidueIndex = nextCalphaHelix.startIndex
+
+            for residueIndex in range(startResidueIndex, stopResidueIndex + 1):
+                if residueIndex in self.chain.residueRange():
+                    rigidInitializationTransformations[residueIndex] = rigidInitializationTransformation
+
+        # Helices
+        for calphaHelixIndex in correspondedCalphaHelixIndices:
+            # Get Helix
+            calphaHelix = self.chain.helices[calphaHelixIndex]
+
+            # Get Helix Transformation
+            helixTransformation = correspondenceTransformations[calphaHelixIndex]
+
+            # Store Rigid Initialization Transformation
+            for residueIndex in range(calphaHelix.startIndex, calphaHelix.stopIndex + 1):
+                if residueIndex in self.chain.residueRange():
+                    rigidInitializationTransformations[residueIndex] = helixTransformation
+
+        # Sheets
+        for sheetNo, sheet in sorted(self.chain.sheets.items()):
+            # Get Connected Helices
+            connectedCalphaHelixIndices = set()
+            for strandNo, strand in sheet.strandList.items():
+                for currentCalphaHelixIndex, nextCalphaHelixIndex in self.ntuples(correspondedCalphaHelixIndices, 2):
+                    currentCalphaHelix = self.chain.helices[currentCalphaHelixIndex]
+                    nextCalphaHelix    = self.chain.helices[nextCalphaHelixIndex]
+
+                    if currentCalphaHelixIndex == correspondedCalphaHelixIndices[0] and strand.startIndex >= self.chain.getFirstResidueIndex() and strand.stopIndex < nextCalphaHelix.stopIndex:
+                        connectedCalphaHelixIndices.add(currentCalphaHelixIndex)
+                        connectedCalphaHelixIndices.add(nextCalphaHelixIndex)
+                    
+                    if nextCalphaHelixIndex == correspondedCalphaHelixIndices[-1] and strand.startIndex > currentCalphaHelix.startIndex and strand.stopIndex <= self.chain.getLastResidueIndex():
+                        connectedCalphaHelixIndices.add(currentCalphaHelixIndex)
+                        connectedCalphaHelixIndices.add(nextCalphaHelixIndex)
+
+                    if strand.startIndex > currentCalphaHelix.stopIndex and strand.stopIndex < nextCalphaHelix.startIndex:
+                        connectedCalphaHelixIndices.add(currentCalphaHelixIndex)
+                        connectedCalphaHelixIndices.add(nextCalphaHelixIndex)
+            if not connectedCalphaHelixIndices:
+                continue
+
+            # Get Source/Target Positions
+            sourceCalphaHelixPositions = []
+            targetCalphaHelixPositions = []
+            for calphaHelixIndex in connectedCalphaHelixIndices:
+                calphaHelix = self.chain.helices[calphaHelixIndex]
+
+                for residueIndex in range(calphaHelix.startIndex, calphaHelix.stopIndex + 1):
+                    if residueIndex in self.chain.residueRange():
+                        sourceCalphaHelixPositions.append(self.chain[residueIndex].getAtom('CA').getPosition())
+                        targetCalphaHelixPositions.append(correspondenceTargets[calphaHelixIndex][residueIndex])
+
+            # Calculate Rigid Initialization Transformation
+            rigidInitializationTransformation = self.linearSolver.findRotationTranslation(sourceCalphaHelixPositions, targetCalphaHelixPositions)
+
+            # Store Rigid Initialization Transformation
+            for strand in sheet.strandList.values():
+                for residueIndex in range(strand.startIndex, strand.stopIndex + 1):
+                    if residueIndex in self.chain.residueRange():
+                        rigidInitializationTransformations[residueIndex] = rigidInitializationTransformation
+
+        return rigidInitializationTransformations
+
+    def backupChain(self):
+        self.backupChainAtomPositions = {}
+        for residueIndex in self.chain.residueRange():
+            if residueIndex not in self.backupChainAtomPositions:
+                self.backupChainAtomPositions[residueIndex] = {}
+
+            for atomName in self.chain[residueIndex].getAtomNames():
+                self.backupChainAtomPositions[residueIndex][atomName] = self.chain[residueIndex].getAtom(atomName).getPosition()
+
+    def restoreChain(self):
+        for residueIndex in self.chain.residueRange():
+            for atomName in self.chain[residueIndex].getAtomNames():
+                self.chain[residueIndex].getAtom(atomName).setPosition(self.backupChainAtomPositions[residueIndex][atomName])
+
+    def getClosestVertex(self, vertex, otherVertices, threshold, oneToOne):
+        closestVertexIndex    = None
+        closestVertex         = None
+        closestVertexDistance = None
+        for otherVertexIndex, otherVertex in enumerate(otherVertices):
+            vertexDistance = (vertex - otherVertex).length()
+
+            if (threshold == None or vertexDistance <= threshold) and (closestVertexDistance == None or vertexDistance < closestVertexDistance):
+                closestVertexIndex    = otherVertexIndex
+                closestVertex         = otherVertex
+                closestVertexDistance = vertexDistance
+
+        if oneToOne and closestVertexIndex != None:
+            otherVertices.pop(closestVertexIndex)
+
+        return closestVertex
+
+    def calculateRMSD(self, sourceVertices, targetVertices, threshold, oneToOne):
+        squaredDistanceSum = 0
+        numSourceVertices  = len(sourceVertices)
+        for sourceVertex in sourceVertices:
+            targetVertex = self.getClosestVertex(sourceVertex, targetVertices, threshold, oneToOne)
+
+            squaredDistanceSum += ((sourceVertex - targetVertex).length() ** 2)
+
+        rmsd = sqrt(squaredDistanceSum / numSourceVertices)
+
+        return rmsd
+
+    def ntuples(self, lst, n):
+        tuples = zip(*[lst[i:]+lst[:i] for i in range(n)])
+        tuples.pop()
+
+        return tuples

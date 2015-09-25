@@ -7,6 +7,7 @@
 #define PROTEINMORPH_NON_MANIFOLD_MESH_H
 
 #include <vector>
+#include <stack>
 #include <MathTools/Vector3D.h>
 #include <SkeletonMaker/volume.h>
 #include <string>
@@ -99,6 +100,8 @@ namespace wustl_mm {
 			vector<unsigned int> GetNeighboringVertexIndices(unsigned int vertexIx);
 			vector<Vector3DFloat> SampleTriangle(int faceId, double discretizationStep);
 			Volume * ToVolume();
+			vector<Vector3DFloat> GetSurfaceVertices(int noiseThreshold = 0);
+			vector<Vector3DFloat> GetNonSurfaceVertices();
 			Vector3DFloat GetVertexNormal(int vertexId);
 			Vector3DFloat GetFaceNormal(int faceId);
 			NonManifoldMesh * SmoothLaplacian(double converganceRate);	
@@ -776,6 +779,54 @@ namespace wustl_mm {
 		}
 
 
+	    template <class TVertex, class TEdge, class TFace> vector<Vector3DFloat> NonManifoldMesh<TVertex, TEdge, TFace>::GetSurfaceVertices(int noiseThreshold) {
+			vector<Vector3DFloat> surfaceVertices;
+            
+            vector<bool> visitedFlags(vertices.size(), false);
+            for(unsigned int vertexIndex = 0; vertexIndex < vertices.size(); vertexIndex++) {
+                vector<Vector3DFloat> connectedComponent;
+                stack<unsigned int> toProcess;
+                toProcess.push(vertexIndex);
+                while (!toProcess.empty()) {
+                    unsigned int processVertexIndex = toProcess.top();
+                    toProcess.pop();
+                    if (visitedFlags[processVertexIndex] || !IsSurfaceVertex(processVertexIndex)) {
+                        continue;
+                    }
+                    visitedFlags[processVertexIndex] = true;
+                
+                    connectedComponent.push_back(vertices[processVertexIndex].position);
+                    
+                    vector<unsigned int> neighborVertexIndices = GetNeighboringVertexIndices(processVertexIndex);
+                    for (unsigned int neighborVertexNum = 0; neighborVertexNum < neighborVertexIndices.size(); neighborVertexNum++) {
+                        unsigned int neighborVertexIndex = neighborVertexIndices[neighborVertexNum];
+
+                        toProcess.push(neighborVertexIndex);
+                    }
+                }
+                
+                if (connectedComponent.size() > noiseThreshold) {
+                    surfaceVertices.insert(surfaceVertices.end(), connectedComponent.begin(), connectedComponent.end());
+                }
+            }
+
+            return surfaceVertices;
+        }
+
+	    template <class TVertex, class TEdge, class TFace> vector<Vector3DFloat> NonManifoldMesh<TVertex, TEdge, TFace>::GetNonSurfaceVertices() {
+            vector<Vector3DFloat> nonSurfaceVertices;
+            
+            for(unsigned int i = 0; i < vertices.size(); i++) {
+                if (IsSurfaceVertex(i)) {
+                    continue;
+                }
+
+                nonSurfaceVertices.push_back(vertices[i].position);
+            }
+
+            return nonSurfaceVertices;
+        }	
+
 		template <class TVertex, class TEdge, class TFace> Vector3DFloat NonManifoldMesh<TVertex, TEdge, TFace>::GetVertexNormal(int vertexId) {
 			int index = GetVertexIndex(vertexId);
 			int edgeIndex;
@@ -1007,7 +1058,7 @@ namespace wustl_mm {
 			vertices[vertexIx].position = vertices[vertexIx].position + translateVector;
 		}
 		
-		template <class TVertex, class TEdge, class TFace> int NonManifoldMesh<TVertex, TEdge, TFace>::GetClosestVertexIndex(Vector3DFloat pos) {
+        template <class TVertex, class TEdge, class TFace> int NonManifoldMesh<TVertex, TEdge, TFace>::GetClosestVertexIndex(Vector3DFloat pos) {
 			if(vertices.size() == 0) {
 				return -1;
 			}
@@ -1015,7 +1066,7 @@ namespace wustl_mm {
 			double distance, minDistance = (pos - vertices[0].position).Length();
 			int minIx = 0;
 			for(unsigned int i = 0; i < vertices.size(); i++) {
-				distance = (pos - vertices[i].position).Length();
+                distance = (pos - vertices[i].position).Length();
 				if(distance < minDistance) {
 					minDistance = distance;
 					minIx = i;

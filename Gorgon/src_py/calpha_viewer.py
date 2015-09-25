@@ -190,10 +190,12 @@ class CAlphaViewer(BaseViewer):
             
             for chain in self.loadedChains:
                 for helixIx, helix in chain.helices.items():                    
-                    ix = self.renderer.startHelix()
+                    ix = None
                     self.ribbonMouseMapping[0][ix] = helixIx
                     for i in range(helix.startIndex, helix.stopIndex + 1):
                         if (i in chain.residueList) and ("CA" in chain[i].getAtomNames()):
+                            if ix == None:
+                                ix = self.renderer.startHelix()
                             CAatom = chain[i].getAtom("CA")
                             self.renderer.addHelixElement(ix, chain[i].getAtom("CA").getHashKey())
                             resNumTemp = i - 1
@@ -244,7 +246,7 @@ class CAlphaViewer(BaseViewer):
                                 CAatom = chain[i].getAtom("CA")
                                 self.renderer.addStrandElement(ix, chain[i].getAtom("CA").getHashKey())
                                 resNumTemp = i - 1
-                                if resNumTemp > 0:
+                                if resNumTemp in chain:
                                     prevCAAtom = chain.residueList[resNumTemp].getAtom('CA')
                                     while not prevCAAtom and resNumTemp >= 0:
                                         prevCAAtom = chain.residueList[resNumTemp].getAtom('CA')
@@ -267,7 +269,7 @@ class CAlphaViewer(BaseViewer):
                                     CAatom.setPrevCAHash(CAatom.getHashKey())
                                 #set the atom's "next" CA atom
                                 resNumTemp = i + 1
-                                if resNumTemp <= chain.getLastResidueIndex():
+                                if resNumTemp in chain:
                                     nextCAAtom = chain.residueList[resNumTemp].getAtom('CA')
                                     while not nextCAAtom and resNumTemp <= chain.getLastResidueIndex():
                                         nextCAAtom = chain.residueList[resNumTemp].getAtom('CA')
@@ -597,6 +599,7 @@ class CAlphaViewer(BaseViewer):
             #Chain.setSelectedChainKey(mychain.getIDs())
             mychain.addCalphaBonds()
             mychain.addSideChainBonds()
+            mychain.addSheetBonds()
             renderer = self.renderer
             for i in mychain.residueRange():
                 for atomName in mychain[i].getAtomNames():
