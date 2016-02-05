@@ -20,7 +20,7 @@ BOOST_PYTHON_MODULE(@current_pylib@)
             .def(vector_indexing_suite<std::vector<std::vector<double> > >() );
 
     const double & (Volume::*get)(int, int, int) const = &Volume::operator();
-    double & (Volume::*set)(int, int, int)             = &Volume::operator();
+//          double & (Volume::*set)(int, int, int)       = &Volume::operator();
 
   class_<Volume>("Volume", init<>())
       .def(init<int, int, int, optional<double> >())
@@ -30,6 +30,14 @@ BOOST_PYTHON_MODULE(@current_pylib@)
       .def("getSize", &Volume::getSize)
       .def("cmp", &Volume::cmp)
       .def("out", &Volume::print)
+//      .def("get", &get, return_value_policy<copy_const_reference>())
+//      .def("gett", &gett)
+      .def("get", get, return_value_policy<copy_const_reference>())
+//      .def("set", set, return_value_policy<copy_non_const_reference>())
+      .def("set", &Volume::setItem)
+//      .def("sett", &sett)
+//      .def("sett", &Volume::operator())
+
 
 //      .def("getMin", &Volume::getMin)
 //      .def("getMax", &Volume::getMax)
