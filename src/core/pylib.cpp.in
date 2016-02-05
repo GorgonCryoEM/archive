@@ -7,8 +7,42 @@ using namespace Core;
 
 using namespace boost::python;
 
+//#include <boost/python/tuple.hpp>
+//#include <boost/python/module.hpp>
+//#include <boost/python/refcount.hpp>
+//
+//
+//namespace python = boost::python;
+//namespace tuples = boost::tuples;
+//
+//
+//
+//template <class H, class T>
+//python::tuple tuple_to_python(tuples::cons<H,T> const& x)
+//{
+//  return python::make_tuple(x.head) + tuple_to_python(x.tail);
+//}
+//
+//python::tuple tuple_to_python(tuples::null_type)
+//{
+//  return python::tuple();
+//}
+//
+//template <class T>
+//struct tupleconverter
+//{
+//  static PyObject* convert(T const& x)
+//  {
+//      return python::incref(tuple_to_python(x).ptr());
+//  }
+//};
+
+
+
 BOOST_PYTHON_MODULE(@current_pylib@)
 {
+//    to_python_converter<tuple<int, int, int>, tupleconverter<tuple<int, int, int> > >();
+    
     class_<std::vector<float> >("std::vector<float>")
             .def(vector_indexing_suite<std::vector<float> >() );
     class_<std::vector<std::vector<float> > >("std::vector<std::vector<float> >")
@@ -21,6 +55,7 @@ BOOST_PYTHON_MODULE(@current_pylib@)
 
     const double & (Volume::*get)(int, int, int) const = &Volume::operator();
     double & (Volume::*set)(int, int, int)             = &Volume::operator();
+    const double & (Volume::*indtuple)(tuple<int,int,int>) const = &Volume::operator();
 
   class_<Volume>("Volume", init<>())
       .def(init<int, int, int, optional<double> >())
@@ -29,6 +64,10 @@ BOOST_PYTHON_MODULE(@current_pylib@)
       .def("getSizeZ", &Volume::getSizeZ)
       .def("getSize", &Volume::getSize)
       .def("cmp", &Volume::cmp)
+//      .def("__getitem__", indtuple, return_value_policy<copy_const_reference>())
+//      .def("__getitem__", indint, return_value_policy<copy_const_reference>())
+//      .def("__call__", get, return_value_policy<copy_const_reference>())
+//      .def("__setitem__", set, return_value_policy<copy_non_const_reference>())
       .def("out", &Volume::print)
 
 //      .def("getMin", &Volume::getMin)

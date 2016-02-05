@@ -3,9 +3,14 @@
 
 #include <vector>
 #include "Dim3D.h"
+#include <boost/tuple/tuple.hpp>
 
 using namespace std;
 //using namespace Core;
+//using namespace boost::tuples;
+//using boost::tuples::tuple;
+using boost::tuple;
+using boost::get;
 
 namespace Core {
     class Volume {
@@ -23,6 +28,8 @@ namespace Core {
 
         double & operator()(int i, int j, int k);
         const double & operator()(int i, int j, int k) const;
+        const double & operator()(tuple<int,int,int> args) const;
+
         typedef vector<double>::const_iterator const_iterator;
         typedef vector<double>::iterator iterator;
 

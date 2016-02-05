@@ -86,6 +86,14 @@ const double & Volume::operator()(int i, int j, int k) const {
     return data[getIndex(i, j, k)];
 }
 
+const double & Volume::operator()(tuple<int,int,int> args) const{
+    int i0 = get<0>(args);
+    int i1 = get<1>(args);
+    int i2 = get<2>(args);
+
+    return (*this)(i0,i1,i2);
+}
+
 int Volume::getIndex(int x, int y, int z) const {
     return (x * getSizeY() * getSizeZ() + y * getSizeZ() + z);
 }
