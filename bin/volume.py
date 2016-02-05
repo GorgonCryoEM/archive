@@ -22,6 +22,7 @@ v[i,j,k] = 555.0
 
 print v[i,j,k]
 
+print "Filling"
 fill = Fill(v)
 fill(11.0)
 

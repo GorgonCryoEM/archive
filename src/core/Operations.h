@@ -17,15 +17,15 @@ using namespace Core;
 
 class Operation {
     public:
-        Operation(Volume vol);
+        Operation(Volume &vol);
 //        virtual void operator()(Volume &vol) =0;
     protected:
-        Volume volume;
+        Volume &volume;
 };
 
 class Fill : public Operation {
     public:
-        Fill(Volume vol);
+        Fill(Volume &vol);
         virtual void operator()(double val);
 };
 

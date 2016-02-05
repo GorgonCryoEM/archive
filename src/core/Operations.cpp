@@ -7,11 +7,11 @@
 
 #include "Operations.h"
 
-Operation::Operation(Volume vol)
+Operation::Operation(Volume &vol)
         : volume(vol)
 {}
 
-Fill::Fill(Volume vol)
+Fill::Fill(Volume &vol)
         : Operation(vol)
 {}
 
