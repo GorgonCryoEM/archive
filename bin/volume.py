@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from Core import Volume
+from Core import Volume, Fill
 
 v = Volume(2,2,2,3.0)
 v1 = Volume()

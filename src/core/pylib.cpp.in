@@ -47,10 +47,11 @@ BOOST_PYTHON_MODULE(@current_pylib@)
   ;
   
 //  class_<OperationWrapper>("Operation", no_init);
-  class_<OperationWrapper>("Operation", init<Volume>());
+//  class_<OperationWrapper>("Operation", init<Volume>());
   
-  class_<Fill, bases<Operation> >("Fill", init< Volume >())
-////       .def("__call__", &Fill::operator())
+//  class_<Fill, bases<Operation> >("Fill", init< Volume >())
+  class_<Fill>("Fill", init<Volume>())
+       .def("__call__", &Fill::operator())
   ;
 
 }
