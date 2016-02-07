@@ -11,17 +11,13 @@ Operation::Operation(Volume &vol)
         : volume(vol)
 {}
 
-Fill::Fill(Volume &vol)
-        : Operation(vol)
-{}
-
-void Fill::operator()(double val)
-{
-    for(int x = 0; x < volume.getSizeX(); x++) {
-        for(int y = 0; y < volume.getSizeY(); y++) {
-            for(int z = 0; z < volume.getSizeZ(); z++) {
-                volume(x, y, z) = val;
-            }
-        }
-    }
-}
+//void Fill::operator()(double val)
+//{
+//    for(int x = 0; x < volume.getSizeX(); x++) {
+//        for(int y = 0; y < volume.getSizeY(); y++) {
+//            for(int z = 0; z < volume.getSizeZ(); z++) {
+//                volume(x, y, z) = val;
+//            }
+//        }
+//    }
+//}

@@ -23,16 +23,5 @@ class Operation {
         Volume &volume;
 };
 
-class Fill : public Operation {
-    public:
-        Fill(Volume &vol);
-        virtual void operator()(double val);
-};
-
-//struct OperationWrapper : public Operation, boost::python::wrapper<Operation> {
-//        OperationWrapper(Volume vol)
-//                     : Operation(vol)
-//                       {}
-//};
 
 #endif /* SRC_CORE_OPERATIONS_H_ */
