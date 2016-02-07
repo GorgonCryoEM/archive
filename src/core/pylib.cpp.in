@@ -38,6 +38,7 @@ BOOST_PYTHON_MODULE(@current_pylib@)
 //      .def("set", set, return_value_policy<copy_non_const_reference>())
       .def("set", &Volume::setItem)
       .def("fill", &Volume::fill)
+      .def("applyMask", &Volume::applyMask)
 //      .def("sett", &sett)
 //      .def("sett", &Volume::operator())
 
