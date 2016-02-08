@@ -49,4 +49,16 @@ namespace Core {
         return *max_element(volume.begin(), volume.end());
     }
 
+    double Volume::getMean() const {
+    }
+
+    double Volume::getEdgeMean() const {
+    }
+
+    double Volume::getStdDev() const {
+    }
+
+    Vector3DFloat Volume::getCenterOfMass() const {
+    }
+
 } /* namespace Core */
