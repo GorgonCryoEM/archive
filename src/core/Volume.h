@@ -10,6 +10,8 @@
 
 #include "VolumeData.h"
 
+#include <algorithm>
+
 namespace Core {
 
     /*
@@ -23,6 +25,8 @@ namespace Core {
 
             void fill(double val);
             void applyMask(double maskValue, bool keepMaskValue);
+            double getMin() const;
+            double getMax() const;
 
         private:
             VolumeData & volume;

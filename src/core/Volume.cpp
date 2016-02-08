@@ -41,5 +41,12 @@ namespace Core {
                         *it = 0;
     }
 
+    double Volume::getMin() const {
+        return *min_element(volume.begin(), volume.end());
+    }
+
+    double Volume::getMax() const {
+        return *max_element(volume.begin(), volume.end());
+    }
 
 } /* namespace Core */
