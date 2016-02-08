@@ -7,6 +7,8 @@
 
 #include "Volume.h"
 
+#include <algorithm>
+
 namespace Core {
 
     Volume::Volume()

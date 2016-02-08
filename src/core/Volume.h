@@ -10,8 +10,6 @@
 
 #include "VolumeData.h"
 
-#include <algorithm>
-
 namespace Core {
 
     /*
