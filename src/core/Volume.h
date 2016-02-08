@@ -146,8 +146,6 @@ namespace Core {
 //
 //            void normalizeVolume();
 //            void downsampleVolume();
-//            float getMaxDensity() const;
-//            float getMinDensity() const;
 //            void loadFile(string fileName);
 //            void saveFile(string fileName);
 //            void PerformSmoothLaplacian(double convergenceRate, int iterations);
