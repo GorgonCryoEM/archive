@@ -29,6 +29,7 @@ namespace Core {
         double & operator()(int i, int j, int k);
         void setItem(int i, int j, int k, double val);
         const double & operator()(int i, int j, int k) const;
+        void operator-(const VolumeData & obj);
 
 //        typedef vector<double>::const_iterator const_iterator;
 //        typedef vector<double>::iterator iterator;

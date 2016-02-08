@@ -92,6 +92,17 @@ const double & VolumeData::operator()(int i, int j, int k) const {
     return data[getIndex(i, j, k)];
 }
 
+void VolumeData::operator-(const VolumeData & obj){
+    iterator it1=data.begin();
+    const_iterator it2=obj.data.begin();
+    for(;
+        it1!=data.end() && it2!=obj.data.end();
+        ++it1, ++it2)
+    {
+        *it1 -= *it2;
+    }
+}
+
 int VolumeData::getIndex(int x, int y, int z) const {
     return (x * getSizeY() * getSizeZ() + y * getSizeZ() + z);
 }
