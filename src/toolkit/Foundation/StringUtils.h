@@ -10,6 +10,8 @@ using namespace std;
 namespace Foundation {
     class StringUtils {
     public:
+        static string DoubleToString(double number, int padSize = -1, string padChar = "0", int digits = -1, int decimals = -1);
+        static string IntToString(int number, int padSize = -1, string padChar = "0");
         static string StringToUpper(string strToConvert);
         static string StringToLower(string strToConvert);
         static void RightTrim(string &source, string t);
@@ -17,6 +19,38 @@ namespace Foundation {
         static string RightPad(string source, int strLength, string padChar = " ");
         static string LeftPad(string source, int strLength, string padChar = " ");
     };
+
+    string StringUtils::DoubleToString(double number, int padSize, string padChar, int digits, int decimals) {
+        char * x = new char[20];
+        char * y = new char[20];
+        if((digits > 0) && (decimals > 0) ) {
+            sprintf(y, "%%%d.%df", digits, decimals);
+            sprintf(x, y, number);
+        } else {
+            sprintf(x, "%f", number);
+        }
+        string retVal = x;
+
+        int start = retVal.size();
+        for(int i = start; i <= padSize; i++) {
+            retVal = padChar + retVal;
+        }
+
+        delete [] x;
+        return retVal;
+    }
+
+    string StringUtils::IntToString(int number, int padSize, string padChar) {
+        char * x = new char[20];
+        sprintf(x, "%d", number);
+        string retVal = x;
+        int start = retVal.size();
+        for(int i = start; i <= padSize; i++) {
+            retVal = padChar + retVal;
+        }
+        delete [] x;
+        return retVal;
+    }
 
     string StringUtils::StringToUpper(string strToConvert) {
        for(unsigned int i=0;i<strToConvert.length();i++)   {
