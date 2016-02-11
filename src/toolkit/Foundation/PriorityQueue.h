@@ -39,7 +39,7 @@ namespace SkeletonMaker {
             }
 
             int getLength() {
-                return queueLength;
+                return q.size();
             }
 
             bool isEmpty() {
