@@ -39,7 +39,7 @@ namespace SkeletonMaker {
             }
 
             int getLength() {
-                return q.size();
+                return (int)q.size();
             }
 
             bool isEmpty() {
@@ -47,7 +47,7 @@ namespace SkeletonMaker {
             }
 
             bool isFull() {
-                return (q.size() == maxLength);
+                return (getLength() == maxLength);
             }
 
             void add(T v, int k) {
