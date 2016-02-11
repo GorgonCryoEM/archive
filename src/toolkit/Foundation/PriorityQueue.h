@@ -56,9 +56,10 @@ namespace SkeletonMaker {
                     return;
                 }
 
+                int ind = getLength();
+
                 q.push(make_pair(v,k));
 
-                int ind = queueLength;
                 int tind;
                 queueLength = q.size();
 
