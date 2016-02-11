@@ -60,7 +60,7 @@ namespace SkeletonMaker {
 
                 int ind = queueLength;
                 int tind;
-                queueLength++;
+                queueLength = q.size();
 
                 while(ind > 0) {
                     tind = (ind + 1) / 2 - 1;
@@ -92,7 +92,7 @@ namespace SkeletonMaker {
 
                 v = valueQueue[0];
                 k = keyQueue[0];
-                queueLength--;
+                queueLength = q.size();
 
                 if(isEmpty()) {
                     valueQueue[0] = T();
