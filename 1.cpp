@@ -26,8 +26,8 @@ void Volume::curveSkeleton(Volume* grayvol, float lowthr, float highthr,
             for(k = 0; k < getSizeZ(); k++) {
                 if(getDataAt(i, j, k) >= 0) {
                     double v = grayvol->getDataAt(i, j, k);
-                    if(v <= lowthr || v > highthr
-                       || svol->getDataAt(i, j, k) > 0) {
+                    if(svol->getDataAt(i, j, k) > 0
+                       || v <= lowthr || v > highthr) {
                         setDataAt(i, j, k, MAX_ERODE);
                     }
                     else {
