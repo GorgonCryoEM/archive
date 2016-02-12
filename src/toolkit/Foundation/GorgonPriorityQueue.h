@@ -2,8 +2,8 @@
 #define TOOLKIT_FOUNDATION_GORGONPRIORITYQUEUE_H
 
 
+#include "GHeap.h"
 #include "GorgonPriorityQueueElement.h"
-#include "GorgonHeap.h"
 
 namespace Foundation {
     template <class TKey, class TValue>
