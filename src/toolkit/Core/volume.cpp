@@ -1142,10 +1142,9 @@ void Volume::curveSkeleton2D(float thr, Volume* svol) {
                         setDataAt(i, j, k, MAX_ERODE);
                     }
                     else {
-                        for(int m = 0; m < 4; m++) {
-                            if(getDataAt(i + neighbor4[m][0],
-                                       j + neighbor4[m][1], k)
-                               < 0) {
+                        for(int m = 0; m < 6; m++) {
+                                                    if(getDataAt(i + neighbor6[m][0],
+                                                               j + neighbor6[m][1], k + neighbor6[m][2])                               < 0) {
                                 // setDataAt( i, j, k, 1 ) ;
                                 queue2->prepend(i, j, k);
                                 break;
@@ -1274,10 +1273,10 @@ void Volume::curveSkeleton2D(float thr, Volume* svol) {
             /* Adding ends */
 
             // Move its neighboring unvisited node to queue2
-            for(int m = 0; m < 4; m++) {
-                int nx = ox + neighbor4[m][0];
-                int ny = oy + neighbor4[m][1];
-                int nz = oz;
+            for(int m = 0; m < 6; m++) {
+                int nx = ox + neighbor6[m][0];
+                int ny = oy + neighbor6[m][1];
+                int nz = oz + neighbor6[m][2];
                 if(getDataAt(nx, ny, nz) == 0) {
                     // setDataAt( nx, ny, nz, curwid + 1 ) ;
                     queue2->prepend(nx, ny, nz);
