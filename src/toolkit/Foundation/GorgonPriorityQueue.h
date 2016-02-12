@@ -3,7 +3,7 @@
 
 
 #include "GHeap.h"
-#include "GorgonPriorityQueueElement.h"
+#include "PQueueElem.h"
 
 namespace Foundation {
     template <class TKey, class TValue>
