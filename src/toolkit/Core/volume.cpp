@@ -839,10 +839,6 @@ void Volume::curveSkeleton(Volume* grayvol, float lowthr, float highthr,
 #endif
 
         if(numSimple == 0) {
-            if(queue2->getNumElements() > 0) {
-                printf(
-                        "*************************wierd here*************************\n");
-            }
             break;
         }
     }
