@@ -1595,7 +1595,7 @@ namespace GraySkeletonCPP {
                 thinnedVolume->curveSkeleton(threshold, preserve);
                 break;
             case THINNING_CLASS_CURVE_PRESERVATION_2D :
-                thinnedVolume->curveSkeleton(threshold, preserve);
+                thinnedVolume->curveSkeleton2D(threshold, preserve);
                 break;
             case THINNING_CLASS_TOPOLOGY_PRESERVATION :
                 thinnedVolume->skeleton(threshold, preserve, preserve);
