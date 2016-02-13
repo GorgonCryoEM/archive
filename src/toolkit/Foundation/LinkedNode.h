@@ -77,7 +77,6 @@ namespace GraphMatch {
         bool used[MAX_NODES];
         int n1[MAX_NODES];
         int n2[MAX_NODES];
-        int top = 0;
         for(int i = 0; i < MAX_NODES; i++) {
             used[i] = false;
         }
@@ -87,6 +86,7 @@ namespace GraphMatch {
             if(currentNode->parentNode == NULL) {
                  break;
             }
+        int top = 0;
             n1[top] = currentNode->n1Node;
             n2[top] = currentNode->n2Node;
             used[(int)currentNode->n1Node] = true;
