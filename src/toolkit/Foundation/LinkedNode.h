@@ -83,8 +83,7 @@ namespace GraphMatch {
         }
 
         LinkedNodeStub * currentNode = this;
-        bool continueLoop = true;
-        while(continueLoop) {
+        while(true) {
             if(currentNode->parentNode == NULL) {
                  break;
             }
