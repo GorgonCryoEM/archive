@@ -41,7 +41,7 @@ namespace GraphMatch {
             LinkedNode * currentNode;
 
             typedef PQueueElem<double, LinkedNode *> Elem;
-            priority_queue<Elem(double, LinkedNode *)> * queue;
+            priority_queue<Elem> * queue;
 
             vector<LinkedNodeStub*> usedNodes;
             vector<SSECorrespondenceResult> solutions;
