@@ -82,11 +82,8 @@ namespace GraphMatch {
         }
 
         LinkedNodeStub * currentNode = this;
-        while(true) {
-            if(currentNode->parentNode == NULL) {
-                 break;
-            }
         int top = 0;
+        while(currentNode->parentNode != NULL) {
             n1[top] = currentNode->n1Node;
             n2[top] = currentNode->n2Node;
             used[(int)currentNode->n1Node] = true;
