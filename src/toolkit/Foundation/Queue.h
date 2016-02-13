@@ -121,6 +121,8 @@ namespace SkeletonMaker {
 
         if(it != q.end()){
             it = q.erase(it);
+            if(it==q.end())
+                return NULL;
 
             return &(*it);
         }
