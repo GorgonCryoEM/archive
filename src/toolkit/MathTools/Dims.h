@@ -10,9 +10,16 @@ class Dim {
 	    : vals(D, T())
       {}
 
-    Dim(T v)
-        : vals(D, v)
-      {}
+//    Dim(T v)
+//        : vals(D, v)
+//      {}
+
+    template<class... Args>
+    Dim(Args... args)
+            : vals({args...})
+    {
+            static_assert(sizeof...(args)==D, "Wrong number of arguments");
+    }
 
     vector<T> vals;
 };
