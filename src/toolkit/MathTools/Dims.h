@@ -31,7 +31,7 @@ class Dim {
       return vals[d-1];
     }
 
-    vector<T> vals;
+    vector<typename enable_if<is_arithmetic<T>::value,T>::type> vals;
 };
 
 template <int D, class T>
