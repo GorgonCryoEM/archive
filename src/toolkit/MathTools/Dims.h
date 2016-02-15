@@ -9,13 +9,12 @@ class Dim {
     Dim()
 	    : vals(D, T())
       {}
-    
+
     Dim(T v)
-	    : val(v)
+        : vals(D, v)
       {}
-    
+
     vector<T> vals;
-    T val;
 };
 
 template <int D, class T>
@@ -25,6 +24,6 @@ ostream& operator<<(ostream& out, const Dim<D,T> &obj){
 		  ++it
      )
     out<<" "<<*it;
-  
+
   return out;
 }
