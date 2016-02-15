@@ -8,8 +8,13 @@ template <int D, class T>
 class DimBase {
   public:
     DimBase()    : dim(T()), dims()  {}
-    DimBase(T v) : dim(v),   dims(v-1) {
-      cout<<"DimBase<"<<D<<">::ctor("<<v<<")"<<endl;
+    template<class... Args>
+    DimBase(T v, Args... args)
+//    DimBase(T v)
+        : dim(v),   dims(args...)
+    {
+//            static_assert(sizeof...(Args)==D. "Wrong number of arguments");
+//      cout<<"DimBase<"<<D<<">::ctor("<<v<<")"<<endl;
     }
 
     T& operator[](int d) {
@@ -38,8 +43,14 @@ template <class T>
 class DimBase<1,T> {
   public:
     DimBase()    : dim(T()) {}
-    DimBase(T v) : dim(v)   {
-      cout<<"DimBase<1>::ctor("<<v<<")"<<endl;
+
+//    template<class... Args>
+//    DimBase(Args args)
+    DimBase(T v)
+    : dim(v)
+    {
+//            static_assert(sizeof...(Args)==D. "Wrong number of arguments");
+            cout<<"DimBase<1>::ctor("<<v<<")"<<endl;
     }
 
     T& operator[](int d) {
@@ -74,12 +85,9 @@ class Dim<1,T> : public DimBase<1,T>{
     public:
         Dim()    : DimBase<1,T>() {}
         Dim(T v) : DimBase<1,T>(v)   {}
+//        T x() {
+//            return this->operator[](1);
+//        }
 };
 
-//template<class T>
-//class DimBase<1,T> {
-//  public:
-//    T Y() {
-//      return this->operator[](1);
-//    }
 
