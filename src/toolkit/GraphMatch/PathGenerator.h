@@ -30,7 +30,7 @@ namespace GraphMatch {
 
     void PathGenerator::GenerateGraph(GraphNode * node, char * outFileName)  {
         Volume * skeletonVol = graph->skeletonVolume;
-        Volume * newVol = new Volume(skeletonVol->getSizeX(), skeletonVol->getSizeY(), skeletonVol->getSizeZ());
+        Volume newVol(*skeletonVol);
         int startNode = 0;
         int endNode = 1;
         while (endNode < node->n2Top) {
@@ -46,7 +46,7 @@ namespace GraphMatch {
                 int startCorner = node->n2[startNode]%2 + 1;
                 int endHelix = node->n2[endNode]/2;
                 int endCorner = node->n2[endNode]%2 + 1;
-                bool marked = MarkPath(startHelix, startCorner, endHelix, endCorner, skeletonVol, newVol);
+                bool marked = MarkPath(startHelix, startCorner, endHelix, endCorner, skeletonVol, &newVol);
 
                 if(!marked) {
                     printf("Path between %d and %d was not marked \n", startHelix + 1, endHelix + 1);
@@ -58,8 +58,7 @@ namespace GraphMatch {
             endNode++;
         }
 
-        newVol->toMRCFile(outFileName);
-        delete newVol;
+        newVol.toMRCFile(outFileName);
     }
 
     void PathGenerator::GenerateGraph(LinkedNodeStub * node, char * outFileName)  {
