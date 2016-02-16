@@ -676,7 +676,7 @@ void Volume::curveSkeleton(Volume* grayvol, float lowthr, float highthr,
             }
     int wid = MAX_ERODE;
 #ifdef VERBOSE
-    printf("Total %d nodes\n", queue2->getNumElements() );
+    printf("Total %d nodes\n", queue2->size() );
     printf("Start erosion to %d...\n", wid);
 #endif
 
@@ -698,7 +698,7 @@ void Volume::curveSkeleton(Volume* grayvol, float lowthr, float highthr,
 
         int numComplex = 0, numSimple = 0;
 #ifdef VERBOSE
-        printf("Processing %d nodes in layer %d\n", queue2->getNumElements(), curwid);
+        printf("Processing %d nodes in layer %d\n", queue2->size(), curwid);
 #endif
 
         /*
@@ -934,7 +934,7 @@ void Volume::curveSkeleton(float thr, Volume* svol) {
             }
     int wid = MAX_ERODE;
 #ifdef VERBOSE
-    printf("Total %d nodes\n", queue2->getNumElements() );
+    printf("Total %d nodes\n", queue2->size() );
     printf("Start erosion to %d...\n", wid);
 #endif
 
@@ -956,7 +956,7 @@ void Volume::curveSkeleton(float thr, Volume* svol) {
 
         int numComplex = 0, numSimple = 0;
 #ifdef VERBOSE
-        printf("Processing %d nodes in layer %d\n", queue2->getNumElements(), curwid);
+        printf("Processing %d nodes in layer %d\n", queue2->size(), curwid);
 #endif
 
         /*
@@ -1155,7 +1155,7 @@ void Volume::curveSkeleton2D(float thr, Volume* svol) {
             }
     int wid = MAX_ERODE;
 #ifdef VERBOSE
-    printf("Total %d nodes\n", queue2->getNumElements() );
+    printf("Total %d nodes\n", queue2->size() );
     printf("Start erosion to %d...\n", wid);
 #endif
 
@@ -1177,7 +1177,7 @@ void Volume::curveSkeleton2D(float thr, Volume* svol) {
 
         int numComplex = 0, numSimple = 0;
 #ifdef VERBOSE
-        printf("Processing %d nodes in layer %d\n", queue2->getNumElements(), curwid);
+        printf("Processing %d nodes in layer %d\n", queue2->size(), curwid);
 #endif
 
         /*
@@ -1382,7 +1382,7 @@ void Volume::pointSkeleton(Volume* grayvol, float lowthr, float highthr,
                 }
             }
 #ifdef VERBOSE
-    printf("Total %d nodes\n", queue2->getNumElements() );
+    printf("Total %d nodes\n", queue2->size() );
 #endif
 
     // Perform erosion
@@ -1407,7 +1407,7 @@ void Volume::pointSkeleton(Volume* grayvol, float lowthr, float highthr,
 
         int numComplex = 0, numSimple = 0;
 #ifdef VERBOSE
-        printf("Processing %d nodes in layer %d\n", queue2->getNumElements(), curwid);
+        printf("Processing %d nodes in layer %d\n", queue2->size(), curwid);
 #endif
 
         // Next,
@@ -1613,7 +1613,7 @@ void Volume::skeleton(float thr, Volume* svol, Volume* hvol) {
             }
     int wid = MAX_ERODE;
 #ifdef VERBOSE
-    printf("Total %d nodes\n", queue2->getNumElements() );
+    printf("Total %d nodes\n", queue2->size() );
 
     // Perform erosion
     printf("Start erosion to %d...\n", wid);
@@ -1635,7 +1635,7 @@ void Volume::skeleton(float thr, Volume* svol, Volume* hvol) {
 
         int numComplex = 0, numSimple = 0;
 #ifdef VERBOSE
-        printf("Processing %d nodes in layer %d\n", queue2->getNumElements(), curwid);
+        printf("Processing %d nodes in layer %d\n", queue2->size(), curwid);
 #endif
 
         // Next,
@@ -1793,12 +1793,12 @@ void Volume::erodeHelix(int disthr) {
                     }
                 }
             }
-    //printf("Total %d nodes\n", queue2->getNumElements() ) ;
+    //printf("Total %d nodes\n", queue2->size() ) ;
 
     // Start erosion
     QueueNode* ele;
     int dis = -1;
-    while(queue2->getNumElements() > 0) {
+    while(queue2->size() > 0) {
         // First, set distance
         dis--;
         queues[-dis] = new List();
@@ -1808,7 +1808,7 @@ void Volume::erodeHelix(int disthr) {
             setDataAt(ele->x, ele->y, ele->z, dis);
             queues[-dis]->prepend(ele->x, ele->y, ele->z);
         }
-        //printf("%d nodes\n", queues[-dis]->getNumElements()) ;
+        //printf("%d nodes\n", queues[-dis]->size()) ;
 
         // Next, find next layer
         queue2->reset();
@@ -2009,13 +2009,13 @@ int Volume::erodeSheet(int disthr) {
                 }
             }
 #ifdef VERBOSE
-    printf("Total %d nodes\n", queue2->getNumElements() );
+    printf("Total %d nodes\n", queue2->size() );
 #endif
 
     // Start erosion
     QueueNode* ele;
     int dis = -1;
-    while(queue2->getNumElements() > 0) {
+    while(queue2->size() > 0) {
         // First, set distance
         dis--;
         queues[-dis] = new List();
@@ -2025,7 +2025,7 @@ int Volume::erodeSheet(int disthr) {
             setDataAt(ele->x, ele->y, ele->z, dis);
             queues[-dis]->prepend(ele->x, ele->y, ele->z);
         }
-        //printf("%d nodes\n", queues[-dis]->getNumElements()) ;
+        //printf("%d nodes\n", queues[-dis]->size()) ;
 
         // Next, find next layer
         queue2->reset();
@@ -2272,7 +2272,7 @@ void Volume::surfaceSkeleton(Volume* grayvol, float lowthr, float highthr) {
 
         int numComplex = 0, numSimple = 0;
 #ifdef VERBOSE
-        printf("Processing %d nodes in layer %d\n", queue2->getNumElements(), curwid);
+        printf("Processing %d nodes in layer %d\n", queue2->size(), curwid);
 #endif
 
         queue2->reset();
@@ -2403,7 +2403,7 @@ void Volume::surfaceSkeleton(Volume* grayvol, float lowthr, float highthr) {
         }
 
         if(numSimple == 0) {
-            if(queue2->getNumElements() > 0) {
+            if(queue2->size() > 0) {
                 printf(
                         "*************************wierd**********************\n");
             }
@@ -2491,7 +2491,7 @@ void Volume::surfaceSkeletonPres(float thr, Volume * preserve) {
             }
     int wid = MAX_ERODE;
 #ifdef VERBOSE
-    printf("Total %d nodes\n", queue2->getNumElements() );
+    printf("Total %d nodes\n", queue2->size() );
     printf("Start erosion to %d...\n", wid);
 #endif
 
@@ -2513,7 +2513,7 @@ void Volume::surfaceSkeletonPres(float thr, Volume * preserve) {
 
         int numComplex = 0, numSimple = 0;
 #ifdef VERBOSE
-        printf("Processing %d nodes in layer %d\n", queue2->getNumElements(), curwid);
+        printf("Processing %d nodes in layer %d\n", queue2->size(), curwid);
 #endif
 
         /*
