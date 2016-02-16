@@ -41,7 +41,7 @@ namespace GraphMatch {
 #endif
             LinkedNode * currentNode;
 
-            typedef FakePair<double, LinkedNode *> Elem;
+            typedef pair<double, LinkedNode *> Elem;
             priority_queue<Elem> * queue;
 
             vector<LinkedNodeStub*> usedNodes;
