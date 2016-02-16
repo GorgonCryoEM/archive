@@ -64,7 +64,7 @@ namespace GraphMatch {
 
     void PathGenerator::GenerateGraph(LinkedNodeStub * node, char * outFileName)  {
         Volume * skeletonVol = graph->skeletonVolume;
-        Volume * newVol = new Volume(skeletonVol->getSizeX(), skeletonVol->getSizeY(), skeletonVol->getSizeZ());
+        Volume * newVol = new Volume(*skeletonVol);
 
         int startHelix = -1, startCorner = -1, endHelix = -1, endCorner = -1;
         bool marked;
@@ -120,7 +120,7 @@ namespace GraphMatch {
         d[3][0] = 0;		d[3][1] = 1;		d[3][2] = 0;
         d[4][0] = -1;		d[4][1] = 0;		d[4][2] = 0;
         d[5][0] = 1;		d[5][1] = 0;		d[5][2] = 0;
-        Volume * visited = new Volume(skeletonVol->getSizeX(), skeletonVol->getSizeY(), skeletonVol->getSizeZ());
+        Volume * visited = new Volume(*skeletonVol);
 
         for(int i = 0; i < (int)graph->skeletonHelixes.size(); i++) {
             if(((i != endHelix) && (i != startHelix))) {
