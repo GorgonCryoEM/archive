@@ -23,6 +23,11 @@ namespace Foundation {
     inline bool operator<(const FakePair<T,U>& lhs, const FakePair<T, U> &rhs) {
         return (lhs.first < rhs.first);
     }
+
+    template <class T, class U>
+    inline bool operator<(const pair<T,U>& lhs, const pair<T, U> &rhs) {
+        return (lhs.first < rhs.first);
+    }
 }
 
 #endif
