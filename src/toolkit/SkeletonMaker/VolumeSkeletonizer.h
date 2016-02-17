@@ -238,8 +238,8 @@ namespace GraySkeletonCPP {
                             skelDirectionST = XYZtoUVW(skeletonDirection, imageEigen.vectors[0],imageEigen.vectors[1], imageEigen.vectors[2]);
                             FindOrthogonalAxes(skelDirectionST, n1, n2);
 
-                            m1 = Vector3DFloat(n1.values[0]/u1, n1.values[1]/u2, n1.values[2]/u3);
-                            m2 = Vector3DFloat(n2.values[0]/u1, n2.values[1]/u2, n2.values[2]/u3);
+                            m1 = Vector3DFloat(n1[0]/u1, n1[1]/u2, n1[2]/u3);
+                            m2 = Vector3DFloat(n2[0]/u1, n2[1]/u2, n2[2]/u3);
                             theta = atan((2.0 * (m1 * m2)) / ((m1 * m1) - (m2 * m2))) / 2.0;
                             a = 1.0 / ((m1 * cos(theta)) + (m2 * sin(theta))).length();
                             b = 1.0 / ((m1 * sin(theta)) - (m2 * cos(theta))).length();
@@ -449,10 +449,10 @@ namespace GraySkeletonCPP {
 
 
                     for(int i = 0; i < 3; i++) {
-                        if(abs(grad1.values[i]) > abs(grad2.values[i])) {
-                            gradient[index].values[i] = grad1.values[i];
+                        if(abs(grad1[i]) > abs(grad2[i])) {
+                            gradient[index][i] = grad1[i];
                         } else {
-                            gradient[index].values[i] = grad2.values[i];
+                            gradient[index][i] = grad2[i];
                         }
                     }
                 }
@@ -522,7 +522,7 @@ namespace GraySkeletonCPP {
             for(int r = 0; r < 3; r++) {
                 returnVal.values[r] = 0;
                 for(int c = 0; c < 3; c++) {
-                    returnVal.vectors[r].values[c] = 0;
+                    returnVal.vectors[r][c] = 0;
                 }
             }
         } else {
@@ -543,7 +543,7 @@ namespace GraySkeletonCPP {
                         probability = gaussianFilter.values[xx+gaussianFilterRadius][yy+gaussianFilterRadius][zz+gaussianFilterRadius];
                         for(int r = 0; r < 3; r++) {
                             for(int c = 0; c < 3; c++) {
-                                eigenData.structureTensor[r][c] += imageGradient[index2].values[r] * imageGradient[index2].values[c] * probability;
+                                eigenData.structureTensor[r][c] += imageGradient[index2][r] * imageGradient[index2][c] * probability;
                             }
                         }
                     }
@@ -554,7 +554,7 @@ namespace GraySkeletonCPP {
             for(int r = 0; r < 3; r++) {
                 returnVal.values[r] = eigenData.eigenValues[r];
                 for(int c = 0; c < 3; c++) {
-                    returnVal.vectors[r].values[c] = eigenData.eigenVectors[r][c];
+                    returnVal.vectors[r][c] = eigenData.eigenVectors[r][c];
                 }
             }
 
