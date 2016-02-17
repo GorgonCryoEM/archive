@@ -10,6 +10,8 @@
 
 #include "Matrix.h"
 
+using namespace MathTools;
+
 namespace GraphMatch {
 
     template <class T>
