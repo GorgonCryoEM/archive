@@ -240,27 +240,33 @@ namespace GraphMatch {
     }
 
 
+    template <class T>
     inline Vector3 operator*(const double s, const Vector3 &v) {
         return Vector3(v[0] * s, v[1] * s, v[2] * s);
     }
 
+    template <class T>
     inline double dot(const Vector3 &w, const Vector3 &v) {
         return w * v;
     }
 
+    template <class T>
     inline Vector3 cross(const Vector3 &w, const Vector3 &v) {
         return w ^ v;
     }
 
+    template <class T>
     inline double length(const Vector3 &v) {
         return v.length();
     }
 
+    template <class T>
     inline Vector3 unit(const Vector3 &v) {
         const double len = v.length();
         return v / len;
     }
 
+    template <class T>
     inline std::ostream& operator<<(std::ostream& os, const Vector3& v) {
         os << "(" << v[0] << ", " << v[1] << ", " << v[2] << ")";
         return os;
