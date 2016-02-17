@@ -7,6 +7,7 @@ from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
 import sys
+import argparse
 
 class GLWidget(QtOpenGL.QGLWidget):
     def __init__(self):
@@ -28,6 +29,11 @@ class GLWidget(QtOpenGL.QGLWidget):
 
 
 if __name__ == '__main__':
+	parser = argparse.ArgumentParser(description='Gorgon Explorer')
+	
+	parser.add_argument('volume', action="store")
+	args = parser.parse_args()
+
 	app = QtGui.QApplication(sys.argv)    
 
 	window = GLWidget()
@@ -37,3 +43,5 @@ if __name__ == '__main__':
 	window.move(300,50)
 	
 	app.exec_()
+
+	print args.volume
