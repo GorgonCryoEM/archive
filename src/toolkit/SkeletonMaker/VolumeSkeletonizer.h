@@ -223,7 +223,7 @@ namespace GraySkeletonCPP {
                         a = u1 * u2 * u3;
                         b = sqrt(u2*u2*u3*u3*n.X()*n.X() + u1*u1*u3*u3*n.Y()*n.Y() + u1*u1*u2*u2*n.Z()*n.Z());
                         temp = n*(a/b);
-                        cost = u3/ temp.Length();
+                        cost = u3/ temp.length();
                     }
 
 
@@ -241,8 +241,8 @@ namespace GraySkeletonCPP {
                             m1 = Vector3DFloat(n1.values[0]/u1, n1.values[1]/u2, n1.values[2]/u3);
                             m2 = Vector3DFloat(n2.values[0]/u1, n2.values[1]/u2, n2.values[2]/u3);
                             theta = atan((2.0 * (m1 * m2)) / ((m1 * m1) - (m2 * m2))) / 2.0;
-                            a = 1.0 / ((m1 * cos(theta)) + (m2 * sin(theta))).Length();
-                            b = 1.0 / ((m1 * sin(theta)) - (m2 * cos(theta))).Length();
+                            a = 1.0 / ((m1 * cos(theta)) + (m2 * sin(theta))).length();
+                            b = 1.0 / ((m1 * sin(theta)) - (m2 * cos(theta))).length();
                             cost = (u2 * u3) / (a*b);
                         }
                     }
@@ -284,7 +284,7 @@ namespace GraySkeletonCPP {
         float vContri = vec * v;
         float wContri = vec * w;
         Vector3DFloat inUVW = Vector3DFloat(uContri, vContri, wContri);
-        inUVW.Normalize();
+        inUVW.normalize();
         return inUVW;
     }
 
@@ -513,8 +513,8 @@ namespace GraySkeletonCPP {
         }
         res1 = axis ^ res1;
         res2 = axis ^ res1;
-        res1.Normalize();
-        res2.Normalize();
+        res1.normalize();
+        res2.normalize();
     }
 
     void VolumeSkeletonizer::GetEigenResult(EigenResults3D & returnVal, Vector3DFloat * imageGradient, ProbabilityDistribution3D & gaussianFilter, int x, int y, int z, int sizeX, int sizeY, int sizeZ, int gaussianFilterRadius, bool clear) {
@@ -574,7 +574,7 @@ namespace GraySkeletonCPP {
                 for(int z = -distributionInfo.radius; z <= distributionInfo.radius; z++) {
                     if((x!=0) && (y!=0) && (z!=0)) {
                         skeletonDirection = Vector3DFloat(0,0,0) - Vector3DFloat(x, y, z);
-                        skeletonDirection.Normalize();
+                        skeletonDirection.normalize();
                         cell = GetVoxelCost(eigen, skeletonDirection, PRUNING_CLASS_PRUNE_CURVES);
                         distributionInfo.values[x+distributionInfo.radius][y+distributionInfo.radius][z+distributionInfo.radius] = cell;
                         total += cell;
