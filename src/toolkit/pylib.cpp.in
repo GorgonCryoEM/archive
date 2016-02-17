@@ -330,9 +330,6 @@ BOOST_PYTHON_MODULE(@current_pylib@)
     ;
 
   class_<Vector3DFloat>("Vector3DFloat", init<float, float, float>())
-        .def("x", &Vector3DFloat::X)
-        .def("y", &Vector3DFloat::Y)
-        .def("z", &Vector3DFloat::Z)
         .def("length", &Vector3DFloat::length)
         .def("Transform", &Vector3DFloat::transform)
         .def("rotate", &Vector3DFloat::rotate)
