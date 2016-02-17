@@ -329,10 +329,13 @@ BOOST_PYTHON_MODULE(@current_pylib@)
 //        .def("setNextCAHash", &PDBAtom::SetNextCAHash)
     ;
 
+//  bool (Vector3DFloat::*X)() = &Vector3DFloat::X;
+  float& (Vector3DFloat::*X)() = &Vector3DFloat::X;
+
   class_<Vector3DFloat>("Vector3DFloat", init<float, float, float>())
-        .def("x", &Vector3DFloat::X)
-        .def("y", &Vector3DFloat::Y)
-        .def("z", &Vector3DFloat::Z)
+        .def("x", &Vector3DFloat::X, return_value_policy<reference_existing_object>())
+        .def("y", &Vector3DFloat::Y, return_value_policy<reference_existing_object>())
+        .def("z", &Vector3DFloat::Z, return_value_policy<reference_existing_object>())
         .def("length", &Vector3DFloat::length)
         .def("Transform", &Vector3DFloat::transform)
         .def("rotate", &Vector3DFloat::rotate)
