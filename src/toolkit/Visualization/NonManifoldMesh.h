@@ -632,8 +632,8 @@ namespace Protein_Morph {
         }
         for(unsigned int i = 0; i < vertices.size(); i++) {
             for(unsigned int j = 0; j < 3; j++) {
-                minPos[j] = min(minPos[j], (double)vertices[i].position.values[j]);
-                maxPos[j] = max(maxPos[j], (double)vertices[i].position.values[j]);
+                minPos[j] = min(minPos[j], (double)vertices[i].position[j]);
+                maxPos[j] = max(maxPos[j], (double)vertices[i].position[j]);
             }
         }
 
@@ -655,7 +655,7 @@ namespace Protein_Morph {
             vector<Vector3DInt> positions = Rasterizer::ScanConvertLineC8(v1.position.XInt(), v1.position.YInt(), v1.position.ZInt(), v2.position.XInt(), v2.position.YInt(), v2.position.ZInt());
             for(unsigned int j = 0; j < positions.size(); j++) {
                 for(unsigned int k = 0; k < 3; k++) {
-                    pos[k] = positions[j].values[k] - minPosInt[k];
+                    pos[k] = positions[j][k] - minPosInt[k];
                 }
                 vol->setDataAt(pos[0], pos[1], pos[2], 1.0);
             }
