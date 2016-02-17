@@ -81,8 +81,8 @@ namespace GraphMatch {
 
 
         private:
-            T &x, &y, &z;
-            vector<T> vals;
+            T x, y, z;
+//            T values[3];
 
 //            friend ostream & operator<<(ostream & out, const Vector3D<T> & obj){
 //                return out
@@ -100,37 +100,24 @@ namespace GraphMatch {
 
     template <class T>
     Vector3<T>::Vector3()
-            : vals(3,T()),
-              x(vals[0]),
-              y(vals[1]),
-              z(vals[2])
+            : x(0), y(0), z(0)
     {}
 
     template <class T>
-    Vector3<T>::Vector3(const Vector3<T>& v)
-            : vals(v.vals),
-              x(vals[0]),
-              y(vals[1]),
-              z(vals[2])
+    Vector3<T>::Vector3(const Vector3& v)
+            : x(v[0]), y(v[1]), z(v[2])
     {}
 
     template <class T>
     Vector3<T>::Vector3(T _x, T _y, T _z)
-            : vals(3),
-              x(vals[0]),
-              y(vals[1]),
-              z(vals[2])
-    {
-       vals[0] = _x;
-       vals[1] = _y;
-       vals[2] = _z;
-    }
+            : x(_x), y(_y), z(_z)
+    {}
 
     template <class T>
     Vector3<T>& Vector3<T>::operator=(const Vector3<T>& a) {
-        x = a.x;
-        y = a.y;
-        z = a.z;
+        x = a[0];
+        y = a[1];
+        z = a[2];
         return *this;
     }
 
