@@ -109,7 +109,7 @@ namespace GraphMatch {
     {}
 
     template <class T>
-    Vector3::Vector3(double _x, double _y, double _z)
+    Vector3::Vector3(T _x, T _y, T _z)
             : x(_x), y(_y), z(_z)
     {}
 
@@ -122,12 +122,12 @@ namespace GraphMatch {
     }
 
     template <class T>
-    const double& Vector3::operator[](int n) const {
+    const T& Vector3::operator[](int n) const {
         return (&x)[n];
     }
 
     template <class T>
-    double& Vector3::operator[](int n) {
+    T& Vector3::operator[](int n) {
         return (&x)[n];
     }
 
@@ -149,7 +149,7 @@ namespace GraphMatch {
     }
 
     template <class T>
-    Vector3& Vector3::operator*=(double s) {
+    Vector3& Vector3::operator*=(T s) {
         x *= s;
         y *= s;
         z *= s;
@@ -177,19 +177,19 @@ namespace GraphMatch {
     }
 
     template <class T>
-    Vector3 Vector3::operator/(const double s) const {
+    Vector3 Vector3::operator/(const T s) const {
         assert(s > 0.0);
         return Vector3(x / s, y / s, z / s);
     }
 
     template <class T>
-    Vector3 Vector3::operator*(const double s) const {
+    Vector3 Vector3::operator*(const T s) const {
         return Vector3(x * s, y * s, z * s);
     }
 
     // Dot
     template <class T>
-    double Vector3::operator*(const Vector3 &v) const {
+    T Vector3::operator*(const Vector3 &v) const {
         return x * v.x + y * v.y + z * v.z;
     }
 
@@ -201,18 +201,18 @@ namespace GraphMatch {
     }
 
     template <class T>
-    double Vector3::length() const {
-        return (double)sqrt(x * x + y * y + z * z);
+    T Vector3::length() const {
+        return (T)sqrt(x * x + y * y + z * z);
     }
 
     template <class T>
-    double Vector3::lengthSquared() const {
+    T Vector3::lengthSquared() const {
         return x * x + y * y + z * z;
     }
 
     template <class T>
     void Vector3::normalize() {
-        double s = 1.0 / (double)sqrt(x * x + y * y + z * z);
+        T s = 1.0 / (T)sqrt(x * x + y * y + z * z);
         x *= s;
         y *= s;
         z *= s;
@@ -229,7 +229,7 @@ namespace GraphMatch {
     }
 
     template <class T>
-    bool Vector3::approxEqual(const Vector3 &v, double eps) const {
+    bool Vector3::approxEqual(const Vector3 &v, T eps) const {
         return isZero(x - v.x, eps) && isZero(y - v.y, eps)
                && isZero(z - v.z, eps);
     }
@@ -241,12 +241,12 @@ namespace GraphMatch {
 
 
     template <class T>
-    inline Vector3 operator*(const double s, const Vector3 &v) {
+    inline Vector3 operator*(const T s, const Vector3 &v) {
         return Vector3(v[0] * s, v[1] * s, v[2] * s);
     }
 
     template <class T>
-    inline double dot(const Vector3 &w, const Vector3 &v) {
+    inline T dot(const Vector3 &w, const Vector3 &v) {
         return w * v;
     }
 
@@ -256,13 +256,13 @@ namespace GraphMatch {
     }
 
     template <class T>
-    inline double length(const Vector3 &v) {
+    inline T length(const Vector3 &v) {
         return v.length();
     }
 
     template <class T>
     inline Vector3 unit(const Vector3 &v) {
-        const double len = v.length();
+        const T len = v.length();
         return v / len;
     }
 
