@@ -29,6 +29,7 @@
 #include "MathTools/Vector3.h"
 #include "Octree.h"
 //#include <queue>
+#include <Readers/reader.h>
 
 using namespace std;
 
@@ -575,7 +576,7 @@ namespace Visualization {
         if(dataVolume != NULL) {
             delete dataVolume;
         }
-        dataVolume = VolumeFormatConverter::LoadVolume(fileName);
+        dataVolume = *MRCReaderPicker::pick(fileName.c_str())->getVolume();
         InitializeOctree();
         UpdateBoundingBox();
 
