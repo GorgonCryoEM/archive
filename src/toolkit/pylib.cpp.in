@@ -9,9 +9,11 @@
 #include "ProteinMorph/SSEEngine.h"
 #include "GraphMatch/PDBBond.h"
 #include "Readers/SEQReader.h"
+#include "Visualization/VolumeRenderer.h"
 
 using namespace SkeletonMaker;
 using namespace Protein_Morph;
+using namespace Visualization;
 
 using namespace boost::python;
 
