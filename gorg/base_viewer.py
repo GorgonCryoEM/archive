@@ -1,5 +1,5 @@
 from PyQt4 import QtGui, QtCore, QtOpenGL
-from libpygorgon import VolumeRenderer
+from libpytoolkit import VolumeRenderer
 from libs.vector import *
 
 from OpenGL.GL import *
@@ -11,8 +11,8 @@ class BaseViewer(QtOpenGL.QGLWidget):
     DisplayStyleWireframe, DisplayStyleFlat, DisplayStyleSmooth = range(3)
     
     def __init__(self, main, parent=None):
-        QtOpenGL.QGLWidget.__init__(self, parent)        
-        self.app = main      
+        QtOpenGL.QGLWidget.__init__(self, parent)
+        self.app = main
         self.title = "Untitled"
         self.shortTitle = "UNT"
         self.fileName = "";
@@ -28,14 +28,13 @@ class BaseViewer(QtOpenGL.QGLWidget):
         self.model2Visible = False
         self.model3Visible = False
         self.rotation = self.identityMatrix()
-        self.connect(self, QtCore.SIGNAL("modelChanged()"), self.modelChanged) 
-        self.connect(self, QtCore.SIGNAL("modelLoaded()"), self.modelChanged) 
-        self.connect(self, QtCore.SIGNAL("modelUnloaded()"), self.modelChanged) 
+        self.connect(self, QtCore.SIGNAL("modelChanged()"), self.modelChanged)
+        self.connect(self, QtCore.SIGNAL("modelLoaded()"), self.modelChanged)
+        self.connect(self, QtCore.SIGNAL("modelUnloaded()"), self.modelChanged)
 
         self.glLists = []
         self.showBox = False
         self.twoWayLighting = False
-        
         
         self.multipleSelection = False
         
@@ -43,7 +42,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
         self.visualizationOptions = visualizationForm
     
     def identityMatrix(self):
-        return [[1.0, 0.0, 0.0, 0.0],[0.0, 1.0, 0.0, 0.0], [0.0, 0.0, 1.0, 0.0], [0.0, 0.0, 0.0, 1.0]] 
+        return [[1.0, 0.0, 0.0, 0.0],[0.0, 1.0, 0.0, 0.0], [0.0, 0.0, 1.0, 0.0], [0.0, 0.0, 0.0, 1.0]]
     
     def setScale(self, scaleX, scaleY, scaleZ):
         self.setScaleNoEmit(scaleX, scaleY, scaleZ)
@@ -55,7 +54,6 @@ class BaseViewer(QtOpenGL.QGLWidget):
 #         self.visualizationOptions.ui.doubleSpinBoxSizeY.setValue(scaleY)
 #         self.visualizationOptions.ui.doubleSpinBoxSizeZ.setValue(scaleZ)
         
-    
     def setLocation(self, locationX, locationY, locationZ):
         self.setLocationNoEmit(locationX, locationY, locationZ)
         self.app.mainCamera.updateGL()
@@ -74,18 +72,18 @@ class BaseViewer(QtOpenGL.QGLWidget):
         
         glMultMatrixf(self.rotation)
         
-        self.rotation = glGetFloatv(GL_MODELVIEW_MATRIX)        
+        self.rotation = glGetFloatv(GL_MODELVIEW_MATRIX)
         glPopMatrix()
                         
     def objectToWorldCoordinates(self, objectCoords):
         #Need to apply rotations
-        origin = [self.renderer.getOriginX(), self.renderer.getOriginY(), self.renderer.getOriginZ()]        
+        origin = [self.renderer.getOriginX(), self.renderer.getOriginY(), self.renderer.getOriginZ()]
         scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
 
         return [objectCoords[0] * scale[0] + origin[0],  objectCoords[1] * scale[1] + origin[1], objectCoords[2] * scale[2] + origin[2]]
     
     def worldToObjectCoordinates(self, worldCoords):
-        origin = [self.renderer.getOriginX(), self.renderer.getOriginY(), self.renderer.getOriginZ()]        
+        origin = [self.renderer.getOriginX(), self.renderer.getOriginY(), self.renderer.getOriginZ()]
         scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
         
         return [(worldCoords[0] - origin[0]) / scale[0], (worldCoords[1] - origin[1]) / scale[1], (worldCoords[2] - origin[2]) / scale[2]]
@@ -96,7 +94,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
         return [objectCoords[0] * scale[0],  objectCoords[1] * scale[1], objectCoords[2] * scale[2]]
     
     def worldVectorToObjectCoordinates(self, worldCoords):
-        scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]       
+        scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
         return [worldCoords[0] / scale[0], worldCoords[1] / scale[1], worldCoords[2] / scale[2]]
         
     def objectToWorldCoordinatesVector(self, objectCoords):
@@ -105,11 +103,11 @@ class BaseViewer(QtOpenGL.QGLWidget):
     
     def worldToObjectCoordinatesVector(self, worldCoords):
         coords = self.worldToObjectCoordinates([worldCoords.x(), worldCoords.y(), worldCoords.z()])
-        return Vector3DFloat(coords[0], coords[1], coords[2])    
+        return Vector3DFloat(coords[0], coords[1], coords[2])
     
     def setBoundingBox(self, visible):
         self.showBox = visible
-        if(hasattr(self.app, "mainCamera")) :
+        if(hasattr(self.app, "mainCamera")):
             self.app.mainCamera.updateGL()
 
     def getBoundingBoxColor(self):
@@ -118,14 +116,13 @@ class BaseViewer(QtOpenGL.QGLWidget):
     def repaintCamera2(self, oldColor, newColor):
         if((oldColor.alpha() == 255 and newColor.alpha() != 255) or (oldColor.alpha() != 255 and newColor.alpha() == 255)):
             self.emitModelChanged()
-        else:        
+        else:
             self.repaintCamera()
                 
     def repaintCamera(self):
-        if(hasattr(self.app, "mainCamera")) :
+        if(hasattr(self.app, "mainCamera")):
             self.app.mainCamera.updateGL()
         
-
     def setDisplayStyle(self, style):
         self.displayStyle = style
         self.renderer.setDisplayStyle(style)
@@ -144,7 +141,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
         self.repaintCamera()
         
     def getModelColor(self):
-        return QtGui.QColor(180, 180, 180, 150)    
+        return QtGui.QColor(180, 180, 180, 150)
 
     def getModel2Color(self):
         return QtGui.QColor(180, 180, 180, 150)
@@ -156,14 +153,14 @@ class BaseViewer(QtOpenGL.QGLWidget):
         glColor4f(color.redF(), color.greenF(), color.blueF(), color.alphaF())
         diffuseMaterial = [color.redF(), color.greenF(), color.blueF(), color.alphaF()]
         ambientMaterial = [color.redF()*0.2, color.greenF()*0.2, color.blueF()*0.2, color.alphaF()]
-        specularMaterial = [1.0, 1.0, 1.0, 1.0]        
-        glMaterialfv(GL_BACK, GL_AMBIENT,   ambientMaterial) 
-        glMaterialfv(GL_BACK, GL_DIFFUSE,   diffuseMaterial) 
-        glMaterialfv(GL_BACK, GL_SPECULAR,  specularMaterial) 
+        specularMaterial = [1.0, 1.0, 1.0, 1.0]
+        glMaterialfv(GL_BACK, GL_AMBIENT,   ambientMaterial)
+        glMaterialfv(GL_BACK, GL_DIFFUSE,   diffuseMaterial)
+        glMaterialfv(GL_BACK, GL_SPECULAR,  specularMaterial)
         glMaterialf(GL_BACK, GL_SHININESS, 0.1)
-        glMaterialfv(GL_FRONT, GL_AMBIENT,   ambientMaterial) 
-        glMaterialfv(GL_FRONT, GL_DIFFUSE,   diffuseMaterial) 
-        glMaterialfv(GL_FRONT, GL_SPECULAR,  specularMaterial) 
+        glMaterialfv(GL_FRONT, GL_AMBIENT,   ambientMaterial)
+        glMaterialfv(GL_FRONT, GL_DIFFUSE,   diffuseMaterial)
+        glMaterialfv(GL_FRONT, GL_SPECULAR,  specularMaterial)
         glMaterialf(GL_FRONT, GL_SHININESS, 0.1)
 
     def setThickness(self, value):
@@ -172,7 +169,6 @@ class BaseViewer(QtOpenGL.QGLWidget):
         self.emitThicknessChanged(value)
         self.emitModelChanged()
         
-
     def setSelectEnabled(self, value):
         if(value != self.selectEnabled):
             self.selectEnabled = value
@@ -182,14 +178,14 @@ class BaseViewer(QtOpenGL.QGLWidget):
         if(value != self.mouseMoveEnabled):
             self.mouseMoveEnabled = value
             self.emitModelChanged()
-            self.emitMouseTrackingChanged()   
+            self.emitMouseTrackingChanged()
 
     def setMouseMoveEnabledRay(self, value):
         if(value != self.mouseMoveEnabledRay):
             self.mouseMoveEnabledRay = value
-            self.emitMouseTrackingChanged()                       
+            self.emitMouseTrackingChanged()
 
-    #Override this method to handle menu enabling / disabling when another viewer takes control of this one. 
+    #Override this method to handle menu enabling / disabling when another viewer takes control of this one.
     def updateViewerAutonomy(self, value):
         pass
 
@@ -200,36 +196,34 @@ class BaseViewer(QtOpenGL.QGLWidget):
     def getBoundingBox(self):
         scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
         location = [self.renderer.getOriginX(), self.renderer.getOriginY(), self.renderer.getOriginZ()]
-        minPos = [(self.renderer.getMin(0)*scale[0] + location[0]), 
-                  (self.renderer.getMin(1)*scale[1] + location[1]), 
+        minPos = [(self.renderer.getMin(0)*scale[0] + location[0]),
+                  (self.renderer.getMin(1)*scale[1] + location[1]),
                   (self.renderer.getMin(2)*scale[2] + location[2])]
         maxPos = [(self.renderer.getMax(0)*scale[0] + location[0]),
-                  (self.renderer.getMax(1)*scale[1] + location[1]), 
+                  (self.renderer.getMax(1)*scale[1] + location[1]),
                   (self.renderer.getMax(2)*scale[2] + location[2])]
-        return (minPos, maxPos)        
+        return (minPos, maxPos)
         
-        
-
     def getCenterAndDistance(self):
         scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
         location = [self.renderer.getOriginX(), self.renderer.getOriginY(), self.renderer.getOriginZ()]
-        minPos = [(self.renderer.getMin(0)*scale[0] + location[0]), 
-                  (self.renderer.getMin(1)*scale[1] + location[1]), 
+        minPos = [(self.renderer.getMin(0)*scale[0] + location[0]),
+                  (self.renderer.getMin(1)*scale[1] + location[1]),
                   (self.renderer.getMin(2)*scale[2] + location[2])]
         maxPos = [(self.renderer.getMax(0)*scale[0] + location[0]),
-                  (self.renderer.getMax(1)*scale[1] + location[1]), 
+                  (self.renderer.getMax(1)*scale[1] + location[1]),
                   (self.renderer.getMax(2)*scale[2] + location[2])]
         distance = vectorDistance(minPos, maxPos)
 
-        center = vectorScalarMultiply(0.5, vectorAdd(minPos, maxPos))        
+        center = vectorScalarMultiply(0.5, vectorAdd(minPos, maxPos))
 
         return (center, distance)
 
     def initializeGLDisplayType(self):
         glPushAttrib(GL_LIGHTING_BIT | GL_ENABLE_BIT)
-        if(self.isClosedMesh):            
+        if(self.isClosedMesh):
             glEnable(GL_CULL_FACE)
-        else:                        
+        else:
             glDisable(GL_CULL_FACE)
             
         if(self.twoWayLighting):
@@ -237,13 +231,11 @@ class BaseViewer(QtOpenGL.QGLWidget):
         else:
             glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
             
-                        
         #glDisable(GL_CULL_FACE)
         glEnable(GL_LIGHTING)
         
-        glEnable (GL_BLEND); 
+        glEnable (GL_BLEND);
         glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        
         
         if self.displayStyle == self.DisplayStyleWireframe:
             glPolygonMode(GL_FRONT, GL_LINE)
@@ -264,7 +256,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
             self.setDisplayType()
     
     def unInitializeGLDisplayType(self):
-        glPopAttrib()    
+        glPopAttrib()
 
     def draw(self):
         glPushMatrix()
@@ -272,17 +264,17 @@ class BaseViewer(QtOpenGL.QGLWidget):
         glTranslated(location[0], location[1], location[2])
         glMultMatrixf(self.rotation)
         scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
-        glScaled(scale[0], scale[1], scale[2])   
+        glScaled(scale[0], scale[1], scale[2])
                 
         glPushAttrib(GL_DEPTH_BUFFER_BIT | GL_LIGHTING_BIT | GL_ENABLE_BIT | GL_COLOR_BUFFER_BIT)
-        glEnable(GL_DEPTH_TEST);        
+        glEnable(GL_DEPTH_TEST);
         glDepthMask(GL_TRUE);
         
-        if(self.loaded and self.showBox):            
-            self.setMaterials(self.getBoundingBoxColor())       
-            self.renderer.drawBoundingBox()             
+        if(self.loaded and self.showBox):
+            self.setMaterials(self.getBoundingBoxColor())
+            self.renderer.drawBoundingBox()
         
-        self.emitDrawingModel()                
+        self.emitDrawingModel()
         
         visibility = self.getDrawVisibility()
         colors = self.getDrawColors()
@@ -290,24 +282,23 @@ class BaseViewer(QtOpenGL.QGLWidget):
         for i in range(len(self.glLists)):
             if(self.loaded and visibility[i]):
                 self.setMaterials(colors[i])
-                self.initializeGLDisplayType()            
+                self.initializeGLDisplayType()
                 glCallList(self.glLists[i])
                 self.unInitializeGLDisplayType();
 
         glPopAttrib()
         glPopMatrix()
         
-            
     def loadDataFromFile(self, fileName):
         self.setCursor(QtCore.Qt.WaitCursor)
-        try:            
+        try:
             self.renderer.loadFile(str(fileName))
-            self.setScaleNoEmit(self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ())       
+            self.setScaleNoEmit(self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ())
             self.loaded = True
             self.dirty = False
             self.emitModelLoadedPreDraw()
-            self.emitModelLoaded()            
-            self.emitViewerSetCenter()      
+            self.emitModelLoaded()
+            self.emitViewerSetCenter()
         except:
             QtGui.QMessageBox.critical(self, "Unable to load data file", "The file might be corrupt, or the format may not be supported.", "Ok")
 
@@ -315,15 +306,14 @@ class BaseViewer(QtOpenGL.QGLWidget):
         
         self.setCursor(QtCore.Qt.ArrowCursor)
         
-          
     def loadData(self):
         self.fileName = QtGui.QFileDialog.getOpenFileName(self, self.tr("Open Data"), "", self.tr(self.renderer.getSupportedLoadFileFormats()))
-        if not self.fileName.isEmpty():  
+        if not self.fileName.isEmpty():
             self.loadDataFromFile(self.fileName)
             
     def saveData(self):
         self.fileName = QtGui.QFileDialog.getSaveFileName(self, self.tr("Save Data"), "", self.tr(self.renderer.getSupportedSaveFileFormats()))
-        if not self.fileName.isEmpty():  
+        if not self.fileName.isEmpty():
             self.setCursor(QtCore.Qt.WaitCursor)
             self.renderer.saveFile(str(self.fileName))
             self.dirty = False
@@ -348,7 +338,6 @@ class BaseViewer(QtOpenGL.QGLWidget):
     def getDrawVisibility(self):
         return [self.modelVisible, self.model2Visible, self.model3Visible]
         
-
     def modelChanged(self):
         self.updateActionsAndMenus()
         for list in self.glLists:
@@ -369,15 +358,15 @@ class BaseViewer(QtOpenGL.QGLWidget):
                 self.glLists.append(list)
 
                 if(colors[i].alpha() < 255):
-                    glDepthFunc(GL_LESS)        
+                    glDepthFunc(GL_LESS)
                     glColorMask(False, False, False, False)
                     self.renderer.draw(i, False)
                     glDepthFunc(GL_LEQUAL)
-                    glColorMask(True, True, True, True) 
+                    glColorMask(True, True, True, True)
                     self.renderer.draw(i, self.selectEnabled or self.mouseMoveEnabled)
                 else:
-                    self.renderer.draw(i, self.selectEnabled or self.mouseMoveEnabled)                    
-                glEndList()         
+                    self.renderer.draw(i, self.selectEnabled or self.mouseMoveEnabled)
+                glEndList()
                                     
         glPopAttrib()
 
@@ -385,34 +374,34 @@ class BaseViewer(QtOpenGL.QGLWidget):
 #        self.updateActionsAndMenus()
 #        if self.gllist != 0:
 #            glDeleteLists(self.gllist,1)
-#            
+#
 #        self.gllist = glGenLists(1)
 #        glNewList(self.gllist, GL_COMPILE)
 #        visibility = [self.modelVisible, self.model2Visible, self.model3Visible]
 #        colors = [self.getModelColor(),  self.getModel2Color(), self.getModel3Color()]
-#        
+#
 #        glPushAttrib(GL_LIGHTING_BIT | GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT)
-#                         
+#
 #        self.extraDrawingRoutines()
-#        
+#
 #        for i in range(3):
 #            if(self.loaded and visibility[i]):
 #                self.setMaterials(colors[i])
 #                if(colors[i].alpha() < 255):
-#                    glDepthFunc(GL_LESS)        
+#                    glDepthFunc(GL_LESS)
 #                    glColorMask(False, False, False, False)
 #                    self.renderer.draw(i, False)
 #                    glDepthFunc(GL_LEQUAL)
-#                    glColorMask(True, True, True, True) 
+#                    glColorMask(True, True, True, True)
 #                    self.renderer.draw(i, self.selectEnabled or self.mouseMoveEnabled)
 #                else:
-#                    self.renderer.draw(i, self.selectEnabled or self.mouseMoveEnabled)                    
-#                            
-#        
+#                    self.renderer.draw(i, self.selectEnabled or self.mouseMoveEnabled)
+#
+#
 #
 #        glPopAttrib()
 #
-#        glEndList() 
+#        glEndList()
         
     def getClickCoordinates(self, hitStack):
         hits = [-1,-1,-1,-1,-1]
@@ -421,7 +410,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
                 hits[i] = int(hitStack[i+1]) #int conversion helpful for 64 bit systems
 
         if len(hitStack) == 0:
-            hitStack.append(-1)            
+            hitStack.append(-1)
         
         if(len(hitStack) <= 6):
             coords = self.renderer.get3DCoordinates(int(hitStack[0]), hits[0], hits[1], hits[2], hits[3], hits[4])
@@ -431,7 +420,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
         
     def clearSelection(self):
         if self.renderer.selectionClear():
-            self.emitModelChanged()           
+            self.emitModelChanged()
         
     def performElementSelection(self, hitStack):
         #Override this method to enable mouse selection functionality
@@ -451,14 +440,14 @@ class BaseViewer(QtOpenGL.QGLWidget):
                     hits[i] = int(hitStack[i+1]) #On a 64 bit system, some of these are type numpy.int32 rather than int
             self.performElementSelection(hitStack)
             if len(hitStack) == 0:
-                hitStack.append(-1)            
+                hitStack.append(-1)
             if(len(hitStack) <= 6):
                 #On a 64 bit system, hitStack[0] is of type numpy.int32 rather than int (which is 64 bit)
                 self.renderer.selectionToggle(int(hitStack[0]), forceTrue, hits[0], hits[1], hits[2], hits[3], hits[4])
             else:
                 raise Exception("Unable to call renderer.select method due as there are too many levels in the hit stack")
-            self.emitModelChanged() 
-            self.emitElementClicked(hitStack, event)           
+            self.emitModelChanged()
+            self.emitElementClicked(hitStack, event)
             self.emitElementSelected(hitStack, event)
 
     def processMouseClickRay(self, ray, rayWidth, eye, event):
@@ -466,7 +455,6 @@ class BaseViewer(QtOpenGL.QGLWidget):
 
     def processMouseMove(self, hitStack, event):
         self.emitElementMouseOver(hitStack, event)
-        
         
     def processMouseMoveRay(self, ray, rayWidth, eye, event):
         self.emitMouseOverRay(ray, rayWidth, eye, event)
@@ -488,24 +476,23 @@ class BaseViewer(QtOpenGL.QGLWidget):
         for i in range(6):
                 if(len(hitStack) > i):
                     hits[i] = hitStack[i]
-        self.emit(QtCore.SIGNAL("elementClicked (int, int, int, int, int, int, QMouseEvent)"), hits[0], hits[1], hits[2], hits[3], hits[4], hits[5], event)      
-
+        self.emit(QtCore.SIGNAL("elementClicked (int, int, int, int, int, int, QMouseEvent)"), hits[0], hits[1], hits[2], hits[3], hits[4], hits[5], event)
 
     def emitElementSelected(self, hitStack, event):
         hits = [-1,-1,-1,-1,-1,-1]
         for i in range(6):
                 if(len(hitStack) > i):
                     hits[i] = hitStack[i]
-        self.emit(QtCore.SIGNAL("elementSelected (int, int, int, int, int, int, QMouseEvent)"), hits[0], hits[1], hits[2], hits[3], hits[4], hits[5], event)      
+        self.emit(QtCore.SIGNAL("elementSelected (int, int, int, int, int, int, QMouseEvent)"), hits[0], hits[1], hits[2], hits[3], hits[4], hits[5], event)
         
     def emitMouseTrackingChanged(self):
         self.emit(QtCore.SIGNAL("mouseTrackingChanged ()"))
         
-    def emitElementMouseOver(self, hitStack, event):  
+    def emitElementMouseOver(self, hitStack, event):
         hits = [-1,-1,-1,-1,-1,-1]
         for i in range(6):
                 if(len(hitStack) > i):
-                    hits[i] = hitStack[i]        
+                    hits[i] = hitStack[i]
         self.emit(QtCore.SIGNAL("elementMouseOver (int, int, int, int, int, int, QMouseEvent)"), hits[0], hits[1], hits[2], hits[3], hits[4], hits[5], event)
 
     def emitModelLoadedPreDraw(self):

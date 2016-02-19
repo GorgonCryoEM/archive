@@ -83,6 +83,10 @@ BOOST_PYTHON_MODULE(@current_pylib@)
       .def("saveFile", &Volume::saveFile)
 
   ;
+  
+  class_<VolumeRenderer>("VolumeRenderer", init<>())
+          
+  ;
 
   class_<NonManifoldMesh, bases<Volume> >("NonManifoldMesh", init<>())
   ;
