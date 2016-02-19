@@ -105,7 +105,7 @@ namespace GraphMatch {
 
     template <class T>
     T* Vector3<T>::getValues() const {
-            T vals[3];
+            T * vals = new T[3];
             vals[0] = x;
             vals[1] = y;
             vals[2] = z;
