@@ -17,7 +17,7 @@
 //#include <GorgonGL.h>
 //#include <string>
 //#include <GraphMatch/VectorMath.h>
-//#include "Renderer1.h"
+#include "Renderer.h"
 //#include "GlobalConstants.h"
 //#include "MeshRenderer.h"
 //#include <SkeletonMaker/volume.h>
