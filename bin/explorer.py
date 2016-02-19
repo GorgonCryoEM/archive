@@ -40,11 +40,14 @@ if __name__ == '__main__':
 
     app = QtGui.QApplication(sys.argv)
 
-    window = GLWidget()
-    window.showNormal()
+#     window = GLWidget()
+#     window.showNormal()
+#     window.raise_()
+#     window.resize(800, 800)
+#     window.move(300,50)
+    
+    window.show()
     window.raise_()
-    window.resize(800, 800)
-    window.move(300,50)
     
     app.exec_()
 
