@@ -26,7 +26,7 @@
 //#include <GraySkeletonCPP/VolumeFormatConverter.h>
 //#include <ProteinMorph/NonManifoldMesh.h>
 #include "TriangleMesh.h"
-//#include <MathTools/Vector3D.h>
+#include "MathTools/Vector3.h"
 #include "Octree.h"
 //#include <queue>
 
@@ -34,7 +34,7 @@ using namespace std;
 
 //using namespace wustl_mm::GraySkeletonCPP;
 //using namespace wustl_mm::Protein_Morph;
-//using namespace wustl_mm::MathTools;
+using namespace MathTools;
 //using namespace wustl_mm::GraphMatch;
 //using namespace wustl_mm::SkeletonMaker;
 
