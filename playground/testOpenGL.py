@@ -4,7 +4,9 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
+
 class GLWidget(QtOpenGL.QGLWidget):
+
     def __init__(self):
         super(GLWidget, self).__init__()
         
@@ -16,12 +18,11 @@ class GLWidget(QtOpenGL.QGLWidget):
         glRotate(10,1,2,0)
         self.cubeColor = QtCore.Qt.yellow
         
-    def mouseDoubleClickEvent(self, e):        
+    def mouseDoubleClickEvent(self, e):
         self.cubeColor = QtGui.QColorDialog.getColor()
-        self.updateGL() 
+        self.updateGL()
 
-    
-    def paintGL(self):    
+    def paintGL(self):
         glRotate(5,1,2,0)
         self.draw()
         
@@ -29,7 +30,6 @@ class GLWidget(QtOpenGL.QGLWidget):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glClearColor(0,0,0,1)
         
-
         self.drawRef()
         self.drawWireCube(.8) # Bounding Box
         
@@ -125,7 +125,6 @@ class GLWidget(QtOpenGL.QGLWidget):
         self.qglColor(self.cubeColor)
 #         QColor(Qt.RED)
 
-        
         glVertex(-L,-L, z)
         glVertex(+L,-L, z)
         glVertex(+L,+L, z)
