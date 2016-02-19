@@ -10,7 +10,7 @@ import sys
 import argparse
 
 from libpytoolkit import *
-from gorg import *
+import gorg
 
 
 class GLWidget(QtOpenGL.QGLWidget):
@@ -46,6 +46,9 @@ def main():
     window.raise_()
     window.resize(800, 800)
     window.move(300,50)
+    
+    gorg.window.show()
+    gorg.window.raise_()
     
     sys.exit(app.exec_())
 
