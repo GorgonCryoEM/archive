@@ -32,7 +32,7 @@ class GLWidget(QtOpenGL.QGLWidget):
         glViewport(0,0,w,h)
         
 
-if __name__ == '__main__':
+def main():
     parser = argparse.ArgumentParser(description='Gorgon Explorer')
     
     parser.add_argument('volume', action="store")
@@ -52,3 +52,6 @@ if __name__ == '__main__':
     app.exec_()
 
     print args.volume
+
+if __name__ == '__main__':
+    main()
