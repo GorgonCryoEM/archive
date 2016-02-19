@@ -25,7 +25,7 @@
 //#include <GraySkeletonCPP/VolumeSkeletonizer.h>
 //#include <GraySkeletonCPP/VolumeFormatConverter.h>
 //#include <ProteinMorph/NonManifoldMesh.h>
-//#include <ProteinMorph/TriangleMesh.h>
+#include "TriangleMesh.h"
 //#include <MathTools/Vector3D.h>
 #include "Octree.h"
 //#include <queue>
