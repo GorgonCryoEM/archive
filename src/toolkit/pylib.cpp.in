@@ -85,8 +85,8 @@ BOOST_PYTHON_MODULE(@current_pylib@)
   ;
   
   class_<VolumeRenderer, bases<Volume> >("VolumeRenderer", init<>())
-      .def("getMin", &VolumeRenderer::getMin)
-      .def("getMax", &VolumeRenderer::getMax)
+      .def("getMin", &VolumeRenderer::GetMin)
+      .def("getMax", &VolumeRenderer::GetMax)
   ;
 
   class_<NonManifoldMesh, bases<Volume> >("NonManifoldMesh", init<>())
