@@ -49,7 +49,7 @@ def main():
     window.show()
     window.raise_()
     
-    app.exec_()
+    sys.exit(app.exec_())
 
     print args.volume
 
