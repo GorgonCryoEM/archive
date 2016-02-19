@@ -10,6 +10,7 @@ import sys
 import argparse
 
 from libpytoolkit import *
+import libpytoolkit as gtool
 import gorg
 
 
@@ -49,6 +50,9 @@ def main():
     
 #     gorg.window.show()
 #     gorg.window.raise_()
+    
+    vol = gtool.VolumeRenderer()
+    vol.loadFile(args.volume)
     
     sys.exit(app.exec_())
 
