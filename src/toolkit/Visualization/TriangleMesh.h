@@ -14,7 +14,7 @@
 //#include <string>
 //#include <Foundation/OpenGLUtils.h>
 //#include "TriangleMeshFace.h"
-//#include "TriangleMeshVertex.h"
+#include "TriangleMeshVertex.h"
 
 
 using namespace std;
