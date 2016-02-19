@@ -11,7 +11,7 @@
 
 
 //#include <vector>
-//#include <MathTools/Vector3D.h>
+#include <MathTools/Vector3.h>
 
 //using namespace std;
 //using namespace wustl_mm::MathTools;
@@ -57,7 +57,7 @@ namespace Foundation {
         OctreeNode<TTag> * GetRoot();
         vector<OctreeNode<TTag> *> GetCells();
         vector<OctreeNode<TTag> *> GetNeighbors(OctreeNode<TTag> * node);
-        vector<OctreeNode<TTag> *> IntersectRay(Vector3DFloat ray, Vector3DFloat origin, float rayWidth);
+        vector<OctreeNode<TTag> *> IntersectRay(Vector3Float ray, Vector3Float origin, float rayWidth);
         void AddNewLeaf(unsigned int xPos, unsigned int yPos, unsigned int zPos, unsigned int cellSize = 1, OctreeNode<TTag> * node = NULL);
         void PrintStructure(OctreeNode<TTag> * node = NULL, unsigned int level = 0);
     private:
@@ -68,10 +68,10 @@ namespace Foundation {
         void CleanNodeRecursively(OctreeNode<TTag> * &node);
         void SplitLeaf(OctreeNode<TTag> * node);
         unsigned int GetLargest2ndPower(unsigned int value);
-        vector<OctreeProjectionTestMinMaxStruct> GetMinMax1DProjectionValues(vector<Vector3DFloat> & testVectors, vector<Vector3DFloat> & points2D);
-        vector<OctreeProjectionTestMinMaxStruct> GetMinMax1DProjectionValues(vector<Vector3DFloat> & testVectors, vector< vector<float> > & points1D);
-        vector< vector<float> > GetCubeProjectionValues(vector<Vector3DFloat> & testVectors, vector<Vector3DFloat> & points2D);
-        void GetRayIntersectingLeafs(vector<OctreeNode<TTag> *> & intersectingCells, OctreeNode<TTag> * node, vector< vector<float> > & cubePoints1D, vector<Vector3DFloat> & testVectors, vector<OctreeProjectionTestMinMaxStruct> & minMaxRayPoints1D);
+        vector<OctreeProjectionTestMinMaxStruct> GetMinMax1DProjectionValues(vector<Vector3Float> & testVectors, vector<Vector3Float> & points2D);
+        vector<OctreeProjectionTestMinMaxStruct> GetMinMax1DProjectionValues(vector<Vector3Float> & testVectors, vector< vector<float> > & points1D);
+        vector< vector<float> > GetCubeProjectionValues(vector<Vector3Float> & testVectors, vector<Vector3Float> & points2D);
+        void GetRayIntersectingLeafs(vector<OctreeNode<TTag> *> & intersectingCells, OctreeNode<TTag> * node, vector< vector<float> > & cubePoints1D, vector<Vector3Float> & testVectors, vector<OctreeProjectionTestMinMaxStruct> & minMaxRayPoints1D);
 
     private:
         vector<OctreeNode<TTag> *> cells;
@@ -282,35 +282,35 @@ namespace Foundation {
     }
 
 
-    template <class TTag> vector<OctreeNode<TTag> *> Octree<TTag>::IntersectRay(Vector3DFloat ray, Vector3DFloat origin, float rayWidth) {
+    template <class TTag> vector<OctreeNode<TTag> *> Octree<TTag>::IntersectRay(Vector3Float ray, Vector3Float origin, float rayWidth) {
         ray.Normalize();
-        Vector3DFloat planeVec1 = ray.GetOrthogonal();
+        Vector3Float planeVec1 = ray.GetOrthogonal();
         planeVec1.Normalize();
-        Vector3DFloat planeVec2 = ray ^ planeVec1;
+        Vector3Float planeVec2 = ray ^ planeVec1;
         planeVec2.Normalize();
         //printf("Ray   : %f %f %f \n", ray.X(), ray.Y(), ray.Z());
         //printf("Origin: %f %f %f \n", origin.X(), origin.Y(), origin.Z());
         //flushall();
 
 
-        vector<Vector3DFloat> rayPoints2D;
-        Vector3DFloat rayPoint3D;
+        vector<Vector3Float> rayPoints2D;
+        Vector3Float rayPoint3D;
         for(int i = 0; i < 4; i ++) {
             rayPoint3D = origin + planeVec1 * rayWidth * ((float)octreeChildren[i][0] * 2.0f - 1.0f) + planeVec2 * rayWidth * ((float)octreeChildren[i][1] * 2.0f - 1.0f);
-            rayPoints2D.push_back(Vector3DFloat::Project3Dto2D(rayPoint3D, origin, planeVec1, planeVec2));
+            rayPoints2D.push_back(Vector3Float::Project3Dto2D(rayPoint3D, origin, planeVec1, planeVec2));
         }
 
-        vector<Vector3DFloat> cubePoints2D;
-        Vector3DFloat cubePoint3D;
+        vector<Vector3Float> cubePoints2D;
+        Vector3Float cubePoint3D;
 
         for(int i = 0; i < 8; i ++) {
-            cubePoint3D = Vector3DFloat(rootNode->pos[0] + octreeChildren[i][0] * rootNode->cellSize, rootNode->pos[1] + octreeChildren[i][1] * rootNode->cellSize, rootNode->pos[2] + octreeChildren[i][2] * rootNode->cellSize);
-            cubePoints2D.push_back(Vector3DFloat::Project3Dto2D(cubePoint3D, origin, planeVec1, planeVec2));
+            cubePoint3D = Vector3Float(rootNode->pos[0] + octreeChildren[i][0] * rootNode->cellSize, rootNode->pos[1] + octreeChildren[i][1] * rootNode->cellSize, rootNode->pos[2] + octreeChildren[i][2] * rootNode->cellSize);
+            cubePoints2D.push_back(Vector3Float::Project3Dto2D(cubePoint3D, origin, planeVec1, planeVec2));
         }
 
 
-        vector<Vector3DFloat> testVectors;
-        Vector3DFloat vec;
+        vector<Vector3Float> testVectors;
+        Vector3Float vec;
 
         for(int i = 0; i < 2; i ++) {
             vec = rayPoints2D[octreeCellTestVectors[i][0]] - rayPoints2D[octreeCellTestVectors[i][1]];
@@ -327,7 +327,7 @@ namespace Foundation {
 
         for(unsigned int i = 0; i < testVectors.size(); i++) {
             testVectors[i].Normalize();
-            testVectors[i] = Vector3DFloat(-testVectors[i].Y(), testVectors[i].X(), 0); // Rotate by 90 in 2D
+            testVectors[i] = Vector3Float(-testVectors[i].Y(), testVectors[i].X(), 0); // Rotate by 90 in 2D
         }
 
 
@@ -405,7 +405,7 @@ namespace Foundation {
         return pow;
     }
 
-    template <class TTag> vector<OctreeProjectionTestMinMaxStruct> Octree<TTag>::GetMinMax1DProjectionValues(vector<Vector3DFloat> & testVectors, vector<Vector3DFloat> & points2D) {
+    template <class TTag> vector<OctreeProjectionTestMinMaxStruct> Octree<TTag>::GetMinMax1DProjectionValues(vector<Vector3Float> & testVectors, vector<Vector3Float> & points2D) {
         vector<OctreeProjectionTestMinMaxStruct> retVal;
         OctreeProjectionTestMinMaxStruct minMaxVals;
         float val;
@@ -423,7 +423,7 @@ namespace Foundation {
         return retVal;
     }
 
-    template <class TTag> vector<OctreeProjectionTestMinMaxStruct> Octree<TTag>::GetMinMax1DProjectionValues(vector<Vector3DFloat> & testVectors, vector< vector<float> > & points1D) {
+    template <class TTag> vector<OctreeProjectionTestMinMaxStruct> Octree<TTag>::GetMinMax1DProjectionValues(vector<Vector3Float> & testVectors, vector< vector<float> > & points1D) {
         vector<OctreeProjectionTestMinMaxStruct> retVal;
         OctreeProjectionTestMinMaxStruct minMaxVals;
 
@@ -439,7 +439,7 @@ namespace Foundation {
         return retVal;
     }
 
-    template <class TTag> vector< vector<float> > Octree<TTag>::GetCubeProjectionValues(vector<Vector3DFloat> & testVectors, vector<Vector3DFloat> & points2D) {
+    template <class TTag> vector< vector<float> > Octree<TTag>::GetCubeProjectionValues(vector<Vector3Float> & testVectors, vector<Vector3Float> & points2D) {
         vector< vector<float> > retVal;
         vector<float> values;
 
@@ -453,7 +453,7 @@ namespace Foundation {
         return retVal;
     }
 
-    template <class TTag> void Octree<TTag>::GetRayIntersectingLeafs(vector<OctreeNode<TTag> *> & intersectingCells, OctreeNode<TTag> * node, vector< vector<float> > & cubePoints1D, vector<Vector3DFloat> & testVectors, vector<OctreeProjectionTestMinMaxStruct> & minMaxRayPoints1D) {
+    template <class TTag> void Octree<TTag>::GetRayIntersectingLeafs(vector<OctreeNode<TTag> *> & intersectingCells, OctreeNode<TTag> * node, vector< vector<float> > & cubePoints1D, vector<Vector3Float> & testVectors, vector<OctreeProjectionTestMinMaxStruct> & minMaxRayPoints1D) {
         vector<OctreeProjectionTestMinMaxStruct> minMaxCubePoints1D = GetMinMax1DProjectionValues(testVectors, cubePoints1D);
         bool intersecting = true;
 
