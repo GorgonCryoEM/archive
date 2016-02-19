@@ -27,7 +27,7 @@
 //#include <ProteinMorph/NonManifoldMesh.h>
 //#include <ProteinMorph/TriangleMesh.h>
 //#include <MathTools/Vector3D.h>
-//#include <Foundation/Octree.h>
+#include "Octree.h"
 //#include <queue>
 
 using namespace std;
