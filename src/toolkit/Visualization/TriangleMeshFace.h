@@ -1,22 +1,22 @@
-// Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
-// Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
-// Description:   A class for a face stored in a triangle mesh
+/*
+ * TriangleMeshFace.h
+ *
+ * Author: shadow_walker <shadowwalkersb@gmail.com>
+ *
+ */
 
 
-
-#ifndef PROTEINMORPH_TRIANGLE_MESH_FACE_H
-#define PROTEINMORPH_TRIANGLE_MESH_FACE_H
+#ifndef SRC_TOOLKIT_VISUALIZATION_TRIANGLEMESHFACE_H_
+#define SRC_TOOLKIT_VISUALIZATION_TRIANGLEMESHFACE_H_
 
 using namespace std;
 
-namespace wustl_mm {
-	namespace Protein_Morph {
-		template <class TFace> class TriangleMeshFace {
-		public:
-			unsigned long long vertexHashes[3];
-			TFace tag;
-		};
-	}
+namespace Protein_Morph {
+    template <class TFace> class TriangleMeshFace {
+    public:
+        unsigned long long vertexHashes[3];
+        TFace tag;
+    };
 }
 
-#endif
+#endif /* SRC_TOOLKIT_VISUALIZATION_TRIANGLEMESHFACE_H_ */
