@@ -12,7 +12,7 @@
 //#include <map>
 //#include <vector>
 //#include <string>
-//#include <Foundation/OpenGLUtils.h>
+#include "OpenGLUtils.h"
 #include "TriangleMeshFace.h"
 #include "TriangleMeshVertex.h"
 
