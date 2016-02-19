@@ -9,13 +9,13 @@
 
 //#include <string>
 //#include <GorgonGL.h>
-//#include <Foundation/OpenGLUtils.h>
+#include "OpenGLUtils.h"
 //#include <MathTools/Vector3D.h>
 //#include <MathTools/MathLib.h>
 
 //using namespace std;
 //using namespace wustl_mm::MathTools;
-//using namespace wustl_mm::Foundation;
+using namespace Foundation;
 
 namespace Visualization {
     class Renderer {
