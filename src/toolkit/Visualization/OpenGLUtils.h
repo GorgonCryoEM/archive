@@ -10,7 +10,7 @@
 #define SRC_TOOLKIT_VISUALIZATION_OPENGLUTILS_H_
 
 
-#include <GorgonGL.h>
+#include "GorgonGL.h"
 using namespace std;
 
 namespace Foundation {
