@@ -948,15 +948,6 @@ namespace GraySkeletonCPP {
         }
 
         return surfaceFound && ((doDependantChecks && !IsSurfaceBorder(sourceVolume, x, y, z)) || (!doDependantChecks));
-
-
-        //if(doDependantChecks &&
-        //	(IsPoint(sourceVolume, x, y, z) || IsCurveEnd(sourceVolume, x, y, z) ||
-        //	IsCurveBody(sourceVolume, x, y, z) || IsSurfaceBorder(sourceVolume, x, y, z) ||
-        //	IsVolumeBody(sourceVolume, x, y, z) || IsVolumeBorder(sourceVolume, x, y, z, false))) {
-        //	return false;
-        //}
-        //return true;
     }
 
 
