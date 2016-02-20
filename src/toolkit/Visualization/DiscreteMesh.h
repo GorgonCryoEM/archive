@@ -950,18 +950,23 @@ namespace GraySkeletonCPP {
         return surfaceFound && ((doDependantChecks && !IsSurfaceBorder(sourceVolume, x, y, z)) || (!doDependantChecks));
     }
 
-
-    bool DiscreteMesh::IsVolumeBorder(Volume * sourceVolume, int x, int y, int z, bool doDependantChecks) {
-        if(doDependantChecks && IsVolumeBody(sourceVolume, x, y, z)) {
+    bool DiscreteMesh::IsVolumeBorder(Volume * sourceVolume, int x, int y,
+                                      int z, bool doDependantChecks)
+    {
+        if(doDependantChecks && IsVolumeBody(sourceVolume, x, y, z))
             return false;
-        }
 
         bool isBorder = false;
         bool allInCube;
         for(int cube = 0; cube < 8; cube++) {
             allInCube = true;
             for(int p = 0; p < 7; p++) {
-                allInCube = allInCube && (sourceVolume->getDataAt(x + VOLUME_NEIGHBOR_CUBES[cube][p][0], y + VOLUME_NEIGHBOR_CUBES[cube][p][1], z + VOLUME_NEIGHBOR_CUBES[cube][p][2]) > 0);
+                allInCube = allInCube
+                        && (sourceVolume->getDataAt(
+                                    x + VOLUME_NEIGHBOR_CUBES[cube][p][0],
+                                    y + VOLUME_NEIGHBOR_CUBES[cube][p][1],
+                                    z + VOLUME_NEIGHBOR_CUBES[cube][p][2])
+                            > 0);
             }
             isBorder = isBorder || allInCube;
         }
@@ -971,12 +976,14 @@ namespace GraySkeletonCPP {
         return (GetN26Count(sourceVolume, x, y, z) == 26);
     }
 
-
-
     bool DiscreteMesh::IsSimple(Volume * sourceVolume, int x, int y, int z) {
         return sourceVolume->isSimple(x, y, z) != 0;
     }
-    bool DiscreteMesh::IsValidSurface(Volume * sourceVolume, Vector3Double p0, Vector3Double p1, Vector3Double p2, Vector3Double p3) {
+
+    bool DiscreteMesh::IsValidSurface(Volume * sourceVolume, Vector3Double p0,
+                                      Vector3Double p1, Vector3Double p2,
+                                      Vector3Double p3)
+    {
         Vector3Double surface[4] = {p0, p1, p2, p3};
         Vector3Double pDelta = p2 - p0;
         Vector3Double upperVector, lowerVector;
@@ -995,9 +1002,15 @@ namespace GraySkeletonCPP {
         Vector3Double currentPos;
         for(int i = 0; i < 4; i++) {
             currentPos = surface[i] + upperVector;
-            allFound = allFound && (sourceVolume->getDataAt(currentPos.XInt(), currentPos.YInt(), currentPos.ZInt()) > 0);
+            allFound = allFound
+                    && (sourceVolume->getDataAt(currentPos.XInt(),
+                                currentPos.YInt(), currentPos.ZInt())
+                        > 0);
             currentPos = surface[i] + lowerVector;
-            allFound = allFound && (sourceVolume->getDataAt(currentPos.XInt(), currentPos.YInt(), currentPos.ZInt()) > 0);
+            allFound = allFound
+                    && (sourceVolume->getDataAt(currentPos.XInt(),
+                                currentPos.YInt(), currentPos.ZInt())
+                        > 0);
         }
         return !allFound;
     }
