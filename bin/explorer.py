@@ -51,6 +51,7 @@ def main():
     
     gorg.window.show()
     gorg.window.raise_()
+    gorg.window.volumeViewer.loadDataFromFile(args.volume)
     
 #     vol = VolumeViewer(app)
 #     vol.loadFile(args.volume)
