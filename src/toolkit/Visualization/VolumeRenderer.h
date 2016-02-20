@@ -258,7 +258,7 @@ namespace Visualization {
         return redraw;
     }
     void VolumeRenderer::DownsampleVolume() {
-        Volume * sourceVol = volData;
+        Volume * sourceVol = GetVolume();
         Volume * destVol = new Volume(sourceVol->getSizeX()/2, sourceVol->getSizeY()/2, sourceVol->getSizeZ()/2);
         double val;
 
@@ -418,7 +418,7 @@ namespace Visualization {
                 if((int)node->cellSize <= sampleInterval + sampleInterval) {
                     for(int i = 0; i < 8; i++) {
                         if(node->children[i] != NULL) {
-                            MarchingCube(volData, surfaceMesh, surfaceValue, node->children[i]->pos[0], node->children[i]->pos[1], node->children[i]->pos[2], sampleInterval);
+                            MarchingCube(GetVolume(), surfaceMesh, surfaceValue, node->children[i]->pos[0], node->children[i]->pos[1], node->children[i]->pos[2], sampleInterval);
                         }
                     }
                 } else {
@@ -450,7 +450,7 @@ namespace Visualization {
                 for(iX = 0; iX < maxX; iX+=sampleInterval) {
                     for(iY = 0; iY < maxY; iY+=sampleInterval) {
                         for(iZ = 0; iZ < maxZ; iZ+=sampleInterval) {
-                            MarchingCube(volData, surfaceMesh, surfaceValue, iX, iY, iZ, sampleInterval);
+                            MarchingCube(GetVolume(), surfaceMesh, surfaceValue, iX, iY, iZ, sampleInterval);
                         }
                     }
                 }
@@ -932,7 +932,7 @@ namespace Visualization {
 
     Volume * VolumeRenderer::PerformBinarySkeletonizationJu2007(double threshold, int minCurveSize, int minSurfaceSize) {
         VolumeSkeletonizer * skeletonizer = new VolumeSkeletonizer(0,0,0,DEFAULT_SKELETON_DIRECTION_RADIUS);
-        Volume * outputVol = skeletonizer->PerformPureJuSkeletonization(volData, "", threshold, minCurveSize, minSurfaceSize);
+        Volume * outputVol = skeletonizer->PerformPureJuSkeletonization(GetVolume(), "", threshold, minCurveSize, minSurfaceSize);
         delete skeletonizer;
         return outputVol;
     }
@@ -941,7 +941,7 @@ namespace Visualization {
         double stepSize = (getMax() - startDensity) / stepCount;
         if(!isZero(stepSize)) {
             VolumeSkeletonizer * skeletonizer = new VolumeSkeletonizer(0, curveRadius, surfaceRadius, skeletonRadius);
-            Volume * outputVol = skeletonizer->PerformImmersionSkeletonizationAndPruning(volData, NULL, startDensity, getMax(), stepSize, 0, 0, minCurveSize, minSurfaceSize, 0, 0, "", true, 1.0, DEFAULT_PRUNE_THRESHOLD, DEFAULT_PRUNE_THRESHOLD);
+            Volume * outputVol = skeletonizer->PerformImmersionSkeletonizationAndPruning(GetVolume(), NULL, startDensity, getMax(), stepSize, 0, 0, minCurveSize, minSurfaceSize, 0, 0, "", true, 1.0, DEFAULT_PRUNE_THRESHOLD, DEFAULT_PRUNE_THRESHOLD);
             delete skeletonizer;
             return outputVol;
         } else {
@@ -950,7 +950,7 @@ namespace Visualization {
     }
 
     Volume * VolumeRenderer::GetVolume() {
-        return volData;
+        return dynamic_cast<Volume *>(this);
     }
 
 }
