@@ -32,6 +32,7 @@ namespace Protein_Morph {
         vector<unsigned int> faceIds;
         string tag;
     };
+
     ostream& operator<<(ostream& out, const NonManifoldMeshEdge& obj){
         return out<<"\033[34m"
                   <<"faceIds.size(): "<<obj.faceIds.size()
@@ -44,6 +45,7 @@ namespace Protein_Morph {
         vector<unsigned int> vertexIds;
         string tag;
     };
+
     ostream& operator<<(ostream& out, const NonManifoldMeshFace& obj){
             return out<<"\033[34m"
                       <<"edgeIds.size(): "<<obj.edgeIds.size()
@@ -57,6 +59,7 @@ namespace Protein_Morph {
         vector<unsigned int> edgeIds;
         bool tag;
     };
+
     ostream& operator<<(ostream& out, const NonManifoldMeshVertex& obj){
             return out<<"\033[34m"
                       <<"edgeIds.size(): "<<obj.edgeIds.size()
@@ -64,11 +67,9 @@ namespace Protein_Morph {
                       <<"\033[0m";
     }
 
-
     typedef vector<NonManifoldMeshVertex > TV;
     typedef vector<NonManifoldMeshEdge >   TE;
     typedef vector<NonManifoldMeshFace >   TF;
-
 
     #ifdef _WIN32
         typedef hash_map<int, int> HashMapType;
@@ -90,33 +91,39 @@ namespace Protein_Morph {
         int GetVertexIndex(int vertexId);
         int GetFaceIndex(int faceId);
         int GetEdgeIndex(int edgeId);
-        int GetEdgeIndex(int vertexId1, int vertexId2);
-        int GetClosestVertexIndex(Vector3Float pos);
-        void AddEdge(int vertexId1, int vertexId2, string tag = "");
-        void AddQuad(int vertexId1, int vertexId2, int vertexId3, int vertexId4, string newEdgeTag = "", string faceTag = "");
-        void AddTriangle(int vertexId1, int vertexId2, int vertexId3, string newEdgeTag = "", string faceTag = "");
-        void MarkFixedVertices();
-        void MergeMesh(NonManifoldMesh * srcMesh);
-        void RemoveFace(int faceId);
-        void RemoveEdge(int edgeId);
-        void RemoveVertex(int vertexId);
-        void RemoveNullEntries();
-        void ToOffCells(string fileName);
-        void ToMathematicaFile(string fileName);
-        void setScale(float x, float y, float z);
-        void setScale(Dim3D<float> val);
-        void TranslateVertex(int vertexIx, Vector3Float translateVector);
-        vector<unsigned int> GetPath(unsigned int edge0Ix, unsigned int edge1Ix);
-        vector<unsigned int> GetNeighboringVertexIndices(unsigned int vertexIx);
-        vector<Vector3Float> SampleTriangle(int faceId, double discretizationStep);
-        Volume * ToVolume();
-        Vector3Float GetVertexNormal(int vertexId);
-        Vector3Float GetFaceNormal(int faceId);
-        NonManifoldMesh SmoothLaplacian(double converganceRate);
-        NonManifoldMesh SmoothLaplacian(double converganceRate, int iterations);
-        static NonManifoldMesh * LoadOffFile(string fileName);
-        void Clear();
-
+            int GetEdgeIndex(int vertexId1, int vertexId2);
+            int GetClosestVertexIndex(Vector3Float pos);
+            void AddEdge(int vertexId1, int vertexId2, string tag = "");
+            void AddQuad(int vertexId1, int vertexId2, int vertexId3,
+                         int vertexId4, string newEdgeTag = "", string faceTag =
+                                 "");
+            void AddTriangle(int vertexId1, int vertexId2, int vertexId3,
+                             string newEdgeTag = "", string faceTag = "");
+            void MarkFixedVertices();
+            void MergeMesh(NonManifoldMesh * srcMesh);
+            void RemoveFace(int faceId);
+            void RemoveEdge(int edgeId);
+            void RemoveVertex(int vertexId);
+            void RemoveNullEntries();
+            void ToOffCells(string fileName);
+            void ToMathematicaFile(string fileName);
+            void setScale(float x, float y, float z);
+            void setScale(Dim3D<float> val);
+            void TranslateVertex(int vertexIx, Vector3Float translateVector);
+            vector<unsigned int> GetPath(unsigned int edge0Ix,
+                                         unsigned int edge1Ix);
+            vector<unsigned int> GetNeighboringVertexIndices(
+                    unsigned int vertexIx);
+            vector<Vector3Float> SampleTriangle(int faceId,
+                                                double discretizationStep);
+            Volume * ToVolume();
+            Vector3Float GetVertexNormal(int vertexId);
+            Vector3Float GetFaceNormal(int faceId);
+            NonManifoldMesh SmoothLaplacian(double converganceRate);
+            NonManifoldMesh SmoothLaplacian(double converganceRate,
+                                            int iterations);
+            static NonManifoldMesh * LoadOffFile(string fileName);
+            void Clear();
 
     public:
         Dim3D<float> scale;
@@ -528,7 +535,6 @@ namespace Protein_Morph {
         }
     }
 
-
     void NonManifoldMesh::ToOffCells(string fileName) {
         RemoveNullEntries();
         ofstream outFile(fileName.c_str());
@@ -566,7 +572,6 @@ namespace Protein_Morph {
         }
         outFile.close();
     }
-
 
     void NonManifoldMesh::ToMathematicaFile(string fileName) {
         RemoveNullEntries();
@@ -624,11 +629,10 @@ namespace Protein_Morph {
             }
         }
         outF<<"}\n";
-
         outF<<"}";
-
         outF.close();
     }
+
     Volume * NonManifoldMesh::ToVolume() {
         double minPos[3] = {MAX_DOUBLE,MAX_DOUBLE,MAX_DOUBLE};
         double maxPos[3] = {MIN_DOUBLE, MIN_DOUBLE, MIN_DOUBLE};
@@ -675,7 +679,6 @@ namespace Protein_Morph {
         return vol;
     }
 
-
     Vector3Float NonManifoldMesh::GetVertexNormal(int vertexId) {
         int index = GetVertexIndex(vertexId);
         int edgeIndex;
@@ -703,6 +706,7 @@ namespace Protein_Morph {
         }
         return normal;
     }
+
     NonManifoldMesh NonManifoldMesh::SmoothLaplacian(double converganceRate) {
         NonManifoldMesh smoothedMesh = NonManifoldMesh(this);
         int i, j, vertexIndex;
@@ -732,7 +736,6 @@ namespace Protein_Morph {
         return smoothedMesh;
     }
 
-
     NonManifoldMesh NonManifoldMesh::SmoothLaplacian(double converganceRate, int iterations) {
         NonManifoldMesh newMesh;
         NonManifoldMesh oldMesh = NonManifoldMesh(this);
@@ -743,6 +746,7 @@ namespace Protein_Morph {
 
         return oldMesh;
     }
+
     NonManifoldMesh * NonManifoldMesh::LoadOffFile(string fileName) {
         NonManifoldMesh * mesh = new NonManifoldMesh();
         ifstream inFile(fileName.c_str());
@@ -809,17 +813,10 @@ namespace Protein_Morph {
 
         //printf(" Vertices %d of %d loaded.  Faces %d of %d loaded", lVertices, nVertices, lFaces, nFaces);
 
-        //int v1, v2;
-        //for(int i=0; i < nEdges; i++) {
-        //	fscanf(inFile, "%d %d\n", &v1, &v2);
-        //	if(!mesh->IsEdgePresent(v1, v2)) {
-        //		mesh->AddEdge(v1, v2, false);
-        //	}
-        //}
-
         inFile.close();
         return mesh;
     }
+
     vector<unsigned int> NonManifoldMesh::GetPath(unsigned int edge0Ix, unsigned int edge1Ix) {
         vector<unsigned int> path;
         map<unsigned int,  unsigned int> source;
@@ -859,6 +856,7 @@ namespace Protein_Morph {
 
         return path;
     }
+
     vector<Vector3Float> NonManifoldMesh::SampleTriangle(int faceId, double discretizationStep) {
         int faceIndex = GetFaceIndex(faceId);
         NonManifoldMeshFace face = faces[faceIndex];
