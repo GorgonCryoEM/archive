@@ -111,7 +111,7 @@ namespace Visualization {
         int sampleInterval;
         int displayRadius;
         int viewingType;
-        Volume * cuttingVolume;
+        Volume cuttingVolume;
         Vector3Float radiusOrigin;
         bool useDisplayRadius;
 
@@ -124,7 +124,8 @@ namespace Visualization {
     };
 
     VolumeRenderer::VolumeRenderer()
-        : Renderer()
+        : Renderer(),
+        cuttingVolume(Volume(2, 2, 2))
     {
         textureLoaded = false;
         useDisplayRadius = false;
@@ -135,7 +136,6 @@ namespace Visualization {
         surfaceValue = 1.5;
         displayRadius = 1;
         sampleInterval = 1;
-        cuttingVolume = new Volume(2, 2, 2);
         cuttingMesh = new NonManifoldMesh();
         drawEnabled = false;
     }
@@ -153,7 +153,6 @@ namespace Visualization {
             delete octree;
         }
         delete cuttingMesh;
-        delete cuttingVolume;
     }
 
     float VolumeRenderer::GetMaxDensity(){
@@ -500,11 +499,11 @@ namespace Visualization {
                 for(iX = 0; iX < 2; iX++) {
                     for(iY = 0; iY < 2; iY++) {
                         for(iZ = 0; iZ < 2; iZ++) {
-                            cuttingVolume->setDataAt(iX, iY, iZ, (cuttingPlaneCenter - Vector3Float(iX * getSizeX(), iY * getSizeY(), iZ * getSizeZ()))* cuttingPlaneDirection);
+                            cuttingVolume.setDataAt(iX, iY, iZ, (cuttingPlaneCenter - Vector3Float(iX * getSizeX(), iY * getSizeY(), iZ * getSizeZ()))* cuttingPlaneDirection);
                         }
                     }
                 }
-                MarchingCube(cuttingVolume, cuttingMesh, 0.0f, 0, 0, 0, 1);
+                MarchingCube(&cuttingVolume, cuttingMesh, 0.0f, 0, 0, 0, 1);
             }
         }
         return redraw;
@@ -535,12 +534,12 @@ namespace Visualization {
                     for(iX = 0; iX < 2; iX++) {
                         for(iY = 0; iY < 2; iY++) {
                             for(iZ = 0; iZ < 2; iZ++) {
-                                cuttingVolume->setDataAt(iX, iY, iZ, (center - Vector3Float(iX * getSizeX(), iY * getSizeY(), iZ * getSizeZ()))* cuttingPlaneDirection);
+                                cuttingVolume.setDataAt(iX, iY, iZ, (center - Vector3Float(iX * getSizeX(), iY * getSizeY(), iZ * getSizeZ()))* cuttingPlaneDirection);
                             }
                         }
                     }
                     tempMesh.Clear();
-                    MarchingCube(cuttingVolume, &tempMesh, 0.0f, 0, 0, 0, 1);
+                    MarchingCube(&cuttingVolume, &tempMesh, 0.0f, 0, 0, 0, 1);
                     cuttingMesh->MergeMesh(&tempMesh);
                 }
             }
