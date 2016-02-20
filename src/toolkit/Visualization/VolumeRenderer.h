@@ -128,7 +128,6 @@ namespace Visualization {
         useDisplayRadius = false;
         viewingType = VIEWING_TYPE_ISO_SURFACE;
         surfaceMesh = new VolumeSurfaceMeshType();
-        volData = NULL;
         octree = NULL;
         surfaceValue = 1.5;
         displayRadius = 1;
@@ -143,9 +142,6 @@ namespace Visualization {
             textureLoaded = false;
         }
         delete surfaceMesh;
-        if(volData != NULL) {
-            delete volData;
-        }
         if(octree != NULL) {
             delete octree;
         }
@@ -560,10 +556,7 @@ namespace Visualization {
     }
 
     void VolumeRenderer::LoadFile(string fileName) {
-        if(volData != NULL) {
-            delete volData;
-        }
-        volData = MRCReaderPicker::pick(fileName.c_str())->getVolume();
+        Volume::loadFile(fileName);
         InitializeOctree();
         UpdateBoundingBox();
 
