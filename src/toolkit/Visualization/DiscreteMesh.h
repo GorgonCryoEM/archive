@@ -338,8 +338,6 @@ namespace GraySkeletonCPP {
         delete [] p1Neighbors;
         delete [] p2Neighbors;
         return nCount;
-
-
     }
 
     int DiscreteMesh::GetSurfaceNeighborCount(int x1, int y1, int z1, int x2,
