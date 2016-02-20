@@ -12,7 +12,7 @@ import argparse
 from libpytoolkit import *
 import libpytoolkit as gtool
 import gorg
-
+from gorg.volume_viewer import VolumeViewer
 
 class GLWidget(QtOpenGL.QGLWidget):
 
@@ -51,7 +51,7 @@ def main():
 #     gorg.window.show()
 #     gorg.window.raise_()
     
-    vol = gtool.VolumeRenderer()
+    vol = VolumeViewer(app)
     vol.loadFile(args.volume)
     
     sys.exit(app.exec_())
