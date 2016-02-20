@@ -114,7 +114,7 @@ class VolumeSurfaceEditorForm(BaseDockWidget):
         self.ui.histogram.clearData()
         for i in range(binCount):
             histogramData.append(volume.getHistogramBinValue(i))
-        self.ui.histogram.setHistogram(histogramData, volume.getMin(), volume.getMax())
+        self.ui.histogram.setHistogram(histogramData, volume.getMinDensity(), volume.getMaxDensity())
         
     def histogramResized(self):
         self.populateHistogram()
