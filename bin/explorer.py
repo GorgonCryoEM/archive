@@ -57,7 +57,5 @@ def main():
     
     sys.exit(app.exec_())
 
-    print args.volume
-
 if __name__ == '__main__':
     main()
