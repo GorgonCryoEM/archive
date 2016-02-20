@@ -342,8 +342,10 @@ namespace GraySkeletonCPP {
 
     }
 
-    int DiscreteMesh::GetSurfaceNeighborCount(int x1, int y1, int z1, int x2, int y2, int z2) {
-        int * p1Neighbors, * p2Neighbors;
+    int DiscreteMesh::GetSurfaceNeighborCount(int x1, int y1, int z1, int x2,
+                                              int y2, int z2)
+    {
+        int * p1Neighbors, *p2Neighbors;
         int p1Count, p2Count;
         p1Count = GetSurfaceNeighbors(x1, y1, z1, p1Neighbors);
         p2Count = GetSurfaceNeighbors(x2, y2, z2, p2Neighbors);
@@ -368,7 +370,10 @@ namespace GraySkeletonCPP {
         return nCount;
     }
 
-    void DiscreteMesh::GetSurfacePoints(int x, int y, int z, unsigned char direction, Vector3Int * & points) {
+    void DiscreteMesh::GetSurfacePoints(int x, int y, int z,
+                                        unsigned char direction,
+                                        Vector3Int * & points)
+    {
         points = new Vector3Int[4];
         switch(direction) {
             case SURFACE_TYPE_XY:
@@ -413,7 +418,9 @@ namespace GraySkeletonCPP {
         curves[index] = curves[index] | curveType;
     }
 
-    void DiscreteMesh::AddSurface(Vector3Int p1, Vector3Int p2, Vector3Int p3, Vector3Int p4){
+    void DiscreteMesh::AddSurface(Vector3Int p1, Vector3Int p2, Vector3Int p3,
+                                  Vector3Int p4)
+    {
         RemovePoint(p1);
         RemovePoint(p2);
         RemovePoint(p3);
@@ -456,7 +463,9 @@ namespace GraySkeletonCPP {
         curves[index] = curves[index] & ~curveType;
     }
 
-    void DiscreteMesh::RemoveSurface(Vector3Int p1, Vector3Int p2, Vector3Int p3, Vector3Int p4){
+    void DiscreteMesh::RemoveSurface(Vector3Int p1, Vector3Int p2,
+                                     Vector3Int p3, Vector3Int p4)
+    {
         Vector3Int p11 = p1, p22 = p2, p33 = p3, p44 = p4;
         FindSurfaceBase(p11, p22, p33, p44);
 
@@ -501,8 +510,9 @@ namespace GraySkeletonCPP {
         }
     }
 
-    void DiscreteMesh::FindSurfaceBase(Vector3Double &p1, Vector3Double &p2, Vector3Double &p3, Vector3Double &p4) {
-
+    void DiscreteMesh::FindSurfaceBase(Vector3Double &p1, Vector3Double &p2,
+                                       Vector3Double &p3, Vector3Double &p4)
+    {
         Vector3Double points[4] = {p1, p2, p3, p4};
         Vector3Double temp;
         int jVal, minVal, minIndex;
@@ -529,8 +539,9 @@ namespace GraySkeletonCPP {
         p4 = points[2];
     }
 
-    void DiscreteMesh::FindSurfaceBase(Vector3Int &p1, Vector3Int &p2, Vector3Int &p3, Vector3Int &p4) {
-
+    void DiscreteMesh::FindSurfaceBase(Vector3Int &p1, Vector3Int &p2,
+                                       Vector3Int &p3, Vector3Int &p4)
+    {
         Vector3Int points[4] = {p1, p2, p3, p4};
         Vector3Int temp;
         int jVal, minVal, minIndex;
@@ -557,10 +568,14 @@ namespace GraySkeletonCPP {
         p4 = points[2];
     }
 
-    int DiscreteMesh::GetC6(Vector3Int * neighbors, int neighborCount, Vector3Int currPoint) {
+    int DiscreteMesh::GetC6(Vector3Int * neighbors, int neighborCount,
+                            Vector3Int currPoint)
+    {
         Volume * vol = new Volume(5, 5, 5);
         for(int i = 0; i < neighborCount; i++) {
-            vol->setDataAt(neighbors[i][0] - currPoint[0]+2, neighbors[i][1] - currPoint[1]+2, neighbors[i][2] - currPoint[2]+2, 1);
+            vol->setDataAt(neighbors[i][0] - currPoint[0] + 2,
+                    neighbors[i][1] - currPoint[1] + 2,
+                    neighbors[i][2] - currPoint[2] + 2, 1);
         }
 
         int c6Count = 0;
@@ -598,10 +613,14 @@ namespace GraySkeletonCPP {
         return c6Count;
     }
 
-    int DiscreteMesh::GetC26(Vector3Int * neighbors, int neighborCount, Vector3Int currPoint) {
+    int DiscreteMesh::GetC26(Vector3Int * neighbors, int neighborCount,
+                             Vector3Int currPoint)
+    {
         Volume * vol = new Volume(5, 5, 5);
         for(int i = 0; i < neighborCount; i++) {
-            vol->setDataAt(neighbors[i][0] - currPoint[0]+2, neighbors[i][1] - currPoint[1]+2, neighbors[i][2] - currPoint[2]+2, 1);
+            vol->setDataAt(neighbors[i][0] - currPoint[0] + 2,
+                    neighbors[i][1] - currPoint[1] + 2,
+                    neighbors[i][2] - currPoint[2] + 2, 1);
         }
 
         int c26Count = 0;
@@ -654,7 +673,9 @@ namespace GraySkeletonCPP {
         return n6Count;
     }
 
-    int DiscreteMesh::GetN6_2(Vector3Int * & n6_2, Volume * sourceVolume, int x, int y, int z) {
+    int DiscreteMesh::GetN6_2(Vector3Int * & n6_2, Volume * sourceVolume, int x,
+                              int y, int z)
+    {
         n6_2 = new Vector3Int[18];
         Vector3Int * n18;
         Vector3Int * n6X, * n6Y;
@@ -693,7 +714,9 @@ namespace GraySkeletonCPP {
         return retVal;
     }
 
-    int DiscreteMesh::GetN18(Vector3Int * & n18, Volume * sourceVolume, int x, int y, int z) {
+    int DiscreteMesh::GetN18(Vector3Int * & n18, Volume * sourceVolume, int x,
+                             int y, int z)
+    {
         n18 = new Vector3Int[18];
         int n18Count = 0;
         for(int i = 0; i < 18; i++) {
@@ -707,7 +730,9 @@ namespace GraySkeletonCPP {
         return n18Count;
     }
 
-    int DiscreteMesh::GetN26(Vector3Int * & n26, Volume * sourceVolume, int x, int y, int z){
+    int DiscreteMesh::GetN26(Vector3Int * & n26, Volume * sourceVolume, int x,
+                             int y, int z)
+    {
         int n26Count = 0;
         n26 = new Vector3Int[26];
         for(int i = 0; i < 26; i++) {
@@ -741,7 +766,10 @@ namespace GraySkeletonCPP {
     int DiscreteMesh::GetN18Count(Volume * sourceVolume, int x, int y, int z) {
         int n18Count = 0;
         for(int i = 0; i < 18; i++) {
-            if(sourceVolume->getDataAt(x + VOLUME_NEIGHBORS_18[i][0], y + VOLUME_NEIGHBORS_18[i][1], z + VOLUME_NEIGHBORS_18[i][2]) > 0)  {
+            if(sourceVolume->getDataAt(x + VOLUME_NEIGHBORS_18[i][0],
+                       y + VOLUME_NEIGHBORS_18[i][1],
+                       z + VOLUME_NEIGHBORS_18[i][2])
+               > 0) {
                 n18Count++;
             }
         }
@@ -751,14 +779,19 @@ namespace GraySkeletonCPP {
     int DiscreteMesh::GetN26Count(Volume * sourceVolume, int x, int y, int z) {
         int n26Count = 0;
         for(int i = 0; i < 26; i++) {
-            if(sourceVolume->getDataAt(x + VOLUME_NEIGHBORS_26[i][0], y + VOLUME_NEIGHBORS_26[i][1], z + VOLUME_NEIGHBORS_26[i][2]) > 0)  {
+            if(sourceVolume->getDataAt(x + VOLUME_NEIGHBORS_26[i][0],
+                       y + VOLUME_NEIGHBORS_26[i][1],
+                       z + VOLUME_NEIGHBORS_26[i][2])
+               > 0) {
                 n26Count++;
             }
         }
         return n26Count;
     }
 
-    int DiscreteMesh::GetMCount(Volume * sourceVolume, int x1, int y1, int z1, int x2, int y2, int z2) {
+    int DiscreteMesh::GetMCount(Volume * sourceVolume, int x1, int y1, int z1,
+                                int x2, int y2, int z2)
+    {
         Vector3Int * n18X;
         int n18XCount = GetN18(n18X, sourceVolume, x1, y1, z1);
         Vector3Int * n6Y;
@@ -766,7 +799,9 @@ namespace GraySkeletonCPP {
         int mCount = 0;
         for(int i = 0; i < n18XCount; i++) {
             for(int j = 0; j < n6YCount; j++) {
-                if((n18X[i][0] == n6Y[j][0]) && (n18X[i][1] == n6Y[j][1]) && (n18X[i][2] == n6Y[j][2])) {
+                if( (n18X[i][0] == n6Y[j][0]) && (n18X[i][1] == n6Y[j][1])
+                   && (n18X[i][2] == n6Y[j][2]))
+                {
                     mCount++;
                 }
             }
@@ -796,12 +831,13 @@ namespace GraySkeletonCPP {
             list<double> thresholds;
             thresholds.push_back(range->getDataAt(2, 2, 2));
 
-            for(int i = 0; i < 26; i++) {
-                value = range->getDataAt(2 + VOLUME_NEIGHBORS_26[i][0] ,2 + VOLUME_NEIGHBORS_26[i][1],2 + VOLUME_NEIGHBORS_26[i][2]);
-                if(value <= range->getDataAt(2, 2, 2)) {
-                    thresholds.push_back(value);
-                }
-            }
+        for(int i = 0; i < 26; i++) {
+            value = range->getDataAt(2 + VOLUME_NEIGHBORS_26[i][0],
+                    2 + VOLUME_NEIGHBORS_26[i][1],
+                    2 + VOLUME_NEIGHBORS_26[i][2]);
+            if(value <= range->getDataAt(2, 2, 2))
+                thresholds.push_back(value);
+        }
             thresholds.sort(greater<double>());
             for(unsigned int i = 0; i < thresholds.size(); i++) {
                 value = thresholds.front();
@@ -833,7 +869,12 @@ namespace GraySkeletonCPP {
         for(int n = 0; n < 12; n++) {
             allPoints = true;
             for(int p = 0; p < 3; p++) {
-                allPoints = allPoints && (sourceVolume->getDataAt(x + VOLUME_NEIGHBOR_FACES[n][p][0], y + VOLUME_NEIGHBOR_FACES[n][p][1], z + VOLUME_NEIGHBOR_FACES[n][p][2]) > 0);
+                allPoints = allPoints
+                        && (sourceVolume->getDataAt(
+                                    x + VOLUME_NEIGHBOR_FACES[n][p][0],
+                                    y + VOLUME_NEIGHBOR_FACES[n][p][1],
+                                    z + VOLUME_NEIGHBOR_FACES[n][p][2])
+                            > 0);
             }
             foundFace = foundFace || allPoints;
         }
@@ -858,16 +899,18 @@ namespace GraySkeletonCPP {
         return (mZigma - n6_2Count - n6Count) == 0;
     }
 
-    bool DiscreteMesh::IsSurfaceBody(Volume * sourceVolume, int x, int y, int z, bool doDependantChecks) {
-        if(sourceVolume->getDataAt(x, y, z) <= 0) {
+    bool DiscreteMesh::IsSurfaceBody(Volume * sourceVolume, int x, int y, int z,
+                                     bool doDependantChecks)
+    {
+        if(sourceVolume->getDataAt(x, y, z) <= 0)
             return false;
-        }
 
         double points[3][3][3];
         for(int xx = 0; xx < 3; xx++){
             for(int yy = 0; yy < 3; yy++){
                 for(int zz = 0; zz < 3; zz++) {
-                    points[xx][yy][zz] = sourceVolume->getDataAt(x+xx-1, y+yy-1, z+zz-1);
+                    points[xx][yy][zz] = sourceVolume->getDataAt(x + xx - 1,
+                            y + yy - 1, z + zz - 1);
                 }
             }
         }
@@ -876,11 +919,15 @@ namespace GraySkeletonCPP {
         for(int i = 0; i < 8; i++) {
             cubeFound = true;
             for(int e = 0; e < 7; e++) {
-                cubeFound = cubeFound && (points[VOLUME_NEIGHBOR_CUBES[i][e][0]+1][VOLUME_NEIGHBOR_CUBES[i][e][1]+1][VOLUME_NEIGHBOR_CUBES[i][e][2]+1] > 0);
+                cubeFound =
+                        cubeFound && (points[VOLUME_NEIGHBOR_CUBES[i][e][0] + 1][VOLUME_NEIGHBOR_CUBES[i][e][1]
+                                + 1][VOLUME_NEIGHBOR_CUBES[i][e][2] + 1]
+                                      > 0);
             }
             if(cubeFound) {
                 for(int e = 0; e < 7; e++) {
-                    points[VOLUME_NEIGHBOR_CUBES[i][e][0]+1][VOLUME_NEIGHBOR_CUBES[i][e][1]+1][VOLUME_NEIGHBOR_CUBES[i][e][2]+1] = 0;
+                    points[VOLUME_NEIGHBOR_CUBES[i][e][0] + 1][VOLUME_NEIGHBOR_CUBES[i][e][1]
+                            + 1][VOLUME_NEIGHBOR_CUBES[i][e][2] + 1] = 0;
                 }
             }
         }
@@ -889,7 +936,11 @@ namespace GraySkeletonCPP {
         for(int i = 0; i < 12; i++) {
             surfaceFound = true;
             for(int e = 0; e < 3; e++) {
-                surfaceFound = surfaceFound && (points[VOLUME_NEIGHBOR_FACES[i][e][0]+1][VOLUME_NEIGHBOR_FACES[i][e][1]+1][VOLUME_NEIGHBOR_FACES[i][e][2]+1] > 0);
+                surfaceFound =
+                        surfaceFound && (points[VOLUME_NEIGHBOR_FACES[i][e][0]
+                                + 1][VOLUME_NEIGHBOR_FACES[i][e][1] + 1][VOLUME_NEIGHBOR_FACES[i][e][2]
+                                + 1]
+                                         > 0);
             }
             if(surfaceFound) {
                 break;
