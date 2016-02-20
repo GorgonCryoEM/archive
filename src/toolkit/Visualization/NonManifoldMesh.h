@@ -650,6 +650,7 @@ namespace Protein_Morph {
             maxPos[1] = getSizeY()-1;
             maxPos[2] = getSizeZ()-1;
         }
+
         for(unsigned int i = 0; i < vertices.size(); i++) {
             for(unsigned int j = 0; j < 3; j++) {
                 minPos[j] = min(minPos[j], (double)vertices[i].position[j]);
@@ -664,6 +665,7 @@ namespace Protein_Morph {
             minPosInt[j] = (int)floor(minPos[j]);
             maxPosInt[j] = (int)ceil(maxPos[j]);
         }
+
         Volume * vol = new Volume(maxPosInt[0] - minPosInt[0]+1, maxPosInt[1] - minPosInt[1]+1, maxPosInt[2] - minPosInt[2]+1);
 
         NonManifoldMeshVertex v1,v2;
@@ -680,6 +682,7 @@ namespace Protein_Morph {
                 vol->setDataAt(pos[0], pos[1], pos[2], 1.0);
             }
         }
+
         vol->setOrigin(origin);
         vol->setSpacing(scale);
         return vol;
