@@ -4,18 +4,19 @@ from base_dock_widget import BaseDockWidget
 from histogram_slider_widget import HistogramSliderWidget
 # import threading
 
+
 class VolumeSurfaceEditorForm(BaseDockWidget):
     ViewingTypeIsoSurface, ViewingTypeCrossSection, ViewingTypeSolid = range(3)
     
     def __init__(self, main, volumeViewer, parent=None):
-        BaseDockWidget.__init__(self, 
-                                main, 
-                                "&Volume - Surface Editor", 
-                                "Modify the volume surface", 
-                                "show_VolumeSurfaceEditor", 
-                                "window-VolumeSurfaceEditor", 
-                                "window", 
-                                QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea | QtCore.Qt.BottomDockWidgetArea, 
+        BaseDockWidget.__init__(self,
+                                main,
+                                "&Volume - Surface Editor",
+                                "Modify the volume surface",
+                                "show_VolumeSurfaceEditor",
+                                "window-VolumeSurfaceEditor",
+                                "window",
+                                QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea | QtCore.Qt.BottomDockWidgetArea,
                                 QtCore.Qt.BottomDockWidgetArea,
                                 parent)
         self.app = main
@@ -27,7 +28,7 @@ class VolumeSurfaceEditorForm(BaseDockWidget):
 
     def createUI(self):
         self.ui = Ui_DialogVolumeSurfaceEditor()
-        self.ui.setupUi(self)       
+        self.ui.setupUi(self)
  
         self.ui.labelIsoLevelMax.setVisible(False)
         self.ui.doubleSpinBoxDensityMax.setVisible(False)
@@ -46,7 +47,6 @@ class VolumeSurfaceEditorForm(BaseDockWidget):
         self.connect(self.ui.doubleSpinBoxDensityMax, QtCore.SIGNAL("editingFinished ()"), self.manualValueMaxChanged)
         self.connect(self.ui.checkBoxUseRadius, QtCore.SIGNAL("toggled(bool)"), self.displayRadiusEnabled)
         
-    
     def setViewingType(self, toggled):
         if(toggled):
             if(self.ui.radioButtonIsoSurface.isChecked()):
@@ -80,9 +80,9 @@ class VolumeSurfaceEditorForm(BaseDockWidget):
         self.viewer.renderer.enableDraw(False)
         maxDensity = self.viewer.renderer.getMaxDensity()
         minDensity = self.viewer.renderer.getMinDensity()
-        self.populateHistogram()        
+        self.populateHistogram()
         self.ui.doubleSpinBoxDensity.setMinimum(minDensity)
-        self.ui.doubleSpinBoxDensity.setMaximum(maxDensity)        
+        self.ui.doubleSpinBoxDensity.setMaximum(maxDensity)
         self.ui.doubleSpinBoxDensityMax.setMinimum(minDensity)
         self.ui.doubleSpinBoxDensityMax.setMaximum(maxDensity)
         if(self.ui.radioButtonIsoSurface.isChecked()):
@@ -91,7 +91,7 @@ class VolumeSurfaceEditorForm(BaseDockWidget):
             defaultDensity = minDensity
         self.ui.histogram.setLowerValue(defaultDensity)
         self.ui.histogram.setHigherValue(maxDensity)
-        maxRadius = int(max(self.viewer.renderer.getMax(0)/2, self.viewer.renderer.getMax(1)/2, self.viewer.renderer.getMax(2)/2));        
+        maxRadius = int(max(self.viewer.renderer.getMax(0)/2, self.viewer.renderer.getMax(1)/2, self.viewer.renderer.getMax(2)/2));
         self.ui.spinBoxDisplayRadius.setMaximum(maxRadius)
         self.ui.spinBoxDisplayRadius.setValue(maxRadius)
         self.viewer.renderer.setSampleInterval(self.getSamplingValue())
@@ -101,8 +101,6 @@ class VolumeSurfaceEditorForm(BaseDockWidget):
         self.displayAct.setEnabled(True)
         self.showWidget(True)
         self.viewer.renderer.enableDraw(True)
-        
-
         
     def populateHistogram(self):
         binCount = self.ui.histogram.width() - 2*self.ui.histogram.verticalBorderSize
@@ -119,15 +117,13 @@ class VolumeSurfaceEditorForm(BaseDockWidget):
     def histogramResized(self):
         self.populateHistogram()
         
-    
     def modelUnloaded(self):
         self.viewer.renderer.enableDraw(False)
         self.displayAct.setEnabled(False)
-        self.showWidget(False)            
+        self.showWidget(False)
         self.ui.histogram.clearData()
         
-        
-    def createActions(self):               
+    def createActions(self):
         self.displayAct.setEnabled(False)
     
     def isoValueIndicatorChanged(self, newValue):
@@ -135,14 +131,14 @@ class VolumeSurfaceEditorForm(BaseDockWidget):
         
         maxValue = float(max(newValue, self.ui.doubleSpinBoxDensityMax.value()));
         if(self.ui.doubleSpinBoxDensityMax.value() != maxValue):
-            self.ui.doubleSpinBoxDensityMax.setValue(maxValue)        
+            self.ui.doubleSpinBoxDensityMax.setValue(maxValue)
         
     def isoValueMaxIndicatorChanged(self, newValue):
         self.ui.doubleSpinBoxDensityMax.setValue(float(newValue))
         
         minValue = float(min(newValue, self.ui.doubleSpinBoxDensity.value()));
         if(self.ui.doubleSpinBoxDensity.value() != minValue):
-            self.ui.doubleSpinBoxDensity.setValue(minValue)        
+            self.ui.doubleSpinBoxDensity.setValue(minValue)
                             
     def manualValueChanged(self):
         newValue = self.ui.doubleSpinBoxDensity.value()
@@ -158,19 +154,19 @@ class VolumeSurfaceEditorForm(BaseDockWidget):
 
     def isoValueMaxChanged(self, newLevel):
         #threading.Thread(target = self.updateIsoValue, args=(newLevel,)).start()
-        self.updateIsoValueMax(newLevel)        
+        self.updateIsoValueMax(newLevel)
         
-    def updateIsoValue(self, newLevel):        
+    def updateIsoValue(self, newLevel):
         self.setCursor(QtCore.Qt.BusyCursor)
         self.viewer.renderer.setSurfaceValue(newLevel)
         self.setCursor(QtCore.Qt.ArrowCursor)
-        self.viewer.emitModelChanged()           
+        self.viewer.emitModelChanged()
         
-    def updateIsoValueMax(self, newLevel):        
+    def updateIsoValueMax(self, newLevel):
         self.setCursor(QtCore.Qt.BusyCursor)
         self.viewer.renderer.setMaxSurfaceValue(newLevel)
         self.setCursor(QtCore.Qt.ArrowCursor)
-        self.viewer.emitModelChanged()        
+        self.viewer.emitModelChanged()
     
     def getSamplingValue(self):
         return int(self.ui.comboBoxSamplingInterval.itemText(self.ui.comboBoxSamplingInterval.currentIndex()))
