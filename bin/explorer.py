@@ -14,6 +14,7 @@ import libpytoolkit as gtool
 import gorg
 from gorg.volume_viewer import VolumeViewer
 
+
 class GLWidget(QtOpenGL.QGLWidget):
 
     def __init__(self):
@@ -48,11 +49,11 @@ def main():
 #     window.resize(800, 800)
 #     window.move(300,50)
     
-#     gorg.window.show()
-#     gorg.window.raise_()
+    gorg.window.show()
+    gorg.window.raise_()
     
-    vol = VolumeViewer(app)
-    vol.loadFile(args.volume)
+#     vol = VolumeViewer(app)
+#     vol.loadFile(args.volume)
     
     sys.exit(app.exec_())
 
