@@ -564,7 +564,6 @@ namespace Visualization {
     }
 
     void VolumeRenderer::LoadFile(string fileName) {
-        Renderer::LoadFile(fileName);
         if(volData != NULL) {
             delete volData;
         }
