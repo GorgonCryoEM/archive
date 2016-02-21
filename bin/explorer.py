@@ -49,6 +49,8 @@ def main():
 #     window.resize(800, 800)
 #     window.move(300,50)
     
+    gorg.window.resize(800, 600)
+#     gorg.window.move(300,50)
     gorg.window.show()
     gorg.window.raise_()
     gorg.window.volumeViewer.loadDataFromFile(args.volume)
