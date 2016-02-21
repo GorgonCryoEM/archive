@@ -38,6 +38,7 @@ def main():
     parser = argparse.ArgumentParser(description='Gorgon Explorer')
     
     parser.add_argument('volume', action="store")
+    parser.add_argument('skeleton', action="store")
     args = parser.parse_args()
 
     app = QtGui.QApplication(sys.argv)
@@ -54,6 +55,7 @@ def main():
     gorg.window.show()
     gorg.window.raise_()
     gorg.window.volumeViewer.loadDataFromFile(args.volume)
+    gorg.window.skeletonViewer.loadDataFromFile(args.skeleton)
     
 #     vol = VolumeViewer(app)
 #     vol.loadFile(args.volume)
