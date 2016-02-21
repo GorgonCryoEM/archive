@@ -773,6 +773,7 @@ namespace GraySkeletonCPP {
         delete range;
         return n6Count;
     }
+
     int DiscreteMesh::GetImmersionSkeletalValue(Volume * skeleton, Vector3Int point) {
         Volume * range = skeleton->getDataRange(point[0], point[1], point[2], 2);
         Volume * thresholdedRange = new Volume(*range);
@@ -927,6 +928,7 @@ namespace GraySkeletonCPP {
         }
         return isBorder;
     }
+
     bool DiscreteMesh::IsVolumeBody(Volume * sourceVolume, int x, int y, int z) {
         return (GetN26Count(sourceVolume, x, y, z) == 26);
     }
