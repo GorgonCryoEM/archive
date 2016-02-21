@@ -215,16 +215,12 @@ namespace GraySkeletonCPP {
                     faces[faceCount][p][2] = z + VOLUME_NEIGHBOR_FACES[n][p][2];
                     allPoints = allPoints && (getDataAt(faces[faceCount][p][0], faces[faceCount][p][1], faces[faceCount][p][2]) > 0);
                 }
-                if(allPoints) {
+                if(allPoints)
                     faceCount++;
-                }
             }
 
-            for(int n = 0; n < faceCount; n++) {
+            for(int n = 0; n < faceCount; n++)
                 AddSurface(p, faces[n][0], faces[n][1], faces[n][2]);
-            }
-
-
         }
     }
 
