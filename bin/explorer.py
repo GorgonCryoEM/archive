@@ -13,6 +13,7 @@ from libpytoolkit import *
 import libpytoolkit as gtool
 import gorg
 from gorg.volume_viewer import VolumeViewer
+import Explorer
 
 
 class GLWidget(QtOpenGL.QGLWidget):
