@@ -91,39 +91,38 @@ namespace Protein_Morph {
         int GetVertexIndex(int vertexId);
         int GetFaceIndex(int faceId);
         int GetEdgeIndex(int edgeId);
-            int GetEdgeIndex(int vertexId1, int vertexId2);
-            int GetClosestVertexIndex(Vector3Float pos);
-            void AddEdge(int vertexId1, int vertexId2, string tag = "");
-            void AddQuad(int vertexId1, int vertexId2, int vertexId3,
-                         int vertexId4, string newEdgeTag = "", string faceTag =
-                                 "");
-            void AddTriangle(int vertexId1, int vertexId2, int vertexId3,
-                             string newEdgeTag = "", string faceTag = "");
-            void MarkFixedVertices();
-            void MergeMesh(NonManifoldMesh * srcMesh);
-            void RemoveFace(int faceId);
-            void RemoveEdge(int edgeId);
-            void RemoveVertex(int vertexId);
-            void RemoveNullEntries();
-            void ToOffCells(string fileName);
-            void ToMathematicaFile(string fileName);
-            void setScale(float x, float y, float z);
-            void setScale(Dim3D<float> val);
-            void TranslateVertex(int vertexIx, Vector3Float translateVector);
-            vector<unsigned int> GetPath(unsigned int edge0Ix,
-                                         unsigned int edge1Ix);
-            vector<unsigned int> GetNeighboringVertexIndices(
-                    unsigned int vertexIx);
-            vector<Vector3Float> SampleTriangle(int faceId,
-                                                double discretizationStep);
-            Volume * ToVolume();
-            Vector3Float GetVertexNormal(int vertexId);
-            Vector3Float GetFaceNormal(int faceId);
-            NonManifoldMesh SmoothLaplacian(double converganceRate);
-            NonManifoldMesh SmoothLaplacian(double converganceRate,
-                                            int iterations);
-            static NonManifoldMesh * LoadOffFile(string fileName);
-            void Clear();
+        int GetEdgeIndex(int vertexId1, int vertexId2);
+        int GetClosestVertexIndex(Vector3Float pos);
+        void AddEdge(int vertexId1, int vertexId2, string tag = "");
+        void AddQuad(int vertexId1, int vertexId2, int vertexId3,
+                     int vertexId4, string newEdgeTag = "", string faceTag ="");
+        void AddTriangle(int vertexId1, int vertexId2, int vertexId3,
+                         string newEdgeTag = "", string faceTag = "");
+        void MarkFixedVertices();
+        void MergeMesh(NonManifoldMesh * srcMesh);
+        void RemoveFace(int faceId);
+        void RemoveEdge(int edgeId);
+        void RemoveVertex(int vertexId);
+        void RemoveNullEntries();
+        void ToOffCells(string fileName);
+        void ToMathematicaFile(string fileName);
+        void setScale(float x, float y, float z);
+        void setScale(Dim3D<float> val);
+        void TranslateVertex(int vertexIx, Vector3Float translateVector);
+        vector<unsigned int> GetPath(unsigned int edge0Ix,
+                unsigned int edge1Ix);
+        vector<unsigned int> GetNeighboringVertexIndices(
+                unsigned int vertexIx);
+        vector<Vector3Float> SampleTriangle(int faceId,
+                double discretizationStep);
+        Volume * ToVolume();
+        Vector3Float GetVertexNormal(int vertexId);
+        Vector3Float GetFaceNormal(int faceId);
+        NonManifoldMesh SmoothLaplacian(double converganceRate);
+        NonManifoldMesh SmoothLaplacian(double converganceRate,
+                                        int iterations);
+        static NonManifoldMesh * LoadOffFile(string fileName);
+        void Clear();
 
     public:
         Dim3D<float> scale;
