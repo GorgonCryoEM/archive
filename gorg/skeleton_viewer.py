@@ -81,10 +81,10 @@ class SkeletonViewer(BaseViewer):
         
     def updateViewerAutonomy(self, autonomous):
         if(not autonomous):
-            self.app.actions.getAction("load_Skeleton").setEnabled(autonomous)
-            self.app.actions.getAction("save_Skeleton").setEnabled(autonomous)
-            self.app.actions.getAction("unload_Skeleton").setEnabled(autonomous)
-            self.app.menus.getMenu("actions-skeleton").setEnabled(autonomous)
+            self.actions.getAction("load_Skeleton").setEnabled(autonomous)
+            self.actions.getAction("save_Skeleton").setEnabled(autonomous)
+            self.actions.getAction("unload_Skeleton").setEnabled(autonomous)
+            self.menus.getMenu("actions-skeleton").setEnabled(autonomous)
         else:
             self.updateActionsAndMenus()
                    
