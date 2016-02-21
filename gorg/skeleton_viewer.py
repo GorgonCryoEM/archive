@@ -15,6 +15,9 @@ class SkeletonViewer(BaseViewer):
         BaseViewer.__init__(self, main, parent)
         self.title = "Skeleton"
         self.shortTitle = "SKE"
+        
+        self.menu = self.app.menubar.addMenu('Skeleton')
+        
         self.isClosedMesh = False
         self.twoWayLighting = True
         self.lineThickness = 3
@@ -48,22 +51,23 @@ class SkeletonViewer(BaseViewer):
 #         self.optionsWindow = SkeletonLaplacianSmoothingForm(self.app, self, self)
         
     def createActions(self):
-        openAct = QtGui.QAction(self.tr("S&keleton..."), self)
-        openAct.setShortcut(self.tr("Ctrl+K"))
-        openAct.setStatusTip(self.tr("Load a skeleton file"))
-        self.connect(openAct, QtCore.SIGNAL("triggered()"), self.loadData)
-        self.app.actions.addAction("load_Skeleton", openAct)
+        self.openAct = QtGui.QAction(self.tr("S&keleton..."), self)
+        self.openAct.setShortcut(self.tr("Ctrl+K"))
+        self.openAct.setStatusTip(self.tr("Load a skeleton file"))
+        self.openAct.triggered.connect(self.loadData)
         
-        saveAct = QtGui.QAction(self.tr("S&keleton..."), self)
-        saveAct.setStatusTip(self.tr("Save a skeleton file"))
-        self.connect(saveAct, QtCore.SIGNAL("triggered()"), self.saveData)
-        self.app.actions.addAction("save_Skeleton", saveAct)
+        self.saveAct = QtGui.QAction(self.tr("S&keleton..."), self)
+        self.saveAct.setStatusTip(self.tr("Save a skeleton file"))
+        self.saveAct.triggered.connect(self.saveData)
         
-        closeAct = QtGui.QAction(self.tr("S&keleton"), self)
-        closeAct.setStatusTip(self.tr("Close the loaded skeleton"))
-        self.connect(closeAct, QtCore.SIGNAL("triggered()"), self.unloadData)
-        self.app.actions.addAction("unload_Skeleton", closeAct)
-                                
+        self.closeAct = QtGui.QAction(self.tr("S&keleton"), self)
+        self.closeAct.setStatusTip(self.tr("Close the loaded skeleton"))
+        self.closeAct.triggered.connect(self.unloadData)
+
+        self.menu.addAction(self.openAct)
+        self.menu.addAction(self.saveAct)
+        self.menu.addAction(self.closeAct)
+
     def updateActionsAndMenus(self):
         pass
 #         if(self.viewerAutonomous):
