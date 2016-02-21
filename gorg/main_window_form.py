@@ -4,7 +4,9 @@ from volume_viewer import VolumeViewer
 
 import sys, os
 
+
 class MainWindowForm(QtGui.QMainWindow):
+
     def __init__(self, version):
         super(MainWindowForm, self).__init__()
 
@@ -24,6 +26,8 @@ class MainWindowForm(QtGui.QMainWindow):
         self.windowManager = QtGui.QWidget(self)
 
         self.volumeViewer = VolumeViewer(self)
+        self.skeletonViewer = SkeletonViewer(self)
+
         self.mainCamera = Camera([self.volumeViewer], self)
         self.setCentralWidget(self.mainCamera)
                 
@@ -62,13 +66,11 @@ class MainWindowForm(QtGui.QMainWindow):
     def closeEvent(self, event):
         exitText = "This will close Gorgon, you will lose all unsaved data.\nAre you sure?"
         
-        if (QtGui.QMessageBox.warning (self, self.tr("Exit Gorgon?"), self.tr(exitText), QtGui.QMessageBox.Yes | QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Yes) :
+        if (QtGui.QMessageBox.warning (self, self.tr("Exit Gorgon?"), self.tr(exitText), QtGui.QMessageBox.Yes | QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Yes):
             event.accept()
-        else :
+        else:
             event.ignore()
 
-
-    
     def dockLocationChanged(self, widget):
         def dockLocationChanged_widget(area):
             widget.area = area
