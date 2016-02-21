@@ -45,7 +45,8 @@ class SkeletonViewer(BaseViewer):
         self.updateActionsAndMenus()
                   
     def createChildWindows(self):
-        self.optionsWindow = SkeletonLaplacianSmoothingForm(self.app, self, self)
+        pass
+#         self.optionsWindow = SkeletonLaplacianSmoothingForm(self.app, self, self)
         
     def createActions(self):
         openAct = QtGui.QAction(self.tr("S&keleton..."), self)
