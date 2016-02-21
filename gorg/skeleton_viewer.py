@@ -72,11 +72,12 @@ class SkeletonViewer(BaseViewer):
         self.app.menus.addMenu("actions-skeleton", self.tr("S&keleton"), "actions");
                    
     def updateActionsAndMenus(self):
-        if(self.viewerAutonomous):
-            self.app.actions.getAction("load_Skeleton").setEnabled(True)
-            self.app.actions.getAction("save_Skeleton").setEnabled(self.loaded)
-            self.app.actions.getAction("unload_Skeleton").setEnabled(self.loaded)
-            self.app.menus.getMenu("actions-skeleton").setEnabled(True)
+        pass
+#         if(self.viewerAutonomous):
+#             self.actions.getAction("load_Skeleton").setEnabled(True)
+#             self.actions.getAction("save_Skeleton").setEnabled(self.loaded)
+#             self.actions.getAction("unload_Skeleton").setEnabled(self.loaded)
+#             self.menus.getMenu("actions-skeleton").setEnabled(True)
         
     def updateViewerAutonomy(self, autonomous):
         if(not autonomous):
