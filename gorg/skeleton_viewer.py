@@ -40,7 +40,6 @@ class SkeletonViewer(BaseViewer):
     
     def createUI(self):
         self.createActions()
-        self.createMenus()
         self.createChildWindows()
         self.updateActionsAndMenus()
                   
@@ -65,12 +64,6 @@ class SkeletonViewer(BaseViewer):
         self.connect(closeAct, QtCore.SIGNAL("triggered()"), self.unloadData)
         self.app.actions.addAction("unload_Skeleton", closeAct)
                                 
-    def createMenus(self):
-        self.app.menus.addAction("file-open-skeleton", self.app.actions.getAction("load_Skeleton"), "file-open")
-        self.app.menus.addAction("file-save-skeleton", self.app.actions.getAction("save_Skeleton"), "file-save")
-        self.app.menus.addAction("file-close-skeleton", self.app.actions.getAction("unload_Skeleton"), "file-close");
-        self.app.menus.addMenu("actions-skeleton", self.tr("S&keleton"), "actions");
-                   
     def updateActionsAndMenus(self):
         pass
 #         if(self.viewerAutonomous):
