@@ -1,10 +1,5 @@
-# Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
-# Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
-# Description:   A viewer for skeletons 
-
-
 from PyQt4 import QtGui, QtCore, QtOpenGL
-from libpyGORGON import MeshRenderer
+from libpytoolkit import MeshRenderer
 from base_viewer import BaseViewer
 from model_visualization_form import ModelVisualizationForm
 from skeleton_laplacian_smoothing_form import SkeletonLaplacianSmoothingForm
