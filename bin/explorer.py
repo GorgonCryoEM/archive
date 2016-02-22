@@ -59,7 +59,7 @@ def main():
 #     gorg.window.skeletonViewer.loadDataFromFile(args.skeleton)
     
     vol = Explorer.VolumeViewer(app)
-    vol.loadFile(args.volume)
+    vol.loadDataFromFile(args.volume)
     
     sys.exit(app.exec_())
 
