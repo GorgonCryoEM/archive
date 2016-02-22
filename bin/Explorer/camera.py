@@ -66,9 +66,9 @@ class Camera(QtOpenGL.QGLWidget):
         if(self.eye != Vector3Float(x, y, z)):
             self.eye = Vector3Float(x, y, z)
             try:
-                self.look = vectorNormalize([self.center[0] - self.eye[0], self.center[1] - self.eye[1], self.center[2] - self.eye[2]])
-                self.right = vectorNormalize(vectorCrossProduct(self.look, self.up))            #print("Eye: right :", self.right)
-                self.up = vectorNormalize(vectorCrossProduct(self.right, self.look))
+                self.look  = (self.center - self.eye).normalize()
+                self.right = (self.look^self.up).normalize()            #print("Eye: right :", self.right)
+                self.up    = (self.right^self.look).normalize()
             except:
                 self.look  = Vector3Float(0,1,0)
                 self.right = Vector3Float(1,0,0)
@@ -80,21 +80,21 @@ class Camera(QtOpenGL.QGLWidget):
         if(self.center != Vector3Float(x, y, z)):
             self.center = Vector3Float(x, y, z)
             try:
-                self.look = vectorNormalize([self.center[0] - self.eye[0], self.center[1] - self.eye[1], self.center[2] - self.eye[2]])
-                self.right = vectorNormalize(vectorCrossProduct(self.look, self.up))
+                self.look  = (self.center - self.eye).normalize()
+                self.right = (self.look^self.up).normalize()
             except:
-                self.look = [0,1,0]
-                self.right = [1,0,0]
+                self.look  = Vector3Float(0,1,0)
+                self.right = Vector3Float(1,0,0)
             self.setRendererCuttingPlanes()
             self.setRendererCenter()
             self.emitCameraChanged()
         
     def setUp(self, x, y, z):
-        if(self.up != vectorNormalize([x, y, z])):
-            self.up = vectorNormalize([x, y, z])
+        if(self.up != Vector3Float(x, y, z).normalize()):
+            self.up = Vector3Float(x, y, z).normalize()
             try:
-                self.right = vectorNormalize(vectorCrossProduct(self.look, self.up))
-                self.up = vectorNormalize(vectorCrossProduct(self.right, self.look))
+                self.right = (self.look^self.up   ).normalize()
+                self.up    = (self.right^self.look).normalize()
             except:
                 self.right = Vector3Float(1,0,0)
             self.setRendererCuttingPlanes()
