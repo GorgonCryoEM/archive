@@ -1,5 +1,4 @@
 from PyQt4 import QtCore, QtGui
-from color_picker_form import ColorPickerForm
 
 
 class ColoredPushButton(QtGui.QPushButton):
