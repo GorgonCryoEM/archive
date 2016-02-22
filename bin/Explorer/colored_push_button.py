@@ -18,9 +18,8 @@ class ColoredPushButton(QtGui.QPushButton):
         painter.end()
     
     def setColor(self, color):
-        if (self.actualColor != color):
-            self.actualColor = color;
-            self.update()
+        self.actualColor = color;
+        self.update()
     
     def color(self):
         return self.actualColor
