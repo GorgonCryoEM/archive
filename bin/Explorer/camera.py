@@ -101,17 +101,17 @@ class Camera(QtOpenGL.QGLWidget):
             self.emitCameraChanged()
         
     def setEyeRotation(self, yaw, pitch, roll):
-        newLook = vectorNormalize(vectorSubtract(vectorAdd(self.eye, vectorScalarMultiply(yaw, self.right)), self.center));
+        newLook = (self.eye + self.right*yaw - self.center).normalize()
         d = (self.eye - self.center).length()
-        newEye = vectorAdd(self.center, vectorScalarMultiply(d, newLook))
+        newEye = self.center + newLook*d
         
-        newLook = vectorNormalize(vectorSubtract(vectorAdd(newEye, vectorScalarMultiply(pitch, self.up)), self.center));
-        d = vectorDistance(newEye, self.center)
-        newEye = vectorAdd(self.center, vectorScalarMultiply(d, newLook))
+        newLook = (newEye+self.up*pitch - self.center).normalize()
+        d = (newEye - self.center).length()
+        newEye = self.center + newLook*d
         
         self.setEye(newEye[0], newEye[1], newEye[2])
         
-        newUp = vectorNormalize(vectorAdd(vectorScalarMultiply(roll*0.01, self.right), self.up))
+        newUp = (self.right*roll*0.01 + self.up).normalize()
         self.setUp(newUp[0], newUp[1], newUp[2])
             
     def setNearFarZoom(self, near, far, zoom):
