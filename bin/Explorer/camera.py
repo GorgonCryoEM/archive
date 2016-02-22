@@ -1,5 +1,6 @@
 from PyQt4 import QtOpenGL, QtCore, QtGui
 from .libs.vector import *
+from libpytoolkit import *
 
 from OpenGL.GL import *
 from OpenGL.GLU import *
@@ -382,7 +383,7 @@ class Camera(QtOpenGL.QGLWidget):
         newDx = vectorDistance(self.eye, self.center) * abs(tan(pi * self.eyeZoom)) * dx / float(self.width())
         newDy = vectorDistance(self.eye, self.center) * abs(tan(pi * self.eyeZoom)) * dy / float(self.height())
         moveDirection = vectorAdd(vectorScalarMultiply(-newDy, self.up), vectorScalarMultiply(newDx, self.right))
-        dirVec = Vector3DFloat(moveDirection[0], moveDirection[1], moveDirection[2])
+        dirVec = Vector3Float(moveDirection[0], moveDirection[1], moveDirection[2])
         for s in self.scene:
             if(s.renderer.selectionMove(dirVec)):
                 s.emitModelChanged()
@@ -395,8 +396,8 @@ class Camera(QtOpenGL.QGLWidget):
         moveDirection = vectorNormalize(moveLength)
         rotationAxis = vectorCrossProduct(moveDirection, self.look)
         
-        rotationAxis3D = Vector3DFloat(rotationAxis[0], rotationAxis[1], rotationAxis[2])
-        centerOfMass = Vector3DFloat(0,0,0)
+        rotationAxis3D = Vector3Float(rotationAxis[0], rotationAxis[1], rotationAxis[2])
+        centerOfMass = Vector3Float(0,0,0)
         
         totalCount = 0
         for s in self.scene:

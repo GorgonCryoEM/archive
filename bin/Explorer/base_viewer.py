@@ -1,6 +1,7 @@
 from PyQt4 import QtGui, QtCore, QtOpenGL
 from libpytoolkit import VolumeRenderer
 from .libs.vector import *
+from libpytoolkit import *
 
 from OpenGL.GL import *
 from OpenGL.GLU import *
@@ -108,11 +109,11 @@ class BaseViewer(QtOpenGL.QGLWidget):
         
     def objectToWorldCoordinatesVector(self, objectCoords):
         coords = self.objectToWorldCoordinates([objectCoords.x(), objectCoords.y(), objectCoords.z()])
-        return Vector3DFloat(coords[0], coords[1], coords[2])
+        return Vector3Float(coords[0], coords[1], coords[2])
     
     def worldToObjectCoordinatesVector(self, worldCoords):
         coords = self.worldToObjectCoordinates([worldCoords.x(), worldCoords.y(), worldCoords.z()])
-        return Vector3DFloat(coords[0], coords[1], coords[2])
+        return Vector3Float(coords[0], coords[1], coords[2])
     
     def setBoundingBox(self, visible):
         self.showBox = visible
