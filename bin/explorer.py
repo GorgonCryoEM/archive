@@ -44,12 +44,12 @@ def main():
 
     app = QtGui.QApplication(sys.argv)
 
-#     window = GLWidget()
-#     window.showNormal()
-#     window.show()
-#     window.raise_()
-#     window.resize(800, 800)
-#     window.move(300,50)
+    window = GLWidget()
+    window.showNormal()
+    window.show()
+    window.raise_()
+    window.resize(800, 800)
+    window.move(300,50)
     
 #     gorg.window.resize(800, 600)
 # #     gorg.window.move(300,50)
@@ -60,7 +60,7 @@ def main():
     
     vol = Explorer.VolumeViewer(app)
     vol.loadDataFromFile(args.volume)
-    mainCamera = Explorer.Camera([vol], app)
+    mainCamera = Explorer.Camera([vol], window)
     
     sys.exit(app.exec_())
 
