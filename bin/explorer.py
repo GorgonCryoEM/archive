@@ -55,6 +55,12 @@ def main():
 #     vol.loadDataFromFile(args.volume)
 #     mainCamera = Explorer.Camera([vol], window)
     
+    Explorer.window.resize(800, 600)
+#     Explorer.window.move(300,50)
+    Explorer.window.show()
+    Explorer.window.raise_()
+    Explorer.window.volumeViewer.loadDataFromFile(args.volume)
+    
 #     gorg.window.resize(800, 600)
 # #     gorg.window.move(300,50)
 #     gorg.window.show()
