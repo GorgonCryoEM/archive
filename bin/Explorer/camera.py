@@ -152,7 +152,8 @@ class Camera(QtOpenGL.QGLWidget):
                         sceneMax[i] = maxPos[i]
         
         distance = vectorDistance(sceneMin, sceneMax)
-        [centerX, centerY, centerZ] = vectorScalarMultiply(0.5, vectorAdd(sceneMin, sceneMax))
+        center = vectorScalarMultiply(0.5, vectorAdd(sceneMin, sceneMax))
+        [centerX, centerY, centerZ] = [center.x(), center.y(), center.z()]
                      
         self.setCenter(centerX, centerY, centerZ)
         self.setEye(self.center[0], self.center[1], self.center[2] - distance)
