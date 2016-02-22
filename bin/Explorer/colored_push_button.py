@@ -1,6 +1,7 @@
 from PyQt4 import QtCore, QtGui
 from color_picker_form import ColorPickerForm
 
+
 class ColoredPushButton(QtGui.QPushButton):
     
     def __init__(self, parent = None):
@@ -31,7 +32,7 @@ class ColoredPushButton(QtGui.QPushButton):
         
     def buttonPressed(self):
         self.colorPicker.setColor(self.actualColor)
-        if(self.colorPicker.exec_() == QtGui.QDialog.Accepted) :
+        if(self.colorPicker.exec_() == QtGui.QDialog.Accepted):
             self.setColor(self.colorPicker.getColor())
             self.emitColorChanged()
     
