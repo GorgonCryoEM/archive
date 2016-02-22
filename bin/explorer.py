@@ -44,12 +44,12 @@ def main():
 
     app = QtGui.QApplication(sys.argv)
 
-    window = GLWidget()
-    window.showNormal()
-    window.show()
-    window.raise_()
-    window.resize(800, 800)
-    window.move(300,50)
+#     window = GLWidget()
+#     window.showNormal()
+#     window.show()
+#     window.raise_()
+#     window.resize(800, 800)
+#     window.move(300,50)
     
 #     gorg.window.resize(800, 600)
 # #     gorg.window.move(300,50)
