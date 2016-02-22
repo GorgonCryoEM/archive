@@ -25,12 +25,6 @@ class MainWindowForm(QtGui.QMainWindow):
         dockwidget.area = area
         dockwidget.dockLocationChanged.connect(self.dockLocationChanged(dockwidget))
         
-    def removeDockWidget (self, dockwidget):
-        QtGui.QMainWindow.removeDockWidget(self, dockwidget)
-        if(dockwidget in self.dockWidgets):
-            self.dockWidgets.remove(dockwidget)
-            dockwidget.dockLocationChanged.disconnect()
-    
     def isDockWidget(self, dockWidget):
         isWidget = False
         for widget in self.dockWidgets:
