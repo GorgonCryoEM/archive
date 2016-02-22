@@ -11,7 +11,7 @@ class ColoredPushButton(QtGui.QPushButton):
         self.brush.setStyle(QtCore.Qt.SolidPattern)
         
         self.connect(self, QtCore.SIGNAL("pressed ()"), self.buttonPressed)
-        self.colorPicker = ColorPickerForm()
+        self.colorPicker = QtGui.QColorDialog(self)
         
     def paintEvent(self, event):
         QtGui.QPushButton.paintEvent(self, event)
@@ -30,10 +30,9 @@ class ColoredPushButton(QtGui.QPushButton):
         return self.actualColor
         
     def buttonPressed(self):
-        self.colorPicker.setColor(self.actualColor)
-        if(self.colorPicker.exec_() == QtGui.QDialog.Accepted):
-            self.setColor(self.colorPicker.getColor())
-            self.emitColorChanged()
+        self.colorPicker.setCurrentColor(self.actualColor)
+        self.setColor(self.colorPicker.getColor())
+        self.emitColorChanged()
     
     def emitColorChanged(self):
         self.emit(QtCore.SIGNAL("colorChanged()"))
