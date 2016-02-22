@@ -50,9 +50,6 @@ class BaseViewer(QtOpenGL.QGLWidget):
 
     def setScaleNoEmit(self, scaleX, scaleY, scaleZ):
         self.renderer.setSpacing(scaleX, scaleY, scaleZ)
-#         self.visualizationOptions.ui.doubleSpinBoxSizeX.setValue(scaleX)
-#         self.visualizationOptions.ui.doubleSpinBoxSizeY.setValue(scaleY)
-#         self.visualizationOptions.ui.doubleSpinBoxSizeZ.setValue(scaleZ)
         
     def setLocation(self, locationX, locationY, locationZ):
         self.setLocationNoEmit(locationX, locationY, locationZ)
