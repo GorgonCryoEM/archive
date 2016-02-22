@@ -27,6 +27,8 @@ class BaseDockWidget(QtGui.QWidget):
         self.displayAct.setChecked(False)
         self.displayAct.triggered.connect(self.loadWidget)
         
+        self.menuParent.addAction(self.displayAct)        
+  
     def loadWidget(self):
         if(self.displayAct.isChecked()):
             self.showWidget(True)
