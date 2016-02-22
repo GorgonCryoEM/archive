@@ -57,8 +57,3 @@ class BaseDockWidget(QtGui.QWidget):
     def show(self):
         QtGui.QWidget.show(self)
         self.displayAct.setChecked(True)
-        
-    
-    
-    
-    
