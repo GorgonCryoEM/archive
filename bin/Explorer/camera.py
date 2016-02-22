@@ -153,14 +153,14 @@ class Camera(QtOpenGL.QGLWidget):
                     if maxPos[i] > sceneMax[i]:
                         sceneMax[i] = maxPos[i]
         
-        distance = vectorDistance(sceneMin, sceneMax)
-        center = vectorScalarMultiply(0.5, vectorAdd(sceneMin, sceneMax))
+        distance = (sceneMin - sceneMax).length()
+        center = (sceneMin + sceneMax)*0.5
         [centerX, centerY, centerZ] = [center.x(), center.y(), center.z()]
                      
         self.setCenter(centerX, centerY, centerZ)
         self.setEye(self.center[0], self.center[1], self.center[2] - distance)
         self.setUp(0, -1, 0)
-        centerDistance = vectorDistance(self.eye, self.center)
+        centerDistance = (self.eye - self.center).length()
         self.setCuttingPlane(0.0)
         self.modelChanged()
          
@@ -171,7 +171,7 @@ class Camera(QtOpenGL.QGLWidget):
         self.setCenter(centerX, centerY, centerZ)
         self.setEye(self.center[0], self.center[1], self.center[2] - distance)
         self.setUp(0, -1, 0)
-        centerDistance = vectorDistance(self.eye, self.center)
+        centerDistance = (self.eye - self.center).length()
         self.setCuttingPlane(0.0)
         self.modelChanged()
          
