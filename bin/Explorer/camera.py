@@ -393,12 +393,12 @@ class Camera(QtOpenGL.QGLWidget):
                 s.emitModelChanged()
 
     def rotateSelectedScene(self, dx, dy):
-        newDx = vectorDistance(self.eye, self.center) * abs(tan(pi * self.eyeZoom)) * dx / float(self.width())
-        newDy = vectorDistance(self.eye, self.center) * abs(tan(pi * self.eyeZoom)) * dy / float(self.height())
+        newDx = (self.eye - self.center).length() * abs(tan(pi * self.eyeZoom)) * dx / float(self.width())
+        newDy = (self.eye - self.center).length() * abs(tan(pi * self.eyeZoom)) * dy / float(self.height())
 
-        moveLength = vectorAdd(vectorScalarMultiply(-newDy, self.up), vectorScalarMultiply(newDx, self.right))
-        moveDirection = vectorNormalize(moveLength)
-        rotationAxis = vectorCrossProduct(moveDirection, self.look)
+        moveLength = self.up*(-newDy) + self.right*newDx
+        moveDirection = moveLength.normalize()
+        rotationAxis = moveDirection^self.look
         
         rotationAxis3D = Vector3Float(rotationAxis[0], rotationAxis[1], rotationAxis[2])
         centerOfMass = Vector3Float(0,0,0)
