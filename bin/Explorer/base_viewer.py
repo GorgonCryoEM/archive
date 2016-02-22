@@ -309,7 +309,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
         
         self.setCursor(QtCore.Qt.ArrowCursor)
         
-    def saveData(self,fileName):
+    def save(self,fileName):
         self.setCursor(QtCore.Qt.WaitCursor)
         self.renderer.saveFile(str(fileName))
         self.dirty = False
