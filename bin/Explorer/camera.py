@@ -1,5 +1,5 @@
 from PyQt4 import QtOpenGL, QtCore, QtGui
-from libs.vector import *
+from .libs.vector import *
 
 from OpenGL.GL import *
 from OpenGL.GLU import *

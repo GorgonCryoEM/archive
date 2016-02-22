@@ -1,6 +1,6 @@
 from PyQt4 import QtGui, QtCore, QtOpenGL
 from libpytoolkit import VolumeRenderer
-from libs.vector import *
+from .libs.vector import *
 
 from OpenGL.GL import *
 from OpenGL.GLU import *
