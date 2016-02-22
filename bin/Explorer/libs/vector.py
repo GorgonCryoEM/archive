@@ -2,7 +2,7 @@ from cmath import *
 from libpytoolkit import *
     
 def vectorDistance(v1, v2):
-    return abs(sqrt(pow(v1[0]-v2[0], 2) + pow(v1[1]-v2[1], 2) + pow(v1[2]-v2[2], 2)))
+    return vectorSubtract(v1,v2).length()
         
 def vectorSize(v):        
     return Vector3Float(v[0], v[1], v[2]).length()
