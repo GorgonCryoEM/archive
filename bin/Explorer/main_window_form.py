@@ -25,12 +25,6 @@ class MainWindowForm(QtGui.QMainWindow):
         dockwidget.area = area
         dockwidget.dockLocationChanged.connect(self.dockLocationChanged(dockwidget))
         
-    def isDockWidget(self, dockWidget):
-        isWidget = False
-        for widget in self.dockWidgets:
-            isWidget = isWidget or (widget == dockWidget)
-        return isWidget
-    
     def exitApplication(self):
         QtGui.qApp.closeAllWindows()
             
