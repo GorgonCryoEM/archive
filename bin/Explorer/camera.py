@@ -1,5 +1,6 @@
 from PyQt4 import QtOpenGL, QtCore, QtGui
 from libs.vector import *
+from scene_editor_form import SceneEditorForm
 
 from OpenGL.GL import *
 from OpenGL.GLU import *
@@ -45,6 +46,7 @@ class Camera(QtOpenGL.QGLWidget):
         self.setUp(0, 0, 1)
         self.setEyeRotation(0, 0, 0)
         self.lastPos = QtCore.QPoint()
+        self.sceneEditor = SceneEditorForm(self.app, self)
         
         for i in range(len(self.scene)):
             self.scene[i].sceneIndex = i;
