@@ -51,16 +51,16 @@ def main():
 #     window.resize(800, 800)
 #     window.move(300,50)
     
+#     vol = Explorer.VolumeViewer(app)
+#     vol.loadDataFromFile(args.volume)
+#     mainCamera = Explorer.Camera([vol], window)
+    
 #     gorg.window.resize(800, 600)
 # #     gorg.window.move(300,50)
 #     gorg.window.show()
 #     gorg.window.raise_()
 #     gorg.window.volumeViewer.loadDataFromFile(args.volume)
 #     gorg.window.skeletonViewer.loadDataFromFile(args.skeleton)
-    
-    vol = Explorer.VolumeViewer(app)
-    vol.loadDataFromFile(args.volume)
-    mainCamera = Explorer.Camera([vol], window)
     
     sys.exit(app.exec_())
 
