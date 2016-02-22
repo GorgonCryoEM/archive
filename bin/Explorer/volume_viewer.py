@@ -17,8 +17,6 @@ class VolumeViewer(BaseViewer):
         self.title = "Volume"
         self.shortTitle = "VOL"
 
-        self.menu = self.app.menubar.addMenu('Volume')
-
         self.renderer = VolumeRenderer()
         self.loaded = False
         self.createUI()
