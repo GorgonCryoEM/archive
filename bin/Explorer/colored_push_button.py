@@ -11,7 +11,6 @@ class ColoredPushButton(QtGui.QPushButton):
         self.colorPicker = QtGui.QColorDialog(self)
         
     def paintEvent(self, event):
-        QtGui.QPushButton.paintEvent(self, event)
         painter = QtGui.QPainter()
         painter.begin(self)
         painter.fillRect(5, 4, self.width()-10, self.height()-8, self.actualColor)
