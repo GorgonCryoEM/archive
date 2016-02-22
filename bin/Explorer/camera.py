@@ -474,11 +474,11 @@ class Camera(QtOpenGL.QGLWidget):
             if event.modifiers() & QtCore.Qt.CTRL:                 # Translating the selection
                 self.moveSelectedScene(dx, dy)
             else:                                                   # Translating the scene
-                newDx = vectorDistance(self.eye, self.center) * abs(tan(pi * self.eyeZoom)) * dx / float(self.width())
-                newDy = vectorDistance(self.eye, self.center) * abs(tan(pi * self.eyeZoom)) * dy / float(self.height())
-                translation = vectorAdd(vectorScalarMultiply(newDy, self.up), vectorScalarMultiply(-newDx, self.right));
-                newEye = vectorAdd(self.eye, translation);
-                newCenter = vectorAdd(self.center, translation);
+                newDx = (self.eye - self.center).length() * abs(tan(pi * self.eyeZoom)) * dx / float(self.width())
+                newDy = (self.eye - self.center).length() * abs(tan(pi * self.eyeZoom)) * dy / float(self.height())
+                translation = self.up*newDy + self.right*(-newDx);
+                newEye = self.eye + translation;
+                newCenter = self.center + translation;
                 self.setEye(newEye[0], newEye[1], newEye[2])
                 self.setCenter(newCenter[0], newCenter[1], newCenter[2])
                 
