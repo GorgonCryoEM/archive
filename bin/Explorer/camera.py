@@ -169,10 +169,6 @@ class Camera(QtOpenGL.QGLWidget):
         centerDistance = vectorDistance(self.eye, self.center)
         self.setCuttingPlane(0.0)
         self.modelChanged()
-        #self.setNearFarZoom(centerDistance - distance/2.0, centerDistance + distance/2.0, 0.25)
-        #radius = vectorDistance([minX, minY, minZ], [maxX, maxY, maxZ]) / 2.0;
-        #eyeDistance = vectorDistance(self.center, self.eye)
-        #self.setNearFar(max(eyeDistance-radius, 0.1), eyeDistance + 2*radius)
          
         self.updateGL()
      
@@ -493,8 +489,6 @@ class Camera(QtOpenGL.QGLWidget):
                 self.setCuttingPlane(self.cuttingPlane + direction * 0.01)
             elif (not (event.modifiers() & QtCore.Qt.ALT) and not (event.modifiers() & QtCore.Qt.CTRL)):     # Zoom in / out
                 self.setNearFarZoom(self.near, self.far, self.eyeZoom + direction * 10.0/360.0)
-                #newEye = vectorAdd(self.eye, vectorScalarMultiply(-direction * 0.1 * (vectorDistance(self.eye, self.look)), self.look))
-                #self.setEye(newEye[0], newEye[1], newEye[2])
             self.updateGL()
         
     def modelChanged(self):
