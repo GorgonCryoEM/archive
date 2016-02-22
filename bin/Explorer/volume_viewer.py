@@ -24,28 +24,9 @@ class VolumeViewer(BaseViewer):
         self.initVisualizationOptions(ModelVisualizationForm(self.app, self))
                       
     def createUI(self):
-        self.createActions()
         self.createChildWindows()
         self.updateActionsAndMenus()
                           
-    def createActions(self):
-        self.openAct = QtGui.QAction(self.tr("&Open"), self)
-        self.openAct.setShortcut(self.tr("Ctrl+V"))
-        self.openAct.setStatusTip(self.tr("Load a volume file"))
-        self.openAct.triggered.connect(self.loadData)
-        
-        self.saveAct = QtGui.QAction(self.tr("&Save"), self)
-        self.saveAct.setStatusTip(self.tr("Save a volume file"))
-        self.saveAct.triggered.connect(self.saveData)
-        
-        self.closeAct = QtGui.QAction(self.tr("&Close"), self)
-        self.closeAct.setStatusTip(self.tr("Close the loaded volume"))
-        self.closeAct.triggered.connect(self.unloadData)
-
-        self.menu.addAction(self.openAct)
-        self.menu.addAction(self.saveAct)
-        self.menu.addAction(self.closeAct)
-        
     def createChildWindows(self):
         self.surfaceEditor = VolumeSurfaceEditorForm(self.app, self, self)
     
