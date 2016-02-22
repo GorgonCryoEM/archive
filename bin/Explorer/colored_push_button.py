@@ -16,10 +16,13 @@ class ColoredPushButton(QtGui.QPushButton):
         painter.fillRect(5, 4, self.width()-10, self.height()-8, self.actualColor)
         painter.end()
     
+    def setColor(self, color):
+        self.actualColor = color;
+        self.update()
+    
     def buttonPressed(self):
         self.colorPicker.setCurrentColor(self.actualColor)
-        self.actualColor = self.colorPicker.getColor()
-        self.update()
+        self.setColor(self.colorPicker.getColor())
         self.emitColorChanged()
     
     def emitColorChanged(self):
