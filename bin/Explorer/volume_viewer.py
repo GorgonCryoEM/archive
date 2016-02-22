@@ -37,7 +37,3 @@ class VolumeViewer(BaseViewer):
         [xx, yy, zz] = self.worldToObjectCoordinates(center)
         self.renderer.setDisplayRadiusOrigin(xx, yy, zz)
         return self.surfaceEditor.ui.checkBoxUseRadius.isChecked()
-    
-    def getIsoValue(self):
-        return self.renderer.getSurfaceValue()
-                          
