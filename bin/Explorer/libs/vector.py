@@ -24,9 +24,11 @@ class Vector:
 	def normalize(self):
 		base = self.len()
 		if(base == 0) :
-			return self.v
+			res = self.v
 		else :
-			return self.__mul__(base)
+			res = self * base
+		
+		return res
 		
 	def __getitem__(self, i):
 		return self.v[i]
