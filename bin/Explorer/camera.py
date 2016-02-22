@@ -1,12 +1,13 @@
 from PyQt4 import QtOpenGL, QtCore, QtGui
-from .libs.vector import *
-from libpytoolkit import *
 
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
+from .libs.vector import *
+from libpytoolkit import *
     
+
 class Camera(QtOpenGL.QGLWidget):
 
     def __init__(self, scene, main, parent=None):

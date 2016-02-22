@@ -1,11 +1,12 @@
 from PyQt4 import QtGui, QtCore, QtOpenGL
-from libpytoolkit import VolumeRenderer
-from .libs.vector import *
-from libpytoolkit import *
 
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
+
+from libpytoolkit import VolumeRenderer
+from .libs.vector import *
+from libpytoolkit import *
 
 
 class BaseViewer(QtOpenGL.QGLWidget):
