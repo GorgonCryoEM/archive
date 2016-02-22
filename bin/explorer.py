@@ -60,7 +60,7 @@ def main():
     
     vol = Explorer.VolumeViewer(app)
     vol.loadDataFromFile(args.volume)
-    mainCamera = Camera([self.volumeViewer, self.skeletonViewer], self)
+    mainCamera = Explorer.Camera([vol], app)
     
     sys.exit(app.exec_())
 
