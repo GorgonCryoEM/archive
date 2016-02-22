@@ -51,15 +51,15 @@ def main():
 #     window.resize(800, 800)
 #     window.move(300,50)
     
-    gorg.window.resize(800, 600)
-#     gorg.window.move(300,50)
-    gorg.window.show()
-    gorg.window.raise_()
-    gorg.window.volumeViewer.loadDataFromFile(args.volume)
-    gorg.window.skeletonViewer.loadDataFromFile(args.skeleton)
+#     gorg.window.resize(800, 600)
+# #     gorg.window.move(300,50)
+#     gorg.window.show()
+#     gorg.window.raise_()
+#     gorg.window.volumeViewer.loadDataFromFile(args.volume)
+#     gorg.window.skeletonViewer.loadDataFromFile(args.skeleton)
     
-#     vol = VolumeViewer(app)
-#     vol.loadFile(args.volume)
+    vol = Explorer.VolumeViewer(app)
+    vol.loadFile(args.volume)
     
     sys.exit(app.exec_())
 
