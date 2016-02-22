@@ -370,39 +370,6 @@ class BaseViewer(QtOpenGL.QGLWidget):
                                     
         glPopAttrib()
 
-#    def modelChanged(self):
-#        self.updateActionsAndMenus()
-#        if self.gllist != 0:
-#            glDeleteLists(self.gllist,1)
-#
-#        self.gllist = glGenLists(1)
-#        glNewList(self.gllist, GL_COMPILE)
-#        visibility = [self.modelVisible, self.model2Visible, self.model3Visible]
-#        colors = [self.getModelColor(),  self.getModel2Color(), self.getModel3Color()]
-#
-#        glPushAttrib(GL_LIGHTING_BIT | GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT)
-#
-#        self.extraDrawingRoutines()
-#
-#        for i in range(3):
-#            if(self.loaded and visibility[i]):
-#                self.setMaterials(colors[i])
-#                if(colors[i].alpha() < 255):
-#                    glDepthFunc(GL_LESS)
-#                    glColorMask(False, False, False, False)
-#                    self.renderer.draw(i, False)
-#                    glDepthFunc(GL_LEQUAL)
-#                    glColorMask(True, True, True, True)
-#                    self.renderer.draw(i, self.selectEnabled or self.mouseMoveEnabled)
-#                else:
-#                    self.renderer.draw(i, self.selectEnabled or self.mouseMoveEnabled)
-#
-#
-#
-#        glPopAttrib()
-#
-#        glEndList()
-        
     def getClickCoordinates(self, hitStack):
         hits = [-1,-1,-1,-1,-1]
         for i in range(5):
