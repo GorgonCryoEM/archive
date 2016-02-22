@@ -22,7 +22,9 @@ class Camera(QtOpenGL.QGLWidget):
         self.aspectRatio = 1.0
         self.selectedScene = -1
         self.lightsEnabled = [True, False]
-        self.lightsPosition = [[1000,1000,1000], [-1000,-1000,-1000]]
+        self.lightsPosition = [Vector3Float(1000,1000,1000),
+							   Vector3Float(-1000,-1000,-1000)
+							   ]
         self.lightsUseEyePosition = [True, False]
         self.mouseMovePoint = QtCore.QPoint(0,0)
         self.mouseDownPoint = QtCore.QPoint(0,0)
@@ -33,11 +35,11 @@ class Camera(QtOpenGL.QGLWidget):
         self.fogDensity = 0.01
         self.fogEnabled = False
         
-        self.center = [0,0,0]
-        self.eye = [0,-4.1,0]
-        self.look = [0,1.1,0]
-        self.right = [1.1,0,0]
-        self.up = [0,0,1.1]
+        self.center = Vector3Float(0,0,0)
+        self.eye =    Vector3Float(0,-4.1,0)
+        self.look =   Vector3Float(0,1.1,0)
+        self.right =  Vector3Float(1.1,0,0)
+        self.up =     Vector3Float(0,0,1.1)
         self.near = 0.11
         self.far = 1000.01
         self.eyeZoom = 0.26
@@ -61,22 +63,22 @@ class Camera(QtOpenGL.QGLWidget):
             self.connect(s, QtCore.SIGNAL("mouseTrackingChanged()"), self.refreshMouseTracking)
     
     def setEye(self, x, y, z):
-        if(self.eye != [x,y,z]):
-            self.eye = [x, y, z]
+        if(self.eye != Vector3Float(x, y, z)):
+            self.eye = Vector3Float(x, y, z)
             try:
                 self.look = vectorNormalize([self.center[0] - self.eye[0], self.center[1] - self.eye[1], self.center[2] - self.eye[2]])
                 self.right = vectorNormalize(vectorCrossProduct(self.look, self.up))            #print("Eye: right :", self.right)
                 self.up = vectorNormalize(vectorCrossProduct(self.right, self.look))
             except:
-                self.look = [0,1,0]
-                self.right = [1,0,0]
-                self.up = [0,0,1]
+                self.look  = Vector3Float(0,1,0)
+                self.right = Vector3Float(1,0,0)
+                self.up    = Vector3Float(0,0,1)
             self.setRendererCuttingPlanes()
             self.emitCameraChanged()
     
     def setCenter(self, x, y, z):
-        if(self.center != [x,y,z]):
-            self.center = [x, y, z]
+        if(self.center != Vector3Float(x, y, z)):
+            self.center = Vector3Float(x, y, z)
             try:
                 self.look = vectorNormalize([self.center[0] - self.eye[0], self.center[1] - self.eye[1], self.center[2] - self.eye[2]])
                 self.right = vectorNormalize(vectorCrossProduct(self.look, self.up))
@@ -94,13 +96,13 @@ class Camera(QtOpenGL.QGLWidget):
                 self.right = vectorNormalize(vectorCrossProduct(self.look, self.up))
                 self.up = vectorNormalize(vectorCrossProduct(self.right, self.look))
             except:
-                self.right = [1,0,0]
+                self.right = Vector3Float(1,0,0)
             self.setRendererCuttingPlanes()
             self.emitCameraChanged()
         
     def setEyeRotation(self, yaw, pitch, roll):
         newLook = vectorNormalize(vectorSubtract(vectorAdd(self.eye, vectorScalarMultiply(yaw, self.right)), self.center));
-        d = vectorDistance(self.eye, self.center)
+        d = (self.eye - self.center).length()
         newEye = vectorAdd(self.center, vectorScalarMultiply(d, newLook))
         
         newLook = vectorNormalize(vectorSubtract(vectorAdd(newEye, vectorScalarMultiply(pitch, self.up)), self.center));
