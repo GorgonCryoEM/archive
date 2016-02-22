@@ -10,21 +10,21 @@ def vectorSize(v):
 def vectorNormalize(v):
 	v = Vector3Float(v[0], v[1], v[2])
 	v.normalize()
-	return [v.x(), v.y(), v.z()]
+	
+	return v
     
 def vectorCrossProduct(v1, v2):
     return [v1[1] * v2[2] - v1[2] * v2[1], v1[2] * v2[0] - v1[0] * v2[2], v1[0] * v2[1] - v1[1] * v2[0]]
 
 def vectorAdd(v1, v2):
 	v = Vector3Float(v1[0], v1[1], v1[2]) + Vector3Float(v2[0], v2[1], v2[2])
-	return [v.x(), v.y(), v.z()]
+	return v
     
 
 def vectorSubtract(v1, v2):
 	v = Vector3Float(v1[0], v1[1], v1[2]) - Vector3Float(v2[0], v2[1], v2[2])
-	return [v.x(), v.y(), v.z()]
+	return v
 
 def vectorScalarMultiply(s, v):
 	v = Vector3Float(v[0], v[1], v[2])*s
-# 		return s*Vector3Float(v)
-	return [v.x(), v.y(), v.z()]
+	return v
