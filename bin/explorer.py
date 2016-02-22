@@ -13,7 +13,7 @@ from libpytoolkit import *
 import libpytoolkit as gtool
 import gorg
 from gorg.volume_viewer import VolumeViewer
-import Explorer
+from Explorer import MainWindowForm
 
 
 class GLWidget(QtOpenGL.QGLWidget):
@@ -58,11 +58,13 @@ def main():
 #     gorg.window.volumeViewer.loadDataFromFile(args.volume)
 #     gorg.window.skeletonViewer.loadDataFromFile(args.skeleton)
     
-    Explorer.window.resize(800, 600)
-#     Explorer.window.move(300,50)
-    Explorer.window.show()
-    Explorer.window.raise_()
-    Explorer.window.volumeViewer.loadDataFromFile(args.volume)
+    window = MainWindowForm('2.2.3')
+
+    window.resize(800, 600)
+#     window.move(300,50)
+    window.show()
+    window.raise_()
+    window.volumeViewer.loadDataFromFile(args.volume)
     
 #     vol = Explorer.VolumeViewer(app)
 #     vol.loadDataFromFile(args.volume)
