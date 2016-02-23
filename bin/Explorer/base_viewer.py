@@ -425,6 +425,9 @@ class BaseViewer(QtOpenGL.QGLWidget):
     def setCenter(self, center):
         return False
     
+    def setModelColor(self, color):
+        self.updateGL()
+
     def emitThicknessChanged(self, value):
         self.emit(QtCore.SIGNAL("thicknessChanged(int)"), value);
 
