@@ -33,6 +33,7 @@ class VolumeViewer(BaseViewer):
             self.surfaceEditor.ui.histogram.setLowerValue(self.surfaceEditor.ui.histogram.lowerValue() - delta)
     
     def setCenter(self, center):
-        [xx, yy, zz] = self.worldToObjectCoordinates(center)
+        xyz = self.worldToObjectCoordinates(center)
+        [xx, yy, zz] = [xyz.x(), xyz.y(), xyz.z()]
         self.renderer.setDisplayRadiusOrigin(xx, yy, zz)
         return self.surfaceEditor.ui.checkBoxUseRadius.isChecked()
