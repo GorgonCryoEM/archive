@@ -5,7 +5,6 @@ from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
 from libpytoolkit import VolumeRenderer
-from .libs.vector import *
 from libpytoolkit import *
 
 
