@@ -111,14 +111,6 @@ class BaseViewer(QtOpenGL.QGLWidget):
 			                worldCoords[2] / scale[2]
                 			)
         
-    def objectToWorldCoordinatesVector(self, objectCoords):
-        coords = self.objectToWorldCoordinates([objectCoords.x(), objectCoords.y(), objectCoords.z()])
-        return Vector3Float(coords[0], coords[1], coords[2])
-    
-    def worldToObjectCoordinatesVector(self, worldCoords):
-        coords = self.worldToObjectCoordinates([worldCoords.x(), worldCoords.y(), worldCoords.z()])
-        return Vector3Float(coords[0], coords[1], coords[2])
-    
     def setBoundingBox(self, visible):
         self.showBox = visible
         if(hasattr(self.app, "mainCamera")):
