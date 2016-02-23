@@ -153,6 +153,9 @@ class Camera(QtOpenGL.QGLWidget):
                     if maxPos[i] > sceneMax[i]:
                         sceneMax[i] = maxPos[i]
         
+        sceneMin = Vector3Float(sceneMin[0], sceneMin[1], sceneMin[2])
+        sceneMax = Vector3Float(sceneMax[0], sceneMax[1], sceneMax[2])
+        
         distance = (sceneMin - sceneMax).length()
         center = (sceneMin + sceneMax)*0.5
         [centerX, centerY, centerZ] = [center.x(), center.y(), center.z()]
