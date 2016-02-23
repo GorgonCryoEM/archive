@@ -43,7 +43,11 @@ class BaseViewer(QtOpenGL.QGLWidget):
         self.visualizationOptions = visualizationForm
     
     def identityMatrix(self):
-        return [[1.0, 0.0, 0.0, 0.0],[0.0, 1.0, 0.0, 0.0], [0.0, 0.0, 1.0, 0.0], [0.0, 0.0, 0.0, 1.0]]
+        return [[1.0, 0.0, 0.0, 0.0],
+				[0.0, 1.0, 0.0, 0.0],
+				[0.0, 0.0, 1.0, 0.0],
+				[0.0, 0.0, 0.0, 1.0]
+				]
     
     def setScale(self, scaleX, scaleY, scaleZ):
         self.setScaleNoEmit(scaleX, scaleY, scaleZ)
