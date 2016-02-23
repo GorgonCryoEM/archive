@@ -386,9 +386,9 @@ class Camera(QtOpenGL.QGLWidget):
         self.updateGL()
      
     def moveSelectedScene(self, dx, dy):
-        newDx = vectorDistance(self.eye, self.center) * abs(tan(pi * self.eyeZoom)) * dx / float(self.width())
-        newDy = vectorDistance(self.eye, self.center) * abs(tan(pi * self.eyeZoom)) * dy / float(self.height())
-        moveDirection = vectorAdd(vectorScalarMultiply(-newDy, self.up), vectorScalarMultiply(newDx, self.right))
+        newDx = (self.eye - self.center).length() * abs(tan(pi * self.eyeZoom)) * dx / float(self.width())
+        newDy = (self.eye - self.center).length() * abs(tan(pi * self.eyeZoom)) * dy / float(self.height())
+        moveDirection = self.up*(-newDy) + self.right*newDx
         dirVec = Vector3Float(moveDirection[0], moveDirection[1], moveDirection[2])
         for s in self.scene:
             if(s.renderer.selectionMove(dirVec)):
@@ -410,14 +410,14 @@ class Camera(QtOpenGL.QGLWidget):
             objectCount = s.renderer.selectionObjectCount()
             if(objectCount > 0):
                 totalCount = totalCount + objectCount
-                centerOfMass = centerOfMass + (s.objectToWorldCoordinatesVector(s.renderer.selectionCenterOfMass()) * float(objectCount))
+                centerOfMass = centerOfMass + (s.objectToWorldCoordinates(s.renderer.selectionCenterOfMass()) * float(objectCount))
         if(totalCount > 0):
             centerOfMass = centerOfMass * float(1.0 / totalCount)
 
         for s in self.scene:
-            selectionCOM = s.worldToObjectCoordinatesVector(centerOfMass)
-            selectionAxis = s.worldToObjectCoordinatesVector(rotationAxis3D)
-            if(s.renderer.selectionRotate(selectionCOM, selectionAxis, vectorSize(moveLength))):
+            selectionCOM = s.worldToObjectCoordinates(centerOfMass)
+            selectionAxis = s.worldToObjectCoordinates(rotationAxis3D)
+            if(s.renderer.selectionRotate(selectionCOM, selectionAxis, moveLength.length())):
                 s.emitModelChanged()
                      
     def mousePressEvent(self, event):
