@@ -212,15 +212,17 @@ class BaseViewer(QtOpenGL.QGLWidget):
     def getCenterAndDistance(self):
         scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
         location = [self.renderer.getOriginX(), self.renderer.getOriginY(), self.renderer.getOriginZ()]
-        minPos = [(self.renderer.getMin(0)*scale[0] + location[0]),
-                  (self.renderer.getMin(1)*scale[1] + location[1]),
-                  (self.renderer.getMin(2)*scale[2] + location[2])]
-        maxPos = [(self.renderer.getMax(0)*scale[0] + location[0]),
-                  (self.renderer.getMax(1)*scale[1] + location[1]),
-                  (self.renderer.getMax(2)*scale[2] + location[2])]
-        distance = vectorDistance(minPos, maxPos)
+        minPos = Vector3Float((self.renderer.getMin(0)*scale[0] + location[0]),
+			                  (self.renderer.getMin(1)*scale[1] + location[1]),
+			                  (self.renderer.getMin(2)*scale[2] + location[2])
+			                  )
+        maxPos = Vector3Float((self.renderer.getMax(0)*scale[0] + location[0]),
+			                  (self.renderer.getMax(1)*scale[1] + location[1]),
+			                  (self.renderer.getMax(2)*scale[2] + location[2])
+			                  )
+        distance = (minPos - maxPos).length()
 
-        center = vectorScalarMultiply(0.5, vectorAdd(minPos, maxPos))
+        center = (minPos + maxPos)*0.5
 
         return (center, distance)
 
