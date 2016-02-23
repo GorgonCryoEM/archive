@@ -362,7 +362,7 @@ class Camera(QtOpenGL.QGLWidget):
         
         p2 = gluUnProject(oglX, oglY, oglZ, modelview, projection, viewport)
         glPopMatrix()
-        return vectorSubtract([p2[0], p2[1], p2[2]], self.eye)
+        return Vector3Float(p2[0], p2[1], p2[2]) - self.eye
                 
     def resizeGL(self, width, height):
         if(height > 0):
