@@ -5,7 +5,7 @@ from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
 from libpytoolkit import *
-    
+from cmath import *
 
 class Camera(QtOpenGL.QGLWidget):
 
