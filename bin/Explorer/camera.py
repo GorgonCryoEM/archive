@@ -35,19 +35,19 @@ class Camera(QtOpenGL.QGLWidget):
         self.fogDensity = 0.01
         self.fogEnabled = False
         
-        self.center = Vector3Float(0,0,0)
-        self.eye =    Vector3Float(0,-4.1,0)
-        self.look =   Vector3Float(0,1.1,0)
-        self.right =  Vector3Float(1.1,0,0)
-        self.up =     Vector3Float(0,0,1.1)
-        self.near = 0.11
-        self.far = 1000.01
+        self.center = Vector3Float(0.0,  0.0, 0.0)
+        self.eye    = Vector3Float(0.0, -4.1, 0.0)
+        self.look   = Vector3Float(0.0, 1.1, 0.0)
+        self.right  = Vector3Float(1.1, 0.0, 0.0)
+        self.up     = Vector3Float(0.0, 0.0, 1.1)
+        self.near    = 0.11
+        self.far     = 1000.01
         self.eyeZoom = 0.26
         
-        self.setCenter(0, 0, 0)
-        self.setEye(0, -4, 0)
-        self.setUp(0, 0, 1)
-        self.setEyeRotation(0, 0, 0)
+        self.setCenter     (0.0, 0.0, 0.0)
+        self.setEye        (0.0, -4.0, 0.0)
+        self.setUp         (0.0, 0.0, 1.0)
+        self.setEyeRotation(0.0, 0.0, 0.0)
         self.lastPos = QtCore.QPoint()
         
         for i in range(len(self.scene)):
