@@ -11,8 +11,8 @@ import argparse
 
 from libpytoolkit import *
 import libpytoolkit as gtool
-import gorg
-from gorg.volume_viewer import VolumeViewer
+# import gorg
+# from gorg.volume_viewer import VolumeViewer
 from Explorer import MainWindowForm
 
 
