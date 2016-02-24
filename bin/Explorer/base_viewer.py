@@ -82,7 +82,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
         origin = [self.renderer.getOriginX(), self.renderer.getOriginY(), self.renderer.getOriginZ()]
         scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
 
-        return Vector3Float(objectCoords[0] * scale[0] + origin[0],
+        return Vec3(objectCoords[0] * scale[0] + origin[0],
 			                objectCoords[1] * scale[1] + origin[1],
 			                objectCoords[2] * scale[2] + origin[2]
 			                )
@@ -91,7 +91,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
         origin = [self.renderer.getOriginX(), self.renderer.getOriginY(), self.renderer.getOriginZ()]
         scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
         
-        return Vector3Float((worldCoords[0] - origin[0]) / scale[0],
+        return Vec3((worldCoords[0] - origin[0]) / scale[0],
 			                (worldCoords[1] - origin[1]) / scale[1],
 			                (worldCoords[2] - origin[2]) / scale[2]
 			                )
@@ -99,14 +99,14 @@ class BaseViewer(QtOpenGL.QGLWidget):
     def objectVectorToWorldCoordinates(self, objectCoords):
         #Need to apply rotations
         scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
-        return Vector3Float(objectCoords[0] * scale[0],
+        return Vec3(objectCoords[0] * scale[0],
 			                objectCoords[1] * scale[1],
 			                objectCoords[2] * scale[2]
 			                )
     
     def worldVectorToObjectCoordinates(self, worldCoords):
         scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
-        return Vector3Float(worldCoords[0] / scale[0],
+        return Vec3(worldCoords[0] / scale[0],
 			                worldCoords[1] / scale[1],
 			                worldCoords[2] / scale[2]
                 			)
@@ -196,11 +196,11 @@ class BaseViewer(QtOpenGL.QGLWidget):
     def getBoundingBox(self):
         scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
         location = [self.renderer.getOriginX(), self.renderer.getOriginY(), self.renderer.getOriginZ()]
-        minPos = Vector3Float((self.renderer.getMin(0)*scale[0] + location[0]),
+        minPos = Vec3((self.renderer.getMin(0)*scale[0] + location[0]),
 			                  (self.renderer.getMin(1)*scale[1] + location[1]),
 			                  (self.renderer.getMin(2)*scale[2] + location[2])
 			                  )
-        maxPos = Vector3Float((self.renderer.getMax(0)*scale[0] + location[0]),
+        maxPos = Vec3((self.renderer.getMax(0)*scale[0] + location[0]),
 			                  (self.renderer.getMax(1)*scale[1] + location[1]),
 			                  (self.renderer.getMax(2)*scale[2] + location[2])
 			                  )
@@ -209,11 +209,11 @@ class BaseViewer(QtOpenGL.QGLWidget):
     def getCenterAndDistance(self):
         scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
         location = [self.renderer.getOriginX(), self.renderer.getOriginY(), self.renderer.getOriginZ()]
-        minPos = Vector3Float((self.renderer.getMin(0)*scale[0] + location[0]),
+        minPos = Vec3((self.renderer.getMin(0)*scale[0] + location[0]),
 			                  (self.renderer.getMin(1)*scale[1] + location[1]),
 			                  (self.renderer.getMin(2)*scale[2] + location[2])
 			                  )
-        maxPos = Vector3Float((self.renderer.getMax(0)*scale[0] + location[0]),
+        maxPos = Vec3((self.renderer.getMax(0)*scale[0] + location[0]),
 			                  (self.renderer.getMax(1)*scale[1] + location[1]),
 			                  (self.renderer.getMax(2)*scale[2] + location[2])
 			                  )
