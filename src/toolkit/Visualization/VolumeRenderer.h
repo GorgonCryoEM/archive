@@ -266,7 +266,7 @@ namespace Visualization {
 
         ProbDistr3D gaussianFilter;
         gaussianFilter.radius = radius;
-        GetBinomialDistribution(gaussianFilter);
+        BinomDistr(gaussianFilter);
 
         for(int x = radius; x < destVol->getSizeX()-radius; x++) {
             for(int y = radius; y < destVol->getSizeY()-radius; y++) {
