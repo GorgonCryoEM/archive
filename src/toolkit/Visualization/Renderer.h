@@ -11,7 +11,7 @@
 //#include <GorgonGL.h>
 #include "OpenGLUtils.h"
 //#include <MathTools/Vector3D.h>
-//#include <MathTools/MathLib.h>
+#include <MathTools/MathLib.h>
 #include "MathTools/Dim3D.h"
 
 //using namespace std;
