@@ -83,34 +83,22 @@ class BaseViewer(QtOpenGL.QGLWidget):
         origin = [self.renderer.getOriginX(), self.renderer.getOriginY(), self.renderer.getOriginZ()]
         scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
 
-        return Vec3([objectCoords[0] * scale[0] + origin[0],
-			                objectCoords[1] * scale[1] + origin[1],
-			                objectCoords[2] * scale[2] + origin[2]
-			                ])
+        return Vec3([objectCoords[i] * scale[i] + origin[i] for i in range(3)])
     
     def worldToObjectCoordinates(self, worldCoords):
         origin = [self.renderer.getOriginX(), self.renderer.getOriginY(), self.renderer.getOriginZ()]
         scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
         
-        return Vec3([(worldCoords[0] - origin[0]) / scale[0],
-			                (worldCoords[1] - origin[1]) / scale[1],
-			                (worldCoords[2] - origin[2]) / scale[2]
-			                ])
+        return Vec3([(worldCoords[i] - origin[i]) / scale[i] for i in range(3)])
 
     def objectVectorToWorldCoordinates(self, objectCoords):
         #Need to apply rotations
         scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
-        return Vec3([objectCoords[0] * scale[0],
-			                objectCoords[1] * scale[1],
-			                objectCoords[2] * scale[2]
-			                ])
+        return Vec3([objectCoords[i] * scale[i] for i in range(3)])
     
     def worldVectorToObjectCoordinates(self, worldCoords):
         scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
-        return Vec3([worldCoords[0] / scale[0],
-			                worldCoords[1] / scale[1],
-			                worldCoords[2] / scale[2]
-                			])
+        return Vec3([worldCoords[i] / scale[i] for i in range(3)])
         
     def setBoundingBox(self, visible):
         self.showBox = visible
