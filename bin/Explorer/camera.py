@@ -13,14 +13,15 @@ class Camera(QtOpenGL.QGLWidget):
 
     def __init__(self, scene, main, parent=None):
         QtOpenGL.QGLWidget.__init__(self, parent)
+        
         self.app = main
 
         self.near = 0
         self.cuttingPlane = 0.0
         self.scene = scene
-        self.mouseTrackingEnabled = False
+        self.mouseTrackingEnabled    = False
         self.mouseTrackingEnabledRay = False
-        self.aspectRatio = 1.0
+        self.aspectRatio   = 1.0
         self.selectedScene = -1
         self.lightsEnabled = [True, False]
         self.lightsPosition = [Vec3(1000,1000,1000),
@@ -30,7 +31,7 @@ class Camera(QtOpenGL.QGLWidget):
         self.mouseMovePoint = QtCore.QPoint(0,0)
         self.mouseDownPoint = QtCore.QPoint(0,0)
         self.mouseLeftPressed = False
-        self.mouseMidPressed = False
+        self.mouseMidPressed  = False
         self.mouseRightPressed = False
         
         self.fogDensity = 0.01
@@ -158,7 +159,7 @@ class Camera(QtOpenGL.QGLWidget):
         sceneMax = Vec3(sceneMax)
         
         distance = (sceneMin - sceneMax).length()
-        center = (sceneMin + sceneMax)*0.5
+        center   = (sceneMin + sceneMax)*0.5
         [centerX, centerY, centerZ] = [center.x(), center.y(), center.z()]
                      
         self.setCenter(center)
@@ -379,10 +380,10 @@ class Camera(QtOpenGL.QGLWidget):
         glMatrixMode(GL_MODELVIEW)
     
     def refreshMouseTracking(self):
-        self.mouseTrackingEnabled = False
+        self.mouseTrackingEnabled    = False
         self.mouseTrackingEnabledRay = False
         for s in self.scene:
-            self.mouseTrackingEnabled = self.mouseTrackingEnabled or s.mouseMoveEnabled
+            self.mouseTrackingEnabled    = self.mouseTrackingEnabled    or s.mouseMoveEnabled
             self.mouseTrackingEnabledRay = self.mouseTrackingEnabledRay or s.mouseMoveEnabledRay
         self.setMouseTracking(self.mouseTrackingEnabled or self.mouseTrackingEnabledRay)
         self.updateGL()
@@ -400,12 +401,12 @@ class Camera(QtOpenGL.QGLWidget):
         newDx = (self.eye - self.center).length() * abs(tan(pi * self.eyeZoom)) * dx / float(self.width())
         newDy = (self.eye - self.center).length() * abs(tan(pi * self.eyeZoom)) * dy / float(self.height())
 
-        moveLength = self.up*(-newDy) + self.right*newDx
+        moveLength    = self.up*(-newDy) + self.right*newDx
         moveDirection = moveLength.normalize()
-        rotationAxis = moveDirection^self.look
+        rotationAxis  = moveDirection^self.look
         
         rotationAxis3D = Vec3(rotationAxis)
-        centerOfMass = Vec3(0,0,0)
+        centerOfMass   = Vec3(0,0,0)
         
         totalCount = 0
         for s in self.scene:
@@ -417,16 +418,16 @@ class Camera(QtOpenGL.QGLWidget):
             centerOfMass = centerOfMass * float(1.0 / totalCount)
 
         for s in self.scene:
-            selectionCOM = s.worldToObjectCoordinates(centerOfMass)
+            selectionCOM  = s.worldToObjectCoordinates(centerOfMass)
             selectionAxis = s.worldToObjectCoordinates(rotationAxis3D)
             if(s.renderer.selectionRotate(selectionCOM, selectionAxis, moveLength.length())):
                 s.emitModelChanged()
                      
     def mousePressEvent(self, event):
-        self.mouseDownPoint = QtCore.QPoint(event.pos())
-        self.mouseMovePoint = QtCore.QPoint(event.pos())
-        self.mouseLeftPressed = (event.buttons() & QtCore.Qt.LeftButton)
-        self.mouseMidPressed = (event.buttons() & QtCore.Qt.MidButton)
+        self.mouseDownPoint    = QtCore.QPoint(event.pos())
+        self.mouseMovePoint    = QtCore.QPoint(event.pos())
+        self.mouseLeftPressed  = (event.buttons() & QtCore.Qt.LeftButton)
+        self.mouseMidPressed   = (event.buttons() & QtCore.Qt.MidButton)
         self.mouseRightPressed = (event.buttons() & QtCore.Qt.RightButton)
         self.processMouseDown(self.pickObject(self.mouseDownPoint.x(), self.mouseDownPoint.y()), event)
         

@@ -143,14 +143,14 @@ class BaseViewer(QtOpenGL.QGLWidget):
         diffuseMaterial = [color.redF(), color.greenF(), color.blueF(), color.alphaF()]
         ambientMaterial = [color.redF()*0.2, color.greenF()*0.2, color.blueF()*0.2, color.alphaF()]
         specularMaterial = [1.0, 1.0, 1.0, 1.0]
-        glMaterialfv(GL_BACK, GL_AMBIENT,   ambientMaterial)
-        glMaterialfv(GL_BACK, GL_DIFFUSE,   diffuseMaterial)
-        glMaterialfv(GL_BACK, GL_SPECULAR,  specularMaterial)
-        glMaterialf(GL_BACK, GL_SHININESS, 0.1)
+        glMaterialfv(GL_BACK,  GL_AMBIENT,   ambientMaterial)
+        glMaterialfv(GL_BACK,  GL_DIFFUSE,   diffuseMaterial)
+        glMaterialfv(GL_BACK,  GL_SPECULAR,  specularMaterial)
+        glMaterialf (GL_BACK,  GL_SHININESS, 0.1)
         glMaterialfv(GL_FRONT, GL_AMBIENT,   ambientMaterial)
         glMaterialfv(GL_FRONT, GL_DIFFUSE,   diffuseMaterial)
         glMaterialfv(GL_FRONT, GL_SPECULAR,  specularMaterial)
-        glMaterialf(GL_FRONT, GL_SHININESS, 0.1)
+        glMaterialf (GL_FRONT, GL_SHININESS, 0.1)
 
     def setThickness(self, value):
         self.thickness = value
@@ -183,14 +183,14 @@ class BaseViewer(QtOpenGL.QGLWidget):
         self.updateViewerAutonomy(value)
     
     def getBoundingBox(self):
-        scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
+        scale    = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
         location = [self.renderer.getOriginX(), self.renderer.getOriginY(), self.renderer.getOriginZ()]
         minPos = Vec3([(self.renderer.getMin(i)*scale[i] + location[i]) for i in range(3)])
         maxPos = Vec3([(self.renderer.getMax(i)*scale[i] + location[i]) for i in range(3)])
         return (minPos, maxPos)
         
     def getCenterAndDistance(self):
-        scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
+        scale    = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
         location = [self.renderer.getOriginX(), self.renderer.getOriginY(), self.renderer.getOriginZ()]
         minPos = Vec3([(self.renderer.getMin(i)*scale[i] + location[i]) for i in range(3)])
         maxPos = Vec3([(self.renderer.getMax(i)*scale[i] + location[i]) for i in range(3)])
@@ -258,7 +258,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
         self.emitDrawingModel()
         
         visibility = self.getDrawVisibility()
-        colors = self.getDrawColors()
+        colors     = self.getDrawColors()
                 
         for i in range(len(self.glLists)):
             if(self.loaded and visibility[i]):
