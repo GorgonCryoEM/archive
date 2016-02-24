@@ -1,1 +1,1 @@
-from .vector_3_float import Vec3
+from .vec3 import Vec3
