@@ -9,7 +9,7 @@ class Vec3(Vec3F):
 #         super(Vec3, self).__init__(0.0,0.0,0.0)
         
     def __init__(self, l):
-        x, y, z = l[0], l[1], l[2]
+        [x, y, z] = [l[i] for i in range(3)]
         super(Vec3, self).__init__(x, y, z)
 
 #     def __init__(self, x, y, z):
