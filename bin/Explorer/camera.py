@@ -30,8 +30,8 @@ class Camera(QtOpenGL.QGLWidget):
         self.lightsUseEyePosition = [True, False]
         self.mouseMovePoint = QtCore.QPoint(0,0)
         self.mouseDownPoint = QtCore.QPoint(0,0)
-        self.mouseLeftPressed = False
-        self.mouseMidPressed  = False
+        self.mouseLeftPressed  = False
+        self.mouseMidPressed   = False
         self.mouseRightPressed = False
         
         self.fogDensity = 0.01
