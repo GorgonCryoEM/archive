@@ -154,8 +154,8 @@ class Camera(QtOpenGL.QGLWidget):
                     if maxPos[i] > sceneMax[i]:
                         sceneMax[i] = maxPos[i]
         
-        sceneMin = Vec3([sceneMin[0], sceneMin[1], sceneMin[2]])
-        sceneMax = Vec3([sceneMax[0], sceneMax[1], sceneMax[2]])
+        sceneMin = Vec3(sceneMin)
+        sceneMax = Vec3(sceneMax)
         
         distance = (sceneMin - sceneMax).length()
         center = (sceneMin + sceneMax)*0.5
@@ -363,7 +363,7 @@ class Camera(QtOpenGL.QGLWidget):
         
         p2 = gluUnProject(oglX, oglY, oglZ, modelview, projection, viewport)
         glPopMatrix()
-        return Vec3([p2[0], p2[1], p2[2]]) - self.eye
+        return Vec3(p2) - self.eye
                 
     def resizeGL(self, width, height):
         if(height > 0):
@@ -391,7 +391,7 @@ class Camera(QtOpenGL.QGLWidget):
         newDx = (self.eye - self.center).length() * abs(tan(pi * self.eyeZoom)) * dx / float(self.width())
         newDy = (self.eye - self.center).length() * abs(tan(pi * self.eyeZoom)) * dy / float(self.height())
         moveDirection = self.up*(-newDy) + self.right*newDx
-        dirVec = Vec3([moveDirection[0], moveDirection[1], moveDirection[2]])
+        dirVec = Vec3(moveDirection)
         for s in self.scene:
             if(s.renderer.selectionMove(dirVec)):
                 s.emitModelChanged()
@@ -404,7 +404,7 @@ class Camera(QtOpenGL.QGLWidget):
         moveDirection = moveLength.normalize()
         rotationAxis = moveDirection^self.look
         
-        rotationAxis3D = Vec3([rotationAxis[0], rotationAxis[1], rotationAxis[2]])
+        rotationAxis3D = Vec3(rotationAxis)
         centerOfMass = Vec3([0,0,0])
         
         totalCount = 0
