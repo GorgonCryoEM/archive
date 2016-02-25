@@ -699,7 +699,7 @@ namespace Visualization {
         int iCorner, iVertex, iVertexTest, iEdge, iTriangle, iFlagIndex, iEdgeFlags;
         float fOffset;
         float afCubeValue[8];
-        Vector3Double asEdgeVertex[12];
+        Vec3D asEdgeVertex[12];
         int vertexIds[12];
 
         //Make a local copy of the values at the cube's corners
@@ -769,7 +769,7 @@ namespace Visualization {
         int iCorner, iVertex, iVertexTest, iEdge, iTriangle, iFlagIndex, iEdgeFlags;
         float fOffset;
         float afCubeValue[8];
-        Vector3Double asEdgeVertex[12];
+        Vec3D asEdgeVertex[12];
         int vertexIds[12];
 
         //Make a local copy of the values at the cube's corners
