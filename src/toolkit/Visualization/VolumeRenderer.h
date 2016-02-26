@@ -32,6 +32,7 @@
 //#include <queue>
 #include <Readers/reader.h>
 #include <algorithm>
+#include "Mesh.h"
 
 using namespace std;
 
@@ -40,6 +41,7 @@ using namespace std;
 using namespace MathTools;
 using namespace GraphMatch;
 using namespace SkeletonMaker;
+using namespace Core;
 
 namespace Visualization {
     const int VIEWING_TYPE_ISO_SURFACE = 0;
