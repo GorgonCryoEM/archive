@@ -730,7 +730,7 @@ namespace Visualization {
                         asEdgeVertex[iEdge][1] = (float)iY + ((float)a2iVertexOffset[ a2iEdgeConnection[iEdge][0] ][1] +  fOffset * (float)a2iEdgeDirection[iEdge][1]) * (float)iScale;
                         asEdgeVertex[iEdge][2] = (float)iZ + ((float)a2iVertexOffset[ a2iEdgeConnection[iEdge][0] ][2] +  fOffset * (float)a2iEdgeDirection[iEdge][2]) * (float)iScale;
 
-                        vertexIds[iEdge] = mesh->AddVertex(TriangleMeshVertex(Vec3F(asEdgeVertex[iEdge][0], asEdgeVertex[iEdge][1], asEdgeVertex[iEdge][2])), GetHashKey(iX, iY, iZ, iEdge, iScale));
+                        vertexIds[iEdge] = mesh->AddMarchingVertex(Vec3F(asEdgeVertex[iEdge][0], asEdgeVertex[iEdge][1], asEdgeVertex[iEdge][2]), GetHashKey(iX, iY, iZ, iEdge, iScale));
                 }
         }
 
@@ -747,7 +747,7 @@ namespace Visualization {
                     triangleVertices[iCorner] = vertexIds[iVertex];
                 }
 
-                mesh->AddFace(triangleVertices[0], triangleVertices[1], triangleVertices[2]);
+                mesh->AddMarchingFace(triangleVertices[0], triangleVertices[1], triangleVertices[2]);
         }
     }
 
@@ -800,7 +800,7 @@ namespace Visualization {
                         asEdgeVertex[iEdge][1] = (float)iY + ((float)a2iVertexOffset[ a2iEdgeConnection[iEdge][0] ][1] +  fOffset * (float)a2iEdgeDirection[iEdge][1]) * (float)iScale;
                         asEdgeVertex[iEdge][2] = (float)iZ + ((float)a2iVertexOffset[ a2iEdgeConnection[iEdge][0] ][2] +  fOffset * (float)a2iEdgeDirection[iEdge][2]) * (float)iScale;
 
-                        vertexIds[iEdge] = mesh->AddHashedVertex(Vec3F(asEdgeVertex[iEdge][0], asEdgeVertex[iEdge][1], asEdgeVertex[iEdge][2]), GetHashKey(iX, iY, iZ, iEdge, iScale));
+                        vertexIds[iEdge] = mesh->AddMarchingVertex(Vec3F(asEdgeVertex[iEdge][0], asEdgeVertex[iEdge][1], asEdgeVertex[iEdge][2]), GetHashKey(iX, iY, iZ, iEdge, iScale));
                 }
         }
 
@@ -817,7 +817,7 @@ namespace Visualization {
                     triangleVertices[iCorner] = vertexIds[iVertex];
                 }
 
-                mesh->AddTriangle(triangleVertices[0], triangleVertices[1], triangleVertices[2]);
+                mesh->AddMarchingFace(triangleVertices[0], triangleVertices[1], triangleVertices[2]);
         }
     }
 
