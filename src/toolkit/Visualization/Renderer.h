@@ -40,12 +40,10 @@ namespace Visualization {
             virtual Vec3F Get3DCoordinates(int subsceneIndex, int ix0,
                                                   int ix1 = -1, int ix2 = -1,
                                                   int ix3 = -1, int ix4 = -1);
-            bool SetCuttingPlane(float position, float vecX, float vecY,
-                                 float vecZ);
+            bool SetCuttingPlane(float position, float vecX, float vecY, float vecZ);
             void static DrawSphere(Vec3F center, float radius);
             void static DrawCylinder(Vec3F pt1, Vec3F pt2,
-                                     float radius, int slices = 10, int stacks =
-                                             10);
+                                     float radius, int slices = 10, int stacks = 10);
             void static DrawLine(Vec3F pt1, Vec3F pt2);
             virtual void SetDisplayStyle(int style);
             virtual void SetObjectSpecificColoring(bool objectSpecific);
@@ -105,9 +103,7 @@ namespace Visualization {
         }
     }
 
-    bool Renderer::SelectionRotate(Vec3F centerOfMass,
-                                   Vec3F rotationAxis, float angle)
-    {
+    bool Renderer::SelectionRotate(Vec3F centerOfMass, Vec3F rotationAxis, float angle) {
         return false;
     }
 
@@ -135,14 +131,14 @@ namespace Visualization {
 
     }
 
-    void Renderer::SelectionToggle(int subsceneIndex, bool forceTrue, int ix0,
-                                   int ix1, int ix2, int ix3, int ix4)
+    void Renderer::SelectionToggle(int subsceneIndex, bool forceTrue,
+                                   int ix0, int ix1, int ix2, int ix3, int ix4)
     {
         selected = true;
     }
 
-    Vec3F Renderer::Get3DCoordinates(int subsceneIndex, int ix0, int ix1,
-                                            int ix2, int ix3, int ix4)
+    Vec3F Renderer::Get3DCoordinates(int subsceneIndex,
+                                     int ix0, int ix1, int ix2, int ix3, int ix4)
     {
         return Vec3F(0, 0, 0);
     }
@@ -159,8 +155,8 @@ namespace Visualization {
         return "All Files (*.*)";
     }
 
-    bool Renderer::SetCuttingPlane(float position, float vecX, float vecY,
-                                   float vecZ)
+    bool Renderer::SetCuttingPlane(float position,
+                                   float vecX, float vecY, float vecZ)
     {
         Vec3F center = Vec3F( (minPts[0] + maxPts[0]) / 2.0,
                 (minPts[1] + maxPts[1]) / 2.0, (minPts[2] + maxPts[2]) / 2.0);
@@ -168,8 +164,7 @@ namespace Visualization {
                 (Vec3F(minPts[0], minPts[1], minPts[2]) - center).length();
         cuttingPlaneDirection = Vec3F(vecX, vecY, vecZ);
         cuttingPlaneDirection.normalize();
-        cuttingPlaneCenter = center
-                + cuttingPlaneDirection * position * distance;
+        cuttingPlaneCenter = center + cuttingPlaneDirection * position * distance;
         //printf("%lf %lf %lf - %lf %lf\n", cuttingPlaneCenter.values[0], cuttingPlaneCenter.values[1], cuttingPlaneCenter.values[2], position, distance); flushall();
         return false;
     }
