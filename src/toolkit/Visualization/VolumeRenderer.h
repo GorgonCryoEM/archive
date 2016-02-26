@@ -170,8 +170,6 @@ namespace Visualization {
         return (fValueDesired - fValue1)/fDelta;
     }
 
-
-
     float VolumeRenderer::GetSurfaceValue() const {
         return surfaceValue;
     }
@@ -221,6 +219,7 @@ namespace Visualization {
         }
         return power;
     }
+
     string VolumeRenderer::GetSupportedLoadFileFormats() {
         return "All Files (*.mrc *.ccp4 *.map *.raw *.pts);; Volumes (*.mrc *.ccp4 *.map *.raw);;Point Cloud (*.pts)";
     }
@@ -237,6 +236,7 @@ namespace Visualization {
             }
         }
     }
+
     void VolumeRenderer::SetViewingType(const int type) {
         viewingType = type;
         if(viewingType == VIEWING_TYPE_SOLID) {
@@ -255,6 +255,7 @@ namespace Visualization {
         }
         return redraw;
     }
+
     void VolumeRenderer::DownsampleVolume() {
         Volume * src = this;
         Volume * dest = new Volume(src->getSizeX()/2, src->getSizeY()/2, src->getSizeZ()/2);
