@@ -33,6 +33,7 @@
 #include <Readers/reader.h>
 #include <algorithm>
 #include "Mesh.h"
+#include "Foundation/StringUtils.h"
 
 using namespace std;
 
