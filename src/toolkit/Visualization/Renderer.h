@@ -5,8 +5,8 @@
  *      Author: shadow_walker
  */
 
-#ifndef SRC_TOOLKIT_VISUALIZATION_VOLUMERENDERER_H_
-#define SRC_TOOLKIT_VISUALIZATION_VOLUMERENDERER_H_
+#ifndef SRC_TOOLKIT_VISUALIZATION_RENDERER_H_
+#define SRC_TOOLKIT_VISUALIZATION_RENDERER_H_
 
 
 #define GL_GLEXT_PROTOTYPES
@@ -55,10 +55,10 @@ namespace Visualization {
     typedef OctreeNode<Range> VolumeRendererOctreeNodeType;
     typedef TriangleMesh VolumeSurfaceMeshType;
 
-    class VolumeRenderer : public Volume, public RendererBase {
+    class Renderer : public Volume, public RendererBase {
     public:
-        VolumeRenderer();
-        ~VolumeRenderer();
+        Renderer();
+        ~Renderer();
 
             float getSurfaceValue() const;
             int getSampleInterval() const;
@@ -118,7 +118,7 @@ namespace Visualization {
         #endif
     };
 
-    VolumeRenderer::VolumeRenderer()
+    Renderer::Renderer()
         : RendererBase(),
         cuttingVolume(Volume(2, 2, 2))
     {
@@ -134,7 +134,7 @@ namespace Visualization {
         drawEnabled = false;
     }
 
-    VolumeRenderer::~VolumeRenderer() {
+    Renderer::~Renderer() {
         if(textureLoaded) {
             glDeleteTextures(1, &textureName);
             textureLoaded = false;
@@ -146,15 +146,15 @@ namespace Visualization {
         delete cuttingMesh;
     }
 
-    float VolumeRenderer::getSurfaceValue() const {
+    float Renderer::getSurfaceValue() const {
         return surfaceValue;
     }
 
-    int VolumeRenderer::getSampleInterval() const  {
+    int Renderer::getSampleInterval() const  {
         return sampleInterval;
     }
 
-    int VolumeRenderer::smallest2ndPower(int value) {
+    int Renderer::smallest2ndPower(int value) {
         int power = 1;
         while (power < value) {
             power = power * 2;
@@ -162,15 +162,15 @@ namespace Visualization {
         return power;
     }
 
-    string VolumeRenderer::getSupportedLoadFileFormats() {
+    string Renderer::getSupportedLoadFileFormats() {
         return "All Files (*.mrc *.ccp4 *.map *.raw *.pts);; Volumes (*.mrc *.ccp4 *.map *.raw);;Point Cloud (*.pts)";
     }
 
-    string VolumeRenderer::getSupportedSaveFileFormats() {
+    string Renderer::getSupportedSaveFileFormats() {
         return "Volumes (*.mrc *.ccp4 *.map *.raw);;Mathematica List (*.nb);;Bitmap Image set (*.bmp);;Structure Tensor Field (*.tns);;Surface Mesh(*.off)";
     }
 
-    void VolumeRenderer::enableDraw(bool enable) {
+    void Renderer::enableDraw(bool enable) {
         if(drawEnabled != enable) {
             drawEnabled = enable;
             if(drawEnabled) {
@@ -179,7 +179,7 @@ namespace Visualization {
         }
     }
 
-    void VolumeRenderer::setViewingType(const int type) {
+    void Renderer::setViewingType(const int type) {
         viewingType = type;
         if(viewingType == VIEWING_TYPE_SOLID) {
             load3DTextureSolidRendering();
@@ -189,7 +189,7 @@ namespace Visualization {
         calculateDisplay();
     }
 
-    bool VolumeRenderer::setCuttingPlane(float position, float vecX, float vecY, float vecZ) {
+    bool Renderer::setCuttingPlane(float position, float vecX, float vecY, float vecZ) {
         RendererBase::setCuttingPlane(position, vecX, vecY, vecZ);
         bool redraw = false;
         if((viewingType == VIEWING_TYPE_CROSS_SECTION) || (viewingType == VIEWING_TYPE_SOLID)) {
@@ -198,7 +198,7 @@ namespace Visualization {
         return redraw;
     }
 
-    void VolumeRenderer::initializeOctree() {
+    void Renderer::initializeOctree() {
         #ifdef USE_OCTREE_OPTIMIZATION
             if(octree != NULL) {
                 delete octree;
@@ -245,7 +245,7 @@ namespace Visualization {
         #endif
     }
 
-    void VolumeRenderer::initializeOctreeTag(VolumeRendererOctreeNodeType * node) {
+    void Renderer::initializeOctreeTag(VolumeRendererOctreeNodeType * node) {
         if(node != NULL) {
             Range tag;
             node->tag = tag;
@@ -257,7 +257,7 @@ namespace Visualization {
         }
     }
 
-    void VolumeRenderer::draw(int subSceneIndex, bool selectEnabled) {
+    void Renderer::draw(int subSceneIndex, bool selectEnabled) {
         if(subSceneIndex == 0) {
             if((viewingType == VIEWING_TYPE_ISO_SURFACE) && (surfaceMesh != NULL)) {
                 surfaceMesh->draw(true, selectEnabled, _useDisplayRadius, displayRadius, radiusOrigin);
@@ -311,7 +311,7 @@ namespace Visualization {
     }
 
 
-    void VolumeRenderer::calculateOctreeNode(VolumeRendererOctreeNodeType * node) {
+    void Renderer::calculateOctreeNode(VolumeRendererOctreeNodeType * node) {
         queue<VolumeRendererOctreeNodeType *> q;
         q.push(node);
 
@@ -336,7 +336,7 @@ namespace Visualization {
         }
     }
 
-    bool VolumeRenderer::calculateSurface() {
+    bool Renderer::calculateSurface() {
         bool redraw = false;
         #ifndef USE_OCTREE_OPTIMIZATION
             //appTimeManager.PushCurrentTime();
@@ -385,7 +385,7 @@ namespace Visualization {
 
     }
 
-    bool VolumeRenderer::calculateCuttingSurface() {
+    bool Renderer::calculateCuttingSurface() {
         cuttingMesh->Clear();
 
         bool redraw = false;
@@ -414,7 +414,7 @@ namespace Visualization {
     }
 
 
-    bool VolumeRenderer::calculateSolidRendering() {
+    bool Renderer::calculateSolidRendering() {
         cuttingMesh->Clear();
         bool redraw = false;
         if(volData != NULL) {
@@ -448,7 +448,7 @@ namespace Visualization {
         }
         return redraw;
     }
-    bool VolumeRenderer::calculateDisplay() {
+    bool Renderer::calculateDisplay() {
         bool redraw = false;
         switch (viewingType) {
             case VIEWING_TYPE_ISO_SURFACE:
@@ -464,7 +464,7 @@ namespace Visualization {
         return redraw;
     }
 
-    void VolumeRenderer::load(string fileName) {
+    void Renderer::load(string fileName) {
         Volume::load(fileName);
         initializeOctree();
         updateBoundingBox();
@@ -476,7 +476,7 @@ namespace Visualization {
         setDisplayRadiusOrigin(getSizeX()/2, getSizeY()/2, getSizeZ()/2);
     }
 
-    void VolumeRenderer::load3DTextureSolidRendering() {
+    void Renderer::load3DTextureSolidRendering() {
         if(textureLoaded) {
             glDeleteTextures(1, &textureName);
             textureLoaded = false;
@@ -524,7 +524,7 @@ namespace Visualization {
 
     }
 
-    void VolumeRenderer::load3DTextureCrossSection() {
+    void Renderer::load3DTextureCrossSection() {
         if(textureLoaded) {
             glDeleteTextures(1, &textureName);
             textureLoaded = false;
@@ -580,7 +580,7 @@ namespace Visualization {
 
     }
 
-    void VolumeRenderer::save(string fileName) {
+    void Renderer::save(string fileName) {
         if(volData != NULL) {
             int pos = fileName.rfind(".") + 1;
             string extension = fileName.substr(pos, fileName.length()-pos);
@@ -597,7 +597,7 @@ namespace Visualization {
         }
     }
 
-    void VolumeRenderer::MarchingCube(Volume * vol, Mesh * mesh, const float iso_level, int iX, int iY, int iZ, int iScale){
+    void Renderer::MarchingCube(Volume * vol, Mesh * mesh, const float iso_level, int iX, int iY, int iZ, int iScale){
         marchingCubeCallCount++;
         extern int aiCubeEdgeFlags[256];
         extern int a2iTriangleConnectionTable[256][16];
@@ -666,7 +666,7 @@ namespace Visualization {
         }
     }
 
-    void VolumeRenderer::setSampleInterval(const int size) {
+    void Renderer::setSampleInterval(const int size) {
         sampleInterval = size;
         if(viewingType == VIEWING_TYPE_ISO_SURFACE) {
             calculateSurface();
@@ -675,7 +675,7 @@ namespace Visualization {
         }
     }
 
-    void VolumeRenderer::setSurfaceValue(const float value) {
+    void Renderer::setSurfaceValue(const float value) {
         surfaceValue = value;
         switch(viewingType) {
             case VIEWING_TYPE_ISO_SURFACE:
@@ -690,7 +690,7 @@ namespace Visualization {
         }
     }
 
-    void VolumeRenderer::setMaxSurfaceValue(const float value) {
+    void Renderer::setMaxSurfaceValue(const float value) {
         maxSurfaceValue = value;
         switch(viewingType) {
             case VIEWING_TYPE_ISO_SURFACE:
@@ -704,19 +704,19 @@ namespace Visualization {
         }
     }
 
-    void VolumeRenderer::setDisplayRadius(const int radius) {
+    void Renderer::setDisplayRadius(const int radius) {
         displayRadius = radius;
     }
 
-    void VolumeRenderer::setDisplayRadiusOrigin(float radiusOriginX, float radiusOriginY, float radiusOriginZ) {
+    void Renderer::setDisplayRadiusOrigin(float radiusOriginX, float radiusOriginY, float radiusOriginZ) {
         radiusOrigin = Vec3F(radiusOriginX, radiusOriginY, radiusOriginZ);
     }
 
-    void VolumeRenderer::useDisplayRadius(bool useRadius) {
+    void Renderer::useDisplayRadius(bool useRadius) {
         _useDisplayRadius = useRadius;
     }
 
-    void VolumeRenderer::unload() {
+    void Renderer::unload() {
         RendererBase::unload();
         if(octree != NULL) {
             delete octree;
@@ -730,7 +730,7 @@ namespace Visualization {
         updateBoundingBox();
     }
 
-    void VolumeRenderer::updateBoundingBox() {
+    void Renderer::updateBoundingBox() {
         if(volData == NULL) {
             minPts = 0.0;
             maxPts = 1.0;
@@ -748,4 +748,4 @@ namespace Visualization {
 
 
 
-#endif /* SRC_TOOLKIT_VISUALIZATION_VOLUMERENDERER_H_ */
+#endif /* SRC_TOOLKIT_VISUALIZATION_RENDERER_H_ */
