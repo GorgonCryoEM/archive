@@ -116,7 +116,7 @@ namespace Visualization {
         int viewingType;
         Volume cuttingVolume;
         Vec3F radiusOrigin;
-        bool useDisplayRadius;
+        bool _useDisplayRadius;
 
         VolumeSurfaceMeshType * surfaceMesh;
         NonManifoldMesh * cuttingMesh;
@@ -131,7 +131,7 @@ namespace Visualization {
         cuttingVolume(Volume(2, 2, 2))
     {
         textureLoaded = false;
-        useDisplayRadius = false;
+        _useDisplayRadius = false;
         viewingType = VIEWING_TYPE_ISO_SURFACE;
         surfaceMesh = new VolumeSurfaceMeshType();
         octree = NULL;
@@ -351,7 +351,7 @@ namespace Visualization {
     void VolumeRenderer::draw(int subSceneIndex, bool selectEnabled) {
         if(subSceneIndex == 0) {
             if((viewingType == VIEWING_TYPE_ISO_SURFACE) && (surfaceMesh != NULL)) {
-                surfaceMesh->draw(true, selectEnabled, useDisplayRadius, displayRadius, radiusOrigin);
+                surfaceMesh->draw(true, selectEnabled, _useDisplayRadius, displayRadius, radiusOrigin);
             } else if((viewingType == VIEWING_TYPE_CROSS_SECTION) || (viewingType == VIEWING_TYPE_SOLID)) {
                 glPushAttrib(GL_LIGHTING_BIT | GL_ENABLE_BIT);
                 glDisable(GL_LIGHTING);
@@ -808,7 +808,7 @@ namespace Visualization {
     }
 
     void VolumeRenderer::useDisplayRadius(bool useRadius) {
-        useDisplayRadius = useRadius;
+        _useDisplayRadius = useRadius;
     }
 
     void VolumeRenderer::unload() {
