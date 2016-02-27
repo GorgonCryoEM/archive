@@ -86,23 +86,23 @@ namespace Visualization {
             void downsampleVolume();
 
     private:
-            int GetHashKey(int x, int y, int z, int edge, int iScale);
-            float GetVoxelData(int x, int y, int z) const;
-            float GetVoxelData(float x, float y, float z) const;
-            float GetOffset(float fValue1, float fValue2, float fValueDesired);
-            bool CalculateSurface();
-            bool CalculateCuttingSurface();
-            bool CalculateSolidRendering();
-            bool CalculateDisplay();
-            void Load3DTextureSolidRendering();
-            void Load3DTextureCrossSection();
-            void InitializeOctree();
-            void InitializeOctreeTag(VolumeRendererOctreeNodeType * node);
-            void CalculateOctreeNode(VolumeRendererOctreeNodeType * node);
+            int getHashKey(int x, int y, int z, int edge, int iScale);
+            float getVoxelData(int x, int y, int z) const;
+            float getVoxelData(float x, float y, float z) const;
+            float getOffset(float fValue1, float fValue2, float fValueDesired);
+            bool calculateSurface();
+            bool calculateCuttingSurface();
+            bool calculateSolidRendering();
+            bool calculateDisplay();
+            void load3DTextureSolidRendering();
+            void load3DTextureCrossSection();
+            void initializeOctree();
+            void initializeOctreeTag(VolumeRendererOctreeNodeType * node);
+            void calculateOctreeNode(VolumeRendererOctreeNodeType * node);
             void MarchingCube(Volume * vol, Mesh * mesh,
                               const float iso_level, int iX, int iY, int iZ,
                               int iScale);
-            int Smallest2ndPower(int value);
+            int smallest2ndPower(int value);
     private:
         int marchingCubeCallCount;
         bool drawEnabled;
@@ -162,7 +162,7 @@ namespace Visualization {
         return Volume::getMin();
     }
 
-    float VolumeRenderer::GetOffset(float fValue1, float fValue2, float fValueDesired) {
+    float VolumeRenderer::getOffset(float fValue1, float fValue2, float fValueDesired) {
         double fDelta = fValue2 - fValue1;
         if(fDelta == 0.0) {
                 return 0.5;
@@ -174,7 +174,7 @@ namespace Visualization {
         return surfaceValue;
     }
 
-    float VolumeRenderer::GetVoxelData(int x, int y, int z) const {
+    float VolumeRenderer::getVoxelData(int x, int y, int z) const {
         if((x < 0) || (x > getSizeX()-1) || (y < 0) || (y > getSizeY()-1) || (z < 0) || (z > getSizeZ()-1)) {
             return 0.0f;
         } else {
@@ -182,15 +182,15 @@ namespace Visualization {
         }
     }
 
-    float VolumeRenderer::GetVoxelData(float x, float y, float z) const {
+    float VolumeRenderer::getVoxelData(float x, float y, float z) const {
         int f[3] = {(int)x, (int)y, (int)z};
         int c[3] = {f[0]+1, f[1]+1, f[2]+1};
         float d[3] = {x - f[0], y - f[1], z - f[2]};
 
-        float i1 = GetVoxelData(f[0], f[1], f[2]) * (1.0 - d[2]) + GetVoxelData(f[0], f[1], c[2]) * d[2];
-        float i2 = GetVoxelData(f[0], c[1], f[2]) * (1.0 - d[2]) + GetVoxelData(f[0], c[1], c[2]) * d[2];
-        float j1 = GetVoxelData(c[0], f[1], f[2]) * (1.0 - d[2]) + GetVoxelData(c[0], f[1], c[2]) * d[2];
-        float j2 = GetVoxelData(c[0], c[1], f[2]) * (1.0 - d[2]) + GetVoxelData(c[0], c[1], c[2]) * d[2];
+        float i1 = getVoxelData(f[0], f[1], f[2]) * (1.0 - d[2]) + getVoxelData(f[0], f[1], c[2]) * d[2];
+        float i2 = getVoxelData(f[0], c[1], f[2]) * (1.0 - d[2]) + getVoxelData(f[0], c[1], c[2]) * d[2];
+        float j1 = getVoxelData(c[0], f[1], f[2]) * (1.0 - d[2]) + getVoxelData(c[0], f[1], c[2]) * d[2];
+        float j2 = getVoxelData(c[0], c[1], f[2]) * (1.0 - d[2]) + getVoxelData(c[0], c[1], c[2]) * d[2];
 
         float w1 = i1 * (1.0 - d[1]) + i2 * d[1];
         float w2 = j1 * (1.0 - d[1]) + j2 * d[1];
@@ -198,7 +198,7 @@ namespace Visualization {
         return w1 * (1.0 - d[0]) + w2 * d[0];
     }
 
-    int VolumeRenderer::GetHashKey(int x, int y, int z, int edge, int iScale) {
+    int VolumeRenderer::getHashKey(int x, int y, int z, int edge, int iScale) {
 
         x += a2iEdgeHash[edge][1]*iScale;
         y += a2iEdgeHash[edge][2]*iScale;
@@ -212,7 +212,7 @@ namespace Visualization {
         return sampleInterval;
     }
 
-    int VolumeRenderer::Smallest2ndPower(int value) {
+    int VolumeRenderer::smallest2ndPower(int value) {
         int power = 1;
         while (power < value) {
             power = power * 2;
@@ -232,7 +232,7 @@ namespace Visualization {
         if(drawEnabled != enable) {
             drawEnabled = enable;
             if(drawEnabled) {
-                CalculateDisplay();
+                calculateDisplay();
             }
         }
     }
@@ -240,18 +240,18 @@ namespace Visualization {
     void VolumeRenderer::setViewingType(const int type) {
         viewingType = type;
         if(viewingType == VIEWING_TYPE_SOLID) {
-            Load3DTextureSolidRendering();
+            load3DTextureSolidRendering();
         } else if  (viewingType == VIEWING_TYPE_CROSS_SECTION) {
-            Load3DTextureCrossSection();
+            load3DTextureCrossSection();
         }
-        CalculateDisplay();
+        calculateDisplay();
     }
 
     bool VolumeRenderer::setCuttingPlane(float position, float vecX, float vecY, float vecZ) {
         Renderer::setCuttingPlane(position, vecX, vecY, vecZ);
         bool redraw = false;
         if((viewingType == VIEWING_TYPE_CROSS_SECTION) || (viewingType == VIEWING_TYPE_SOLID)) {
-            redraw = CalculateDisplay();
+            redraw = calculateDisplay();
         }
         return redraw;
     }
@@ -285,11 +285,11 @@ namespace Visualization {
 
         delete src;
         volData = dest;
-        InitializeOctree();
+        initializeOctree();
         updateBoundingBox();
     }
 
-    void VolumeRenderer::InitializeOctree() {
+    void VolumeRenderer::initializeOctree() {
         #ifdef USE_OCTREE_OPTIMIZATION
             if(octree != NULL) {
                 delete octree;
@@ -305,7 +305,7 @@ namespace Visualization {
                     }
                 }
             }
-            InitializeOctreeTag(octree->GetRoot());
+            initializeOctreeTag(octree->GetRoot());
             float minVal, maxVal, val;
             VolumeRendererOctreeNodeType * node;
 
@@ -336,13 +336,13 @@ namespace Visualization {
         #endif
     }
 
-    void VolumeRenderer::InitializeOctreeTag(VolumeRendererOctreeNodeType * node) {
+    void VolumeRenderer::initializeOctreeTag(VolumeRendererOctreeNodeType * node) {
         if(node != NULL) {
             Range tag;
             node->tag = tag;
             if (!node->isLeaf) {
                 for(int i = 0; i < 8; i++) {
-                    InitializeOctreeTag(node->children[i]);
+                    initializeOctreeTag(node->children[i]);
                 }
             }
         }
@@ -402,7 +402,7 @@ namespace Visualization {
     }
 
 
-    void VolumeRenderer::CalculateOctreeNode(VolumeRendererOctreeNodeType * node) {
+    void VolumeRenderer::calculateOctreeNode(VolumeRendererOctreeNodeType * node) {
         queue<VolumeRendererOctreeNodeType *> q;
         q.push(node);
 
@@ -427,7 +427,7 @@ namespace Visualization {
         }
     }
 
-    bool VolumeRenderer::CalculateSurface() {
+    bool VolumeRenderer::calculateSurface() {
         bool redraw = false;
         #ifndef USE_OCTREE_OPTIMIZATION
             //appTimeManager.PushCurrentTime();
@@ -466,7 +466,7 @@ namespace Visualization {
             redraw = false;
             if(drawEnabled && dataVolume != NULL && octree != NULL) {
                 redraw = true;
-                CalculateOctreeNode(octree->GetRoot());
+                calculateOctreeNode(octree->GetRoot());
             }
 
             appTimeManager.PopAndDisplayTime("Meshing: %f seconds |");
@@ -476,7 +476,7 @@ namespace Visualization {
 
     }
 
-    bool VolumeRenderer::CalculateCuttingSurface() {
+    bool VolumeRenderer::calculateCuttingSurface() {
         cuttingMesh->Clear();
 
         bool redraw = false;
@@ -505,7 +505,7 @@ namespace Visualization {
     }
 
 
-    bool VolumeRenderer::CalculateSolidRendering() {
+    bool VolumeRenderer::calculateSolidRendering() {
         cuttingMesh->Clear();
         bool redraw = false;
         if(volData != NULL) {
@@ -539,17 +539,17 @@ namespace Visualization {
         }
         return redraw;
     }
-    bool VolumeRenderer::CalculateDisplay() {
+    bool VolumeRenderer::calculateDisplay() {
         bool redraw = false;
         switch (viewingType) {
             case VIEWING_TYPE_ISO_SURFACE:
-                redraw = CalculateSurface();
+                redraw = calculateSurface();
                 break;
             case VIEWING_TYPE_CROSS_SECTION:
-                redraw = CalculateCuttingSurface();
+                redraw = calculateCuttingSurface();
                 break;
             case VIEWING_TYPE_SOLID:
-                redraw = CalculateSolidRendering();
+                redraw = calculateSolidRendering();
                 break;
         }
         return redraw;
@@ -557,7 +557,7 @@ namespace Visualization {
 
     void VolumeRenderer::load(string fileName) {
         Volume::load(fileName);
-        InitializeOctree();
+        initializeOctree();
         updateBoundingBox();
 
         #ifdef _WIN32
@@ -567,16 +567,16 @@ namespace Visualization {
         setDisplayRadiusOrigin(getSizeX()/2, getSizeY()/2, getSizeZ()/2);
     }
 
-    void VolumeRenderer::Load3DTextureSolidRendering() {
+    void VolumeRenderer::load3DTextureSolidRendering() {
         if(textureLoaded) {
             glDeleteTextures(1, &textureName);
             textureLoaded = false;
         }
 
         if(volData != NULL) {
-            textureSize[0] = Smallest2ndPower(getSizeX());
-            textureSize[1] = Smallest2ndPower(getSizeY());
-            textureSize[2] = Smallest2ndPower(getSizeZ());
+            textureSize[0] = smallest2ndPower(getSizeX());
+            textureSize[1] = smallest2ndPower(getSizeY());
+            textureSize[2] = smallest2ndPower(getSizeZ());
             double maxVal = maxSurfaceValue;
             double minVal = surfaceValue;
             unsigned char val;
@@ -615,16 +615,16 @@ namespace Visualization {
 
     }
 
-    void VolumeRenderer::Load3DTextureCrossSection() {
+    void VolumeRenderer::load3DTextureCrossSection() {
         if(textureLoaded) {
             glDeleteTextures(1, &textureName);
             textureLoaded = false;
         }
 
         if(volData != NULL) {
-            textureSize[0] = Smallest2ndPower(getSizeX());
-            textureSize[1] = Smallest2ndPower(getSizeY());
-            textureSize[2] = Smallest2ndPower(getSizeZ());
+            textureSize[0] = smallest2ndPower(getSizeX());
+            textureSize[1] = smallest2ndPower(getSizeY());
+            textureSize[2] = smallest2ndPower(getSizeZ());
             double maxVal = maxSurfaceValue;
             double minVal = surfaceValue;
             unsigned char val;
@@ -701,7 +701,7 @@ namespace Visualization {
 
         //Make a local copy of the values at the cube's corners
         for(int iVertex = 0; iVertex < 8; iVertex++) {
-            afCubeValue[iVertex] = GetVoxelData(iX + a2iVertexOffset[iVertex][0]*iScale,
+            afCubeValue[iVertex] = getVoxelData(iX + a2iVertexOffset[iVertex][0]*iScale,
                                                 iY + a2iVertexOffset[iVertex][1]*iScale,
                                                 iZ + a2iVertexOffset[iVertex][2]*iScale);
         }
@@ -730,13 +730,13 @@ namespace Visualization {
                 //if there is an intersection on this edge
                 if(iEdgeFlags & (1<<iEdge))
                 {
-                        fOffset = GetOffset(afCubeValue[ a2iEdgeConnection[iEdge][0] ], afCubeValue[ a2iEdgeConnection[iEdge][1] ], iso_level);
+                        fOffset = getOffset(afCubeValue[ a2iEdgeConnection[iEdge][0] ], afCubeValue[ a2iEdgeConnection[iEdge][1] ], iso_level);
 
                         asEdgeVertex[iEdge][0] = (float)iX + ((float)a2iVertexOffset[ a2iEdgeConnection[iEdge][0] ][0] +  fOffset * (float)a2iEdgeDirection[iEdge][0]) * (float)iScale;
                         asEdgeVertex[iEdge][1] = (float)iY + ((float)a2iVertexOffset[ a2iEdgeConnection[iEdge][0] ][1] +  fOffset * (float)a2iEdgeDirection[iEdge][1]) * (float)iScale;
                         asEdgeVertex[iEdge][2] = (float)iZ + ((float)a2iVertexOffset[ a2iEdgeConnection[iEdge][0] ][2] +  fOffset * (float)a2iEdgeDirection[iEdge][2]) * (float)iScale;
 
-                        vertexIds[iEdge] = mesh->AddMarchingVertex(Vec3F(asEdgeVertex[iEdge][0], asEdgeVertex[iEdge][1], asEdgeVertex[iEdge][2]), GetHashKey(iX, iY, iZ, iEdge, iScale));
+                        vertexIds[iEdge] = mesh->AddMarchingVertex(Vec3F(asEdgeVertex[iEdge][0], asEdgeVertex[iEdge][1], asEdgeVertex[iEdge][2]), getHashKey(iX, iY, iZ, iEdge, iScale));
                 }
         }
 
@@ -764,9 +764,9 @@ namespace Visualization {
     void VolumeRenderer::setSampleInterval(const int size) {
         sampleInterval = size;
         if(viewingType == VIEWING_TYPE_ISO_SURFACE) {
-            CalculateSurface();
+            calculateSurface();
         } else if (viewingType == VIEWING_TYPE_CROSS_SECTION) {
-            CalculateCuttingSurface();
+            calculateCuttingSurface();
         }
     }
 
@@ -774,13 +774,13 @@ namespace Visualization {
         surfaceValue = value;
         switch(viewingType) {
             case VIEWING_TYPE_ISO_SURFACE:
-                CalculateSurface();
+                calculateSurface();
                 break;
             case VIEWING_TYPE_CROSS_SECTION:
-                Load3DTextureCrossSection();
+                load3DTextureCrossSection();
                 break;
             case VIEWING_TYPE_SOLID:
-                Load3DTextureSolidRendering();
+                load3DTextureSolidRendering();
                 break;
         }
     }
@@ -791,10 +791,10 @@ namespace Visualization {
             case VIEWING_TYPE_ISO_SURFACE:
                 break;
             case VIEWING_TYPE_CROSS_SECTION:
-                Load3DTextureCrossSection();
+                load3DTextureCrossSection();
                 break;
             case VIEWING_TYPE_SOLID:
-                Load3DTextureSolidRendering();
+                load3DTextureSolidRendering();
                 break;
         }
     }
@@ -821,7 +821,7 @@ namespace Visualization {
             glDeleteTextures(1, &textureName);
             textureLoaded = false;
         }
-        CalculateSurface();
+        calculateSurface();
         updateBoundingBox();
     }
 
