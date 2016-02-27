@@ -68,8 +68,8 @@ namespace Visualization {
             string GetSupportedSaveFileFormats();
             void EnableDraw(bool enable);
             void Draw(int subSceneIndex, bool selectEnabled);
-            void LoadFile(string fileName);
-            void SaveFile(string fileName);
+            void load(string fileName);
+            void save(string fileName);
             void SetDisplayRadius(const int radius);
             void SetDisplayRadiusOrigin(float radiusOriginX,
                                         float radiusOriginY,
@@ -555,8 +555,8 @@ namespace Visualization {
         return redraw;
     }
 
-    void VolumeRenderer::LoadFile(string fileName) {
-        Volume::loadFile(fileName);
+    void VolumeRenderer::load(string fileName) {
+        Volume::load(fileName);
         InitializeOctree();
         UpdateBoundingBox();
 
@@ -671,7 +671,7 @@ namespace Visualization {
 
     }
 
-    void VolumeRenderer::SaveFile(string fileName) {
+    void VolumeRenderer::save(string fileName) {
         if(volData != NULL) {
             int pos = fileName.rfind(".") + 1;
             string extension = fileName.substr(pos, fileName.length()-pos);
