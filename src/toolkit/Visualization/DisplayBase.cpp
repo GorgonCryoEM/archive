@@ -93,7 +93,39 @@ namespace Visualization {
         }
     }
 
-    void DisplayBase::MarchingCube(Volume * vol, Mesh * mesh, const float iso_level, int iX, int iY, int iZ, int iScale){
+    void DisplayBase::setSampleInterval(const int size) {
+    }
+
+    void DisplayBase::setSurfaceValue(const float value) {
+    }
+
+    void DisplayBase::setMaxSurfaceValue(const float value) {
+    }
+
+    void DisplayBase::unload() {
+        RendererBase::unload();
+        if(textureLoaded) {
+            glDeleteTextures(1, &textureName);
+            textureLoaded = false;
+        }
+        calculateDisplay();
+        updateBoundingBox();
+    }
+
+    void DisplayBase::updateBoundingBox() {
+        if(vol == NULL) {
+            minPts = 0.0;
+            maxPts = 1.0;
+        } else {
+            minPts = 0.0;
+
+            maxPts[0] = vol->getSizeX()-1;
+            maxPts[1] = vol->getSizeY()-1;
+            maxPts[2] = vol->getSizeZ()-1;
+        }
+    }
+
+    void MarchingCube(Volume * vol, Mesh * mesh, const float iso_level, int iX, int iY, int iZ, int iScale){
 //        extern int aiCubeEdgeFlags[256];
 //        extern int a2iTriangleConnectionTable[256][16];
 
@@ -161,37 +193,6 @@ namespace Visualization {
         }
     }
 
-    void DisplayBase::setSampleInterval(const int size) {
-    }
-
-    void DisplayBase::setSurfaceValue(const float value) {
-    }
-
-    void DisplayBase::setMaxSurfaceValue(const float value) {
-    }
-
-    void DisplayBase::unload() {
-        RendererBase::unload();
-        if(textureLoaded) {
-            glDeleteTextures(1, &textureName);
-            textureLoaded = false;
-        }
-        calculateDisplay();
-        updateBoundingBox();
-    }
-
-    void DisplayBase::updateBoundingBox() {
-        if(vol == NULL) {
-            minPts = 0.0;
-            maxPts = 1.0;
-        } else {
-            minPts = 0.0;
-
-            maxPts[0] = vol->getSizeX()-1;
-            maxPts[1] = vol->getSizeY()-1;
-            maxPts[2] = vol->getSizeZ()-1;
-        }
-    }
     int smallest2ndPower(int value) {
         int power = 1;
         while (power < value) {
@@ -199,6 +200,5 @@ namespace Visualization {
         }
         return power;
     }
-
 }
 
