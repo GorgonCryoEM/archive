@@ -24,7 +24,6 @@ namespace Visualization {
         displayRadius = 1;
         sampleInterval = 1;
         cuttingMesh = new NonManifoldMesh();
-        drawEnabled = false;
     }
 
     DisplayBase::~DisplayBase() {

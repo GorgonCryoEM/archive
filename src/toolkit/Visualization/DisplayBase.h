@@ -89,7 +89,6 @@ namespace Visualization {
                               const float iso_level, int iX, int iY, int iZ,
                               int iScale);
     protected:
-        bool drawEnabled;
         bool textureLoaded;
         Dim3D<int> textureSize;
         GLuint textureName;
