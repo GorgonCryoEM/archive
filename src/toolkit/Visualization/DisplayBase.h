@@ -61,9 +61,9 @@ namespace Visualization {
     typedef OctreeNode<Range> VolumeRendererOctreeNodeType;
     typedef TriangleMesh VolumeSurfaceMeshType;
 
-    class DisplayBase : public Volume, public RendererBase {
+    class DisplayBase : public RendererBase {
         public:
-            DisplayBase();
+            DisplayBase(Volume & vol);
             DisplayBase(const RendererBase & rend);
             virtual ~DisplayBase();
 
@@ -118,6 +118,7 @@ namespace Visualization {
             PFNGLTEXIMAGE3DPROC glTexImage3D;
         #endif
 
+        Volume * volData;
     };
 
 } /* namespace Visualization */

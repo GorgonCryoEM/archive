@@ -10,9 +10,10 @@
 
 namespace Visualization {
 
-    DisplayBase::DisplayBase()
+    DisplayBase::DisplayBase(Volume & vol)
         : RendererBase(),
-          cuttingVolume(Volume(2, 2, 2))
+          cuttingVolume(Volume(2, 2, 2)),
+          volData(&vol)
     {
         textureLoaded = false;
         _useDisplayRadius = false;
