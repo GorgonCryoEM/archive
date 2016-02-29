@@ -97,6 +97,8 @@ namespace Visualization {
     }
 
     void DisplayBase::setSurfaceValue(const float value) {
+        load3DTexture();
+        calculateDisplay();
     }
 
     void DisplayBase::setMaxSurfaceValue(const float value) {

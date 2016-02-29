@@ -76,7 +76,7 @@ namespace Visualization {
             virtual void draw(int subSceneIndex, bool selectEnabled);
             void save(string fileName);
             void setSampleInterval(const int size);
-            virtual void setSurfaceValue(const float value);
+            void setSurfaceValue(const float value);
             void setMaxSurfaceValue(const float value);
             virtual bool setCuttingPlane(float position, float vecX, float vecY, float vecZ);
             void updateBoundingBox();
