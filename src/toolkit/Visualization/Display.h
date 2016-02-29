@@ -12,7 +12,7 @@
 
 namespace Visualization {
 
-    class Display : public DisplayBase {
+    class Display {
         public:
             Display();
 
