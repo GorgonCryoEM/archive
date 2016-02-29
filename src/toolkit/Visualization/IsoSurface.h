@@ -34,6 +34,7 @@ namespace Visualization {
             Vec3F radiusOrigin;
             bool _useDisplayRadius;
 
+            VolumeSurfaceMeshType * surfaceMesh;
     };
 
 } /* namespace Visualization */

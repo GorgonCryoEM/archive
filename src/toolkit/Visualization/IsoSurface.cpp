@@ -14,10 +14,11 @@ namespace Visualization {
     {
         displayRadius = 1;
         _useDisplayRadius = false;
+        surfaceMesh = new VolumeSurfaceMeshType();
     }
 
     IsoSurface::~IsoSurface() {
-        // TODO Auto-generated destructor stub
+        delete surfaceMesh;
     }
 
     bool IsoSurface::calculateDisplay() {

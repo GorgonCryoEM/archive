@@ -17,7 +17,6 @@ namespace Visualization {
     {
         textureLoaded = false;
 
-        surfaceMesh = new VolumeSurfaceMeshType();
         surfaceValue = 1.5;
         sampleInterval = 1;
         cuttingMesh = new NonManifoldMesh();
@@ -28,7 +27,6 @@ namespace Visualization {
             glDeleteTextures(1, &textureName);
             textureLoaded = false;
         }
-        delete surfaceMesh;
         delete cuttingMesh;
     }
 

@@ -95,7 +95,6 @@ namespace Visualization {
         int sampleInterval;
         Volume cuttingVolume;
 
-        VolumeSurfaceMeshType * surfaceMesh;
         NonManifoldMesh * cuttingMesh;
 
         #ifdef _WIN32
