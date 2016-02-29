@@ -17,7 +17,6 @@ namespace Visualization {
     {
         textureLoaded = false;
 
-        viewingType = VIEWING_TYPE_ISO_SURFACE;
         surfaceMesh = new VolumeSurfaceMeshType();
         octree = NULL;
         surfaceValue = 1.5;

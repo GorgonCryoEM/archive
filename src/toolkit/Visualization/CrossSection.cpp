@@ -121,19 +121,17 @@ namespace Visualization {
             Vec3F vertex;
             // The outside box
 
-            if(viewingType == VIEWING_TYPE_CROSS_SECTION) {
-                glBegin(GL_LINES);
-                for(unsigned int i = 0; i < cuttingMesh->edges.size(); i++) {
-                    if(cuttingMesh->edges[i].faceIds.size() == 1) {
+            glBegin(GL_LINES);
+            for(unsigned int i = 0; i < cuttingMesh->edges.size(); i++) {
+                if(cuttingMesh->edges[i].faceIds.size() == 1) {
 
-                        for(unsigned int j = 0; j < 2; j++) {
-                            vertex = cuttingMesh->vertices[cuttingMesh->GetVertexIndex(cuttingMesh->edges[i].vertexIds[j])].position;
-                            glVertex3f(vertex.X() * (float)vol->getSizeX(), vertex.Y() * (float)vol->getSizeY(), vertex.Z() * (float)vol->getSizeZ());
-                        }
+                    for(unsigned int j = 0; j < 2; j++) {
+                        vertex = cuttingMesh->vertices[cuttingMesh->GetVertexIndex(cuttingMesh->edges[i].vertexIds[j])].position;
+                        glVertex3f(vertex.X() * (float)vol->getSizeX(), vertex.Y() * (float)vol->getSizeY(), vertex.Z() * (float)vol->getSizeZ());
                     }
                 }
-                glEnd();
             }
+            glEnd();
 
 
             // The cutting surface
