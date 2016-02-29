@@ -9,8 +9,8 @@
 
 namespace Visualization {
 
-    IsoSurface::IsoSurface(Volume & vol)
-    : DisplayBase(vol)
+    IsoSurface::IsoSurface(Volume & V)
+    : DisplayBase(V)
     {
 
     }
@@ -28,15 +28,15 @@ namespace Visualization {
             //appTimeManager.PopAndDisplayTime("Marching Cubes)  Clearing : %f seconds |");
             redraw = false;
 
-            if(drawEnabled && volData != NULL) {
+            if(drawEnabled && vol != NULL) {
                 redraw = true;
-                int maxX = volData->getSizeX();
-                int maxY = volData->getSizeY();
-                int maxZ = volData->getSizeZ();
+                int maxX = vol->getSizeX();
+                int maxY = vol->getSizeY();
+                int maxZ = vol->getSizeZ();
                 for(int i = 0; i < maxX; i+=sampleInterval) {
                     for(int j = 0; j < maxY; j+=sampleInterval) {
                         for(int k = 0; k < maxZ; k+=sampleInterval) {
-                            MarchingCube(volData, surfaceMesh, surfaceValue, i, j, k, sampleInterval);
+                            MarchingCube(vol, surfaceMesh, surfaceValue, i, j, k, sampleInterval);
                         }
                     }
                 }

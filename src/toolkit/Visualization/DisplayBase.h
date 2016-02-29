@@ -63,7 +63,7 @@ namespace Visualization {
 
     class DisplayBase : public RendererBase {
         public:
-            DisplayBase(Volume & vol);
+            DisplayBase(Volume & V);
             DisplayBase(const RendererBase & rend);
             virtual ~DisplayBase();
 
@@ -110,7 +110,7 @@ namespace Visualization {
             PFNGLTEXIMAGE3DPROC glTexImage3D;
         #endif
 
-        Volume * volData;
+        Volume * vol;
     };
 
 } /* namespace Visualization */

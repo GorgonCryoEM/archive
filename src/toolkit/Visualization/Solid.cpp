@@ -9,8 +9,8 @@
 
 namespace Visualization {
 
-    Solid::Solid(Volume & vol)
-    : DisplayBase(vol)
+    Solid::Solid(Volume & V)
+    : DisplayBase(V)
     {
     }
 
@@ -21,7 +21,7 @@ namespace Visualization {
     bool Solid::calculateDisplay() {
         cuttingMesh->Clear();
         bool redraw = false;
-        if(volData != NULL) {
+        if(vol != NULL) {
             redraw = true;
             NonManifoldMesh tempMesh;
 
@@ -40,7 +40,7 @@ namespace Visualization {
                     for(int i = 0; i < 2; i++) {
                         for(int j = 0; j < 2; j++) {
                             for(int k = 0; k < 2; k++) {
-                                cuttingVolume(i, j, k) = (center - Vec3F(i * volData->getSizeX(), j * volData->getSizeY(), k * volData->getSizeZ()))* cuttingPlaneDirection;
+                                cuttingVolume(i, j, k) = (center - Vec3F(i * vol->getSizeX(), j * vol->getSizeY(), k * vol->getSizeZ()))* cuttingPlaneDirection;
                             }
                         }
                     }
@@ -59,10 +59,10 @@ namespace Visualization {
             textureLoaded = false;
         }
 
-        if(volData != NULL) {
-            textureSize[0] = smallest2ndPower(volData->getSizeX());
-            textureSize[1] = smallest2ndPower(volData->getSizeY());
-            textureSize[2] = smallest2ndPower(volData->getSizeZ());
+        if(vol != NULL) {
+            textureSize[0] = smallest2ndPower(vol->getSizeX());
+            textureSize[1] = smallest2ndPower(vol->getSizeY());
+            textureSize[2] = smallest2ndPower(vol->getSizeZ());
             double maxVal = maxSurfaceValue;
             double minVal = surfaceValue;
             unsigned char val;
@@ -72,8 +72,8 @@ namespace Visualization {
             for(int z = 0; z < textureSize.Z(); z++) {
                 for(int y = 0; y < textureSize.Y(); y++) {
                     for(int x = 0; x < textureSize.X(); x++) {
-                        if((x < volData->getSizeX()) && (y < volData->getSizeY()) && (z < volData->getSizeZ())) {
-                            val = (unsigned char)round((min(max((double)(*volData)(x, y, z), minVal), maxVal) - minVal) * 255.0 / (maxVal - minVal));
+                        if((x < vol->getSizeX()) && (y < vol->getSizeY()) && (z < vol->getSizeZ())) {
+                            val = (unsigned char)round((min(max((double)(*vol)(x, y, z), minVal), maxVal) - minVal) * 255.0 / (maxVal - minVal));
                         } else {
                             val = 0;
                         }
@@ -129,7 +129,7 @@ namespace Visualization {
 
                         for(unsigned int j = 0; j < 2; j++) {
                             vertex = cuttingMesh->vertices[cuttingMesh->GetVertexIndex(cuttingMesh->edges[i].vertexIds[j])].position;
-                            glVertex3f(vertex.X() * (float)volData->getSizeX(), vertex.Y() * (float)volData->getSizeY(), vertex.Z() * (float)volData->getSizeZ());
+                            glVertex3f(vertex.X() * (float)vol->getSizeX(), vertex.Y() * (float)vol->getSizeY(), vertex.Z() * (float)vol->getSizeZ());
                         }
                     }
                 }
@@ -144,16 +144,16 @@ namespace Visualization {
             //if(resident) {
                 glBindTexture(GL_TEXTURE_3D, textureName);
 
-                double xRatio = (double)volData->getSizeX() / (double)textureSize.X();
-                double yRatio = (double)volData->getSizeY() / (double)textureSize.Y();
-                double zRatio = (double)volData->getSizeZ() / (double)textureSize.Z();
+                double xRatio = (double)vol->getSizeX() / (double)textureSize.X();
+                double yRatio = (double)vol->getSizeY() / (double)textureSize.Y();
+                double zRatio = (double)vol->getSizeZ() / (double)textureSize.Z();
 
                 for(unsigned int i = 0; i < cuttingMesh->faces.size(); i++) {
                     glBegin(GL_POLYGON);
                     for(unsigned int j = 0; j < cuttingMesh->faces[i].vertexIds.size(); j++) {
                         vertex = cuttingMesh->vertices[cuttingMesh->GetVertexIndex(cuttingMesh->faces[i].vertexIds[j])].position;
                         glTexCoord3d(vertex.X() * xRatio, vertex.Y()* yRatio, vertex.Z() * zRatio);
-                        glVertex3f(vertex.X() * (float)volData->getSizeX(), vertex.Y() * (float)volData->getSizeY(), vertex.Z() * (float)volData->getSizeZ());
+                        glVertex3f(vertex.X() * (float)vol->getSizeX(), vertex.Y() * (float)vol->getSizeY(), vertex.Z() * (float)vol->getSizeZ());
                     }
                     glEnd();
                 }
