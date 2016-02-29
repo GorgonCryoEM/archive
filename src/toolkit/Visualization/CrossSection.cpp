@@ -9,9 +9,9 @@
 
 namespace Visualization {
 
-    CrossSection::CrossSection() {
-        // TODO Auto-generated constructor stub
-
+    CrossSection::CrossSection(Volume & vol)
+    : DisplayBase(vol)
+    {
     }
 
     CrossSection::~CrossSection() {

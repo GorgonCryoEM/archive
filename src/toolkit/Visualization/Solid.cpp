@@ -9,9 +9,9 @@
 
 namespace Visualization {
 
-    Solid::Solid() {
-        // TODO Auto-generated constructor stub
-
+    Solid::Solid(Volume & vol)
+    : DisplayBase(vol)
+    {
     }
 
     Solid::~Solid() {

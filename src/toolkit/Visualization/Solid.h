@@ -17,7 +17,7 @@ namespace Visualization {
      */
     class Solid : public DisplayBase {
         public:
-            Solid();
+            Solid(Volume & volData);
             virtual ~Solid();
 
             bool calculateDisplay();

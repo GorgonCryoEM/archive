@@ -9,9 +9,9 @@
 
 namespace Visualization {
 
-    IsoSurface::IsoSurface() {
-        // TODO Auto-generated constructor stub
-
+    IsoSurface::IsoSurface(Volume & vol)
+    : DisplayBase(vol)
+    {
 
     }
 
