@@ -30,26 +30,25 @@ namespace Visualization {
             //appTimeManager.PopAndDisplayTime("Marching Cubes)  Clearing : %f seconds |");
             redraw = false;
 
-            if(vol != NULL) {
-                redraw = true;
-                int maxX = vol->getSizeX();
-                int maxY = vol->getSizeY();
-                int maxZ = vol->getSizeZ();
-                for(int i = 0; i < maxX; i+=sampleInterval) {
-                    for(int j = 0; j < maxY; j+=sampleInterval) {
-                        for(int k = 0; k < maxZ; k+=sampleInterval) {
-                            MarchingCube(vol, surfaceMesh, surfaceValue, i, j, k, sampleInterval);
-                        }
+            redraw = true;
+            int maxX = vol.getSizeX();
+            int maxY = vol.getSizeY();
+            int maxZ = vol.getSizeZ();
+            for(int i = 0; i < maxX; i+=sampleInterval) {
+                for(int j = 0; j < maxY; j+=sampleInterval) {
+                    for(int k = 0; k < maxZ; k+=sampleInterval) {
+                        MarchingCube(vol, surfaceMesh, surfaceValue, i, j, k, sampleInterval);
                     }
                 }
-                /*for(iX = max(radiusOrigin.X() - displayRadius, 0); iX < min(maxX, radiusOrigin.X() + displayRadius); iX+=sampleInterval) {
+            }
+            /*for(iX = max(radiusOrigin.X() - displayRadius, 0); iX < min(maxX, radiusOrigin.X() + displayRadius); iX+=sampleInterval) {
                     for(iY = max(radiusOrigin.Y() - displayRadius, 0); iY < min(maxY, radiusOrigin.Y() + displayRadius); iY+=sampleInterval) {
                         for(iZ = max(radiusOrigin.Z() - displayRadius, 0); iZ < min(maxZ, radiusOrigin.Z() + displayRadius); iZ+=sampleInterval) {
                             MarchingCube(dataVolume, surfaceMesh, surfaceValue, iX, iY, iZ, sampleInterval);
                         }
                     }
                 }*/
-            }
+
             //appTimeManager.PopAndDisplayTime("Meshing: %f seconds |");
         #else
             appTimeManager.PushCurrentTime();

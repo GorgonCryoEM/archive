@@ -13,7 +13,7 @@ namespace Visualization {
     DisplayBase::DisplayBase(Volume & V)
         : RendererBase(),
           cuttingVolume(Volume(2, 2, 2)),
-          vol(&V)
+          vol(V)
     {
         textureLoaded = false;
 
@@ -75,19 +75,15 @@ namespace Visualization {
 //        #endif
 
     void DisplayBase::save(string fileName) {
-        if(vol != NULL) {
-            int pos = fileName.rfind(".") + 1;
-            string extension = fileName.substr(pos, fileName.length()-pos);
+        int pos = fileName.rfind(".") + 1;
+        string extension = fileName.substr(pos, fileName.length()-pos);
 
-            extension = StringUtils::StringToUpper(extension);
+        extension = StringUtils::StringToUpper(extension);
 
-            if(strcmp(extension.c_str(), "MRC") == 0) {
-                vol->toMRCFile((char *)fileName.c_str());
-            } else {
-                printf("Input format %s not supported!\n", extension.c_str());
-            }
-
-
+        if(strcmp(extension.c_str(), "MRC") == 0) {
+            vol.toMRCFile((char *)fileName.c_str());
+        } else {
+            printf("Input format %s not supported!\n", extension.c_str());
         }
     }
 
@@ -117,19 +113,14 @@ namespace Visualization {
     }
 
     void DisplayBase::updateBoundingBox() {
-        if(vol == NULL) {
-            minPts = 0.0;
-            maxPts = 1.0;
-        } else {
-            minPts = 0.0;
+        minPts = 0.0;
 
-            maxPts[0] = vol->getSizeX()-1;
-            maxPts[1] = vol->getSizeY()-1;
-            maxPts[2] = vol->getSizeZ()-1;
-        }
+        maxPts[0] = vol.getSizeX()-1;
+        maxPts[1] = vol.getSizeY()-1;
+        maxPts[2] = vol.getSizeZ()-1;
     }
 
-    void MarchingCube(Volume * vol, Mesh * mesh, const float iso_level, int iX, int iY, int iZ, int iScale){
+    void MarchingCube(Volume & vol, Mesh * mesh, const float iso_level, int iX, int iY, int iZ, int iScale){
 //        extern int aiCubeEdgeFlags[256];
 //        extern int a2iTriangleConnectionTable[256][16];
 
@@ -141,7 +132,7 @@ namespace Visualization {
 
         //Make a local copy of the values at the cube's corners
         for(int iVertex = 0; iVertex < 8; iVertex++) {
-            afCubeValue[iVertex] = vol->getVoxelData(iX + a2iVertexOffset[iVertex][0]*iScale,
+            afCubeValue[iVertex] = vol.getVoxelData(iX + a2iVertexOffset[iVertex][0]*iScale,
                                                 iY + a2iVertexOffset[iVertex][1]*iScale,
                                                 iZ + a2iVertexOffset[iVertex][2]*iScale);
         }
@@ -170,13 +161,13 @@ namespace Visualization {
                 //if there is an intersection on this edge
                 if(iEdgeFlags & (1<<iEdge))
                 {
-                        fOffset = vol->getOffset(afCubeValue[ a2iEdgeConnection[iEdge][0] ], afCubeValue[ a2iEdgeConnection[iEdge][1] ], iso_level);
+                        fOffset = vol.getOffset(afCubeValue[ a2iEdgeConnection[iEdge][0] ], afCubeValue[ a2iEdgeConnection[iEdge][1] ], iso_level);
 
                         asEdgeVertex[iEdge][0] = (float)iX + ((float)a2iVertexOffset[ a2iEdgeConnection[iEdge][0] ][0] +  fOffset * (float)a2iEdgeDirection[iEdge][0]) * (float)iScale;
                         asEdgeVertex[iEdge][1] = (float)iY + ((float)a2iVertexOffset[ a2iEdgeConnection[iEdge][0] ][1] +  fOffset * (float)a2iEdgeDirection[iEdge][1]) * (float)iScale;
                         asEdgeVertex[iEdge][2] = (float)iZ + ((float)a2iVertexOffset[ a2iEdgeConnection[iEdge][0] ][2] +  fOffset * (float)a2iEdgeDirection[iEdge][2]) * (float)iScale;
 
-                        vertexIds[iEdge] = mesh->AddMarchingVertex(Vec3F(asEdgeVertex[iEdge][0], asEdgeVertex[iEdge][1], asEdgeVertex[iEdge][2]), vol->getHashKey(iX, iY, iZ, iEdge, iScale));
+                        vertexIds[iEdge] = mesh->AddMarchingVertex(Vec3F(asEdgeVertex[iEdge][0], asEdgeVertex[iEdge][1], asEdgeVertex[iEdge][2]), vol.getHashKey(iX, iY, iZ, iEdge, iScale));
                 }
         }
 

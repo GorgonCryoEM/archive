@@ -49,7 +49,7 @@ namespace Visualization {
      *
      */
     int smallest2ndPower(int value);
-    void MarchingCube(Volume * vol, Mesh * mesh,
+    void MarchingCube(Volume & vol, Mesh * mesh,
                       const float iso_level, int iX, int iY, int iZ,
                       int iScale);
 
@@ -101,7 +101,7 @@ namespace Visualization {
             PFNGLTEXIMAGE3DPROC glTexImage3D;
         #endif
 
-        Volume * vol;
+        Volume & vol;
     };
 
 } /* namespace Visualization */

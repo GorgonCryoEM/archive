@@ -23,22 +23,20 @@ namespace Visualization {
 
         bool redraw = false;
 
-        if(vol != NULL) {
-            redraw = true;
+        redraw = true;
 
-            if((cuttingPlaneCenter.X() >= minPts[0]) && (cuttingPlaneCenter.X() <= maxPts[0]) &&
+        if((cuttingPlaneCenter.X() >= minPts[0]) && (cuttingPlaneCenter.X() <= maxPts[0]) &&
                 (cuttingPlaneCenter.Y() >= minPts[1]) && (cuttingPlaneCenter.Y() <= maxPts[1]) &&
                 (cuttingPlaneCenter.Z() >= minPts[2]) && (cuttingPlaneCenter.Z() <= maxPts[2])) {
 
-                for(int i = 0; i < 2; i++) {
-                    for(int j = 0; j < 2; j++) {
-                        for(int k = 0; k < 2; k++) {
-                            cuttingVolume(i, j, k) = (cuttingPlaneCenter - Vec3F(i * vol->getSizeX(), j * vol->getSizeY(), k * vol->getSizeZ()))* cuttingPlaneDirection;
-                        }
+            for(int i = 0; i < 2; i++) {
+                for(int j = 0; j < 2; j++) {
+                    for(int k = 0; k < 2; k++) {
+                        cuttingVolume(i, j, k) = (cuttingPlaneCenter - Vec3F(i * vol.getSizeX(), j * vol.getSizeY(), k * vol.getSizeZ()))* cuttingPlaneDirection;
                     }
                 }
-                MarchingCube(&cuttingVolume, cuttingMesh, 0.0f, 0, 0, 0, 1);
             }
+            MarchingCube(cuttingVolume, cuttingMesh, 0.0f, 0, 0, 0, 1);
         }
         return redraw;
     }
@@ -49,53 +47,51 @@ namespace Visualization {
             textureLoaded = false;
         }
 
-        if(vol != NULL) {
-            textureSize[0] = smallest2ndPower(vol->getSizeX());
-            textureSize[1] = smallest2ndPower(vol->getSizeY());
-            textureSize[2] = smallest2ndPower(vol->getSizeZ());
-            double maxVal = maxSurfaceValue;
-            double minVal = surfaceValue;
-            unsigned char val;
+        textureSize[0] = smallest2ndPower(vol.getSizeX());
+        textureSize[1] = smallest2ndPower(vol.getSizeY());
+        textureSize[2] = smallest2ndPower(vol.getSizeZ());
+        double maxVal = maxSurfaceValue;
+        double minVal = surfaceValue;
+        unsigned char val;
 
-            // Approximations to avoid division by zero
-            if(isZero(minVal - maxVal, 0.000000000001)) {
-                maxVal = minVal + (vol->getMax() - vol->getMin()) / 1000.0;
-            }
-            if(isZero(minVal - maxVal, 0.000000000001)) {
-                maxVal = minVal + 0.0001;
-            }
+        // Approximations to avoid division by zero
+        if(isZero(minVal - maxVal, 0.000000000001)) {
+            maxVal = minVal + (vol.getMax() - vol.getMin()) / 1000.0;
+        }
+        if(isZero(minVal - maxVal, 0.000000000001)) {
+            maxVal = minVal + 0.0001;
+        }
 
-            unsigned char * texels = new unsigned char[textureSize.X() * textureSize.Y() * textureSize.Z()];
-            unsigned int pos = 0;
-            for(int z = 0; z < textureSize.Z(); z++) {
-                for(int y = 0; y < textureSize.Y(); y++) {
-                    for(int x = 0; x < textureSize.X(); x++) {
-                        if((x < vol->getSizeX()) && (y < vol->getSizeY()) && (z < vol->getSizeZ())) {
-                            val = (unsigned char)round((min(max((double)(*vol)(x, y, z), minVal), maxVal) - minVal) * 255.0 / (maxVal - minVal));
-                        } else {
-                            val = 0;
-                        }
-                        texels[pos] = val;
-                        pos++;
+        unsigned char * texels = new unsigned char[textureSize.X() * textureSize.Y() * textureSize.Z()];
+        unsigned int pos = 0;
+        for(int z = 0; z < textureSize.Z(); z++) {
+            for(int y = 0; y < textureSize.Y(); y++) {
+                for(int x = 0; x < textureSize.X(); x++) {
+                    if((x < vol.getSizeX()) && (y < vol.getSizeY()) && (z < vol.getSizeZ())) {
+                        val = (unsigned char)round((min(max((double)(vol)(x, y, z), minVal), maxVal) - minVal) * 255.0 / (maxVal - minVal));
+                    } else {
+                        val = 0;
                     }
+                    texels[pos] = val;
+                    pos++;
                 }
             }
-            glGenTextures(1, &textureName);
-            glBindTexture(GL_TEXTURE_3D, textureName);
-            glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-            glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-            glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_REPEAT);
-            try {
-                glTexImage3D(GL_TEXTURE_3D, 0, GL_LUMINANCE, textureSize.X(), textureSize.Y(), textureSize.Z(), 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, texels);
-                textureLoaded = true;
-            }   catch (int) {
-                textureLoaded = false;
-            }
-            delete [] texels;
-
         }
+        glGenTextures(1, &textureName);
+        glBindTexture(GL_TEXTURE_3D, textureName);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_REPEAT);
+        try {
+            glTexImage3D(GL_TEXTURE_3D, 0, GL_LUMINANCE, textureSize.X(), textureSize.Y(), textureSize.Z(), 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, texels);
+            textureLoaded = true;
+        }   catch (int) {
+            textureLoaded = false;
+        }
+        delete [] texels;
+
     }
 
     void CrossSection::draw(int subSceneIndex, bool selectEnabled) {
@@ -112,7 +108,7 @@ namespace Visualization {
 
                     for(unsigned int j = 0; j < 2; j++) {
                         vertex = cuttingMesh->vertices[cuttingMesh->GetVertexIndex(cuttingMesh->edges[i].vertexIds[j])].position;
-                        glVertex3f(vertex.X() * (float)vol->getSizeX(), vertex.Y() * (float)vol->getSizeY(), vertex.Z() * (float)vol->getSizeZ());
+                        glVertex3f(vertex.X() * (float)vol.getSizeX(), vertex.Y() * (float)vol.getSizeY(), vertex.Z() * (float)vol.getSizeZ());
                     }
                 }
             }
@@ -126,16 +122,16 @@ namespace Visualization {
             //if(resident) {
                 glBindTexture(GL_TEXTURE_3D, textureName);
 
-                double xRatio = (double)vol->getSizeX() / (double)textureSize.X();
-                double yRatio = (double)vol->getSizeY() / (double)textureSize.Y();
-                double zRatio = (double)vol->getSizeZ() / (double)textureSize.Z();
+                double xRatio = (double)vol.getSizeX() / (double)textureSize.X();
+                double yRatio = (double)vol.getSizeY() / (double)textureSize.Y();
+                double zRatio = (double)vol.getSizeZ() / (double)textureSize.Z();
 
                 for(unsigned int i = 0; i < cuttingMesh->faces.size(); i++) {
                     glBegin(GL_POLYGON);
                     for(unsigned int j = 0; j < cuttingMesh->faces[i].vertexIds.size(); j++) {
                         vertex = cuttingMesh->vertices[cuttingMesh->GetVertexIndex(cuttingMesh->faces[i].vertexIds[j])].position;
                         glTexCoord3d(vertex.X() * xRatio, vertex.Y()* yRatio, vertex.Z() * zRatio);
-                        glVertex3f(vertex.X() * (float)vol->getSizeX(), vertex.Y() * (float)vol->getSizeY(), vertex.Z() * (float)vol->getSizeZ());
+                        glVertex3f(vertex.X() * (float)vol.getSizeX(), vertex.Y() * (float)vol.getSizeY(), vertex.Z() * (float)vol.getSizeZ());
                     }
                     glEnd();
                 }
