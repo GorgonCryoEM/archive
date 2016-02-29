@@ -100,6 +100,8 @@ namespace Visualization {
     }
 
     void DisplayBase::setMaxSurfaceValue(const float value) {
+        maxSurfaceValue = value;
+        load3DTexture();
     }
 
     void DisplayBase::unload() {

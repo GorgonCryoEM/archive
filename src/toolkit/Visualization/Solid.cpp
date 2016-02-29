@@ -105,11 +105,6 @@ namespace Visualization {
         load3DTexture();
     }
 
-    void Solid::setMaxSurfaceValue(const float value) {
-        maxSurfaceValue = value;
-        load3DTexture();
-    }
-
     void Solid::draw(int subSceneIndex, bool selectEnabled) {
         if(subSceneIndex == 0) {
             glPushAttrib(GL_LIGHTING_BIT | GL_ENABLE_BIT);

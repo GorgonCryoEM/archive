@@ -79,10 +79,6 @@ namespace Visualization {
         calculateDisplay();
     }
 
-    void IsoSurface::setMaxSurfaceValue(const float value) {
-        maxSurfaceValue = value;
-    }
-
     void IsoSurface::draw(int subSceneIndex, bool selectEnabled) {
         if(subSceneIndex == 0) {
             if(surfaceMesh != NULL)
