@@ -92,6 +92,8 @@ namespace Visualization {
     }
 
     void DisplayBase::setSampleInterval(const int size) {
+        sampleInterval = size;
+        calculateDisplay();
     }
 
     void DisplayBase::setSurfaceValue(const float value) {

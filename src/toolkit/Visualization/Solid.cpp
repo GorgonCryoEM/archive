@@ -100,10 +100,6 @@ namespace Visualization {
         }
     }
 
-    void Solid::setSampleInterval(const int size) {
-        sampleInterval = size;
-    }
-
     void Solid::setSurfaceValue(const float value) {
         surfaceValue = value;
         load3DTexture();
