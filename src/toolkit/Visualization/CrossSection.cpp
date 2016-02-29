@@ -33,7 +33,7 @@ namespace Visualization {
                 for(int i = 0; i < 2; i++) {
                     for(int j = 0; j < 2; j++) {
                         for(int k = 0; k < 2; k++) {
-                            cuttingVolume(i, j, k) = (cuttingPlaneCenter - Vec3F(i * getSizeX(), j * getSizeY(), k * getSizeZ()))* cuttingPlaneDirection;
+                            cuttingVolume(i, j, k) = (cuttingPlaneCenter - Vec3F(i * volData->getSizeX(), j * volData->getSizeY(), k * volData->getSizeZ()))* cuttingPlaneDirection;
                         }
                     }
                 }
@@ -59,7 +59,7 @@ namespace Visualization {
 
             // Approximations to avoid division by zero
             if(isZero(minVal - maxVal, 0.000000000001)) {
-                maxVal = minVal + (Volume::getMax() - Volume::getMin()) / 1000.0;
+                maxVal = minVal + (volData->getMax() - volData->getMin()) / 1000.0;
             }
             if(isZero(minVal - maxVal, 0.000000000001)) {
                 maxVal = minVal + 0.0001;
@@ -70,8 +70,8 @@ namespace Visualization {
             for(int z = 0; z < textureSize.Z(); z++) {
                 for(int y = 0; y < textureSize.Y(); y++) {
                     for(int x = 0; x < textureSize.X(); x++) {
-                        if((x < getSizeX()) && (y < getSizeY()) && (z < getSizeZ())) {
-                            val = (unsigned char)round((min(max((double)(*this)(x, y, z), minVal), maxVal) - minVal) * 255.0 / (maxVal - minVal));
+                        if((x < volData->getSizeX()) && (y < volData->getSizeY()) && (z < volData->getSizeZ())) {
+                            val = (unsigned char)round((min(max((double)(*volData)(x, y, z), minVal), maxVal) - minVal) * 255.0 / (maxVal - minVal));
                         } else {
                             val = 0;
                         }
@@ -128,7 +128,7 @@ namespace Visualization {
 
                         for(unsigned int j = 0; j < 2; j++) {
                             vertex = cuttingMesh->vertices[cuttingMesh->GetVertexIndex(cuttingMesh->edges[i].vertexIds[j])].position;
-                            glVertex3f(vertex.X() * (float)getSizeX(), vertex.Y() * (float)getSizeY(), vertex.Z() * (float)getSizeZ());
+                            glVertex3f(vertex.X() * (float)volData->getSizeX(), vertex.Y() * (float)volData->getSizeY(), vertex.Z() * (float)volData->getSizeZ());
                         }
                     }
                 }
@@ -143,16 +143,16 @@ namespace Visualization {
             //if(resident) {
                 glBindTexture(GL_TEXTURE_3D, textureName);
 
-                double xRatio = (double)getSizeX() / (double)textureSize.X();
-                double yRatio = (double)getSizeY() / (double)textureSize.Y();
-                double zRatio = (double)getSizeZ() / (double)textureSize.Z();
+                double xRatio = (double)volData->getSizeX() / (double)textureSize.X();
+                double yRatio = (double)volData->getSizeY() / (double)textureSize.Y();
+                double zRatio = (double)volData->getSizeZ() / (double)textureSize.Z();
 
                 for(unsigned int i = 0; i < cuttingMesh->faces.size(); i++) {
                     glBegin(GL_POLYGON);
                     for(unsigned int j = 0; j < cuttingMesh->faces[i].vertexIds.size(); j++) {
                         vertex = cuttingMesh->vertices[cuttingMesh->GetVertexIndex(cuttingMesh->faces[i].vertexIds[j])].position;
                         glTexCoord3d(vertex.X() * xRatio, vertex.Y()* yRatio, vertex.Z() * zRatio);
-                        glVertex3f(vertex.X() * (float)getSizeX(), vertex.Y() * (float)getSizeY(), vertex.Z() * (float)getSizeZ());
+                        glVertex3f(vertex.X() * (float)volData->getSizeX(), vertex.Y() * (float)volData->getSizeY(), vertex.Z() * (float)volData->getSizeZ());
                     }
                     glEnd();
                 }
