@@ -97,7 +97,6 @@ namespace Visualization {
         int sampleInterval;
         int viewingType;
         Volume cuttingVolume;
-        Vec3F radiusOrigin;
         bool _useDisplayRadius;
 
         VolumeSurfaceMeshType * surfaceMesh;
