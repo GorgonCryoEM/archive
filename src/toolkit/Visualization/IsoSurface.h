@@ -28,6 +28,9 @@ namespace Visualization {
             void setSurfaceValue(const float value);
             void setMaxSurfaceValue(const float value);
             bool setCuttingPlane(float position, float vecX, float vecY, float vecZ);
+
+        private:
+            int displayRadius;
     };
 
 } /* namespace Visualization */

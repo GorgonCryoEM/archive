@@ -95,7 +95,6 @@ namespace Visualization {
         float surfaceValue;
         float maxSurfaceValue;
         int sampleInterval;
-        int displayRadius;
         int viewingType;
         Volume cuttingVolume;
         Vec3F radiusOrigin;

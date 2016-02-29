@@ -12,7 +12,7 @@ namespace Visualization {
     IsoSurface::IsoSurface(Volume & V)
     : DisplayBase(V)
     {
-
+        displayRadius = 1;
     }
 
     IsoSurface::~IsoSurface() {

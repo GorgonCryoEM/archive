@@ -21,7 +21,6 @@ namespace Visualization {
         surfaceMesh = new VolumeSurfaceMeshType();
         octree = NULL;
         surfaceValue = 1.5;
-        displayRadius = 1;
         sampleInterval = 1;
         cuttingMesh = new NonManifoldMesh();
     }
