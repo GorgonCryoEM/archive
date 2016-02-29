@@ -82,7 +82,7 @@ namespace Visualization {
             void updateBoundingBox();
             void unload();
 
-    private:
+    protected:
             bool calculateSurface();
             bool calculateCuttingSurface();
             bool calculateSolidRendering();
@@ -96,7 +96,7 @@ namespace Visualization {
                               const float iso_level, int iX, int iY, int iZ,
                               int iScale);
             int smallest2ndPower(int value);
-    private:
+    protected:
         bool drawEnabled;
         bool textureLoaded;
         Dim3D<int> textureSize;
