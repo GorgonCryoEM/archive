@@ -32,16 +32,6 @@ Display::Display()
 
 #ifdef BASE
 
-void Display::setViewingType(const int type) {
-    viewingType = type;
-    if(viewingType == VIEWING_TYPE_SOLID) {
-        load3DTextureSolidRendering();
-    } else if  (viewingType == VIEWING_TYPE_CROSS_SECTION) {
-        load3DTextureCrossSection();
-    }
-    calculateDisplay();
-}
-
 bool Display::calculateDisplay() {
     return DisplayBase::calculateDisplay();
 }
@@ -68,6 +58,14 @@ bool Visualization::Display::setCuttingPlane(float position, float vecX,
     return DisplayBase::setCuttingPlane(position, vecX, vecY, vecZ);
 }
 #else
+
+void Display::setViewingType(const int type) {
+    cur = displays[type];
+
+    cur->load3DTexture();
+    cur->calculateDisplay();
+}
+
 bool Display::calculateDisplay() {
     return cur->calculateDisplay();
 }
