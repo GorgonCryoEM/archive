@@ -142,7 +142,7 @@ namespace Visualization {
                 if((int)node->cellSize <= sampleInterval + sampleInterval) {
                     for(int i = 0; i < 8; i++) {
                         if(node->children[i] != NULL) {
-                            MarchingCube(this, surfaceMesh, surfaceValue, node->children[i]->pos[0], node->children[i]->pos[1], node->children[i]->pos[2], sampleInterval);
+                            MarchingCube(volData, surfaceMesh, surfaceValue, node->children[i]->pos[0], node->children[i]->pos[1], node->children[i]->pos[2], sampleInterval);
                         }
                     }
                 } else {
@@ -196,7 +196,7 @@ namespace Visualization {
             extension = StringUtils::StringToUpper(extension);
 
             if(strcmp(extension.c_str(), "MRC") == 0) {
-                toMRCFile((char *)fileName.c_str());
+                volData->toMRCFile((char *)fileName.c_str());
             } else {
                 printf("Input format %s not supported!\n", extension.c_str());
             }
@@ -217,7 +217,7 @@ namespace Visualization {
 
         //Make a local copy of the values at the cube's corners
         for(int iVertex = 0; iVertex < 8; iVertex++) {
-            afCubeValue[iVertex] = getVoxelData(iX + a2iVertexOffset[iVertex][0]*iScale,
+            afCubeValue[iVertex] = volData->getVoxelData(iX + a2iVertexOffset[iVertex][0]*iScale,
                                                 iY + a2iVertexOffset[iVertex][1]*iScale,
                                                 iZ + a2iVertexOffset[iVertex][2]*iScale);
         }
@@ -246,13 +246,13 @@ namespace Visualization {
                 //if there is an intersection on this edge
                 if(iEdgeFlags & (1<<iEdge))
                 {
-                        fOffset = getOffset(afCubeValue[ a2iEdgeConnection[iEdge][0] ], afCubeValue[ a2iEdgeConnection[iEdge][1] ], iso_level);
+                        fOffset = volData->getOffset(afCubeValue[ a2iEdgeConnection[iEdge][0] ], afCubeValue[ a2iEdgeConnection[iEdge][1] ], iso_level);
 
                         asEdgeVertex[iEdge][0] = (float)iX + ((float)a2iVertexOffset[ a2iEdgeConnection[iEdge][0] ][0] +  fOffset * (float)a2iEdgeDirection[iEdge][0]) * (float)iScale;
                         asEdgeVertex[iEdge][1] = (float)iY + ((float)a2iVertexOffset[ a2iEdgeConnection[iEdge][0] ][1] +  fOffset * (float)a2iEdgeDirection[iEdge][1]) * (float)iScale;
                         asEdgeVertex[iEdge][2] = (float)iZ + ((float)a2iVertexOffset[ a2iEdgeConnection[iEdge][0] ][2] +  fOffset * (float)a2iEdgeDirection[iEdge][2]) * (float)iScale;
 
-                        vertexIds[iEdge] = mesh->AddMarchingVertex(Vec3F(asEdgeVertex[iEdge][0], asEdgeVertex[iEdge][1], asEdgeVertex[iEdge][2]), getHashKey(iX, iY, iZ, iEdge, iScale));
+                        vertexIds[iEdge] = mesh->AddMarchingVertex(Vec3F(asEdgeVertex[iEdge][0], asEdgeVertex[iEdge][1], asEdgeVertex[iEdge][2]), volData->getHashKey(iX, iY, iZ, iEdge, iScale));
                 }
         }
 
@@ -315,9 +315,9 @@ namespace Visualization {
         } else {
             minPts = 0.0;
 
-            maxPts[0] = getSizeX()-1;
-            maxPts[1] = getSizeY()-1;
-            maxPts[2] = getSizeZ()-1;
+            maxPts[0] = volData->getSizeX()-1;
+            maxPts[1] = volData->getSizeY()-1;
+            maxPts[2] = volData->getSizeZ()-1;
         }
     }
     int smallest2ndPower(int value) {
