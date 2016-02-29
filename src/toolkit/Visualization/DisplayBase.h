@@ -64,7 +64,6 @@ namespace Visualization {
     class DisplayBase : public RendererBase {
         public:
             DisplayBase(Volume & V);
-            DisplayBase(const RendererBase & rend);
             virtual ~DisplayBase();
 
             float getSurfaceValue() const;
