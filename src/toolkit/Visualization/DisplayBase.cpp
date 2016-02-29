@@ -55,65 +55,10 @@ namespace Visualization {
         return "Volumes (*.mrc *.ccp4 *.map *.raw);;Mathematica List (*.nb);;Bitmap Image set (*.bmp);;Structure Tensor Field (*.tns);;Surface Mesh(*.off)";
     }
 
-    void DisplayBase::enableDraw(bool enable) {
-        if(drawEnabled != enable) {
-            drawEnabled = enable;
-            if(drawEnabled) {
-                calculateDisplay();
-            }
-        }
-    }
-
     bool DisplayBase::setCuttingPlane(float position, float vecX, float vecY, float vecZ) {
         return false;
     }
 
-    void DisplayBase::initializeOctree() {
-        #ifdef USE_OCTREE_OPTIMIZATION
-            if(octree != NULL) {
-                delete octree;
-            }
-            unsigned int sizeX = dataVolume->getSizeX();
-            unsigned int sizeY = dataVolume->getSizeY();
-            unsigned int sizeZ = dataVolume->getSizeZ();
-            octree  = new VolumeRendererOctreeType(sizeX, sizeY, sizeZ);
-            for(unsigned int x = 0; x < sizeX-1; x++) {
-                for(unsigned int y = 0; y < sizeY-1; y++) {
-                    for(unsigned int z = 0; z < sizeZ-1; z++) {
-                        octree->AddNewLeaf(x, y, z, 1);
-                    }
-                }
-            }
-            initializeOctreeTag(octree->GetRoot());
-            float minVal, maxVal, val;
-            VolumeRendererOctreeNodeType * node;
-
-            for(unsigned int x = 0; x < sizeX-1; x++) {
-                for(unsigned int y = 0; y < sizeY-1; y++) {
-                    for(unsigned int z = 0; z < sizeZ-1; z++) {
-                        node = octree->GetLeaf(x, y, z);
-                        minVal = MAX_FLOAT;
-                        maxVal = MIN_FLOAT;
-                        for(unsigned int xx = 0; xx < 2; xx++) {
-                            for(unsigned int yy = 0; yy < 2; yy++) {
-                                for(unsigned int zz = 0; zz < 2; zz++) {
-                                    val = dataVolume->(*this)(x+xx, y+yy, z+zz);
-                                    minVal = min(minVal, val);
-                                    maxVal = max(maxVal, val);
-                                }
-                            }
-                        }
-
-                        while(node != NULL) {
-                            node->tag.maxVal = max(node->tag.maxVal, maxVal);
-                            node->tag.minVal = min(node->tag.minVal, minVal);
-                            node = node->parent;
-                        }
-                    }
-                }
-            }
-        #endif
-    }
 
     void DisplayBase::initializeOctreeTag(VolumeRendererOctreeNodeType * node) {
         if(node != NULL) {
@@ -163,30 +108,18 @@ namespace Visualization {
     void DisplayBase::load3DTexture() {
     }
 
-    void DisplayBase::load(string fileName) {
 //        #ifdef GORGON_DEBUG
               cout<<"\033[32mDEBUG: File:   DisplayBase.cpp"<<endl;
               cout<<"DEBUG: Method: DisplayBase::load(string)\033[0m"<<endl;
               cout<<(Volume)(*this)<<endl;
 //        #endif
 
-        Volume::load(fileName);
 
 //        #ifdef GORGON_DEBUG
               cout<<"\033[32mDEBUG: File:   DisplayBase.cpp"<<endl;
               cout<<"DEBUG: After load()\033[0m"<<endl;
               cout<<(Volume)(*this)<<endl;
 //        #endif
-
-        initializeOctree();
-        updateBoundingBox();
-
-        #ifdef _WIN32
-            glTexImage3D = (PFNGLTEXIMAGE3DPROC) wglGetProcAddress("glTexImage3D");
-        #endif
-
-        setDisplayRadiusOrigin(getSizeX()/2, getSizeY()/2, getSizeZ()/2);
-    }
 
     void DisplayBase::save(string fileName) {
         if(volData != NULL) {
@@ -280,18 +213,6 @@ namespace Visualization {
     }
 
     void DisplayBase::setMaxSurfaceValue(const float value) {
-    }
-
-    void DisplayBase::setDisplayRadius(const int radius) {
-        displayRadius = radius;
-    }
-
-    void DisplayBase::setDisplayRadiusOrigin(float radiusOriginX, float radiusOriginY, float radiusOriginZ) {
-        radiusOrigin = Vec3F(radiusOriginX, radiusOriginY, radiusOriginZ);
-    }
-
-    void DisplayBase::useDisplayRadius(bool useRadius) {
-        _useDisplayRadius = useRadius;
     }
 
     void DisplayBase::unload() {

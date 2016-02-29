@@ -71,15 +71,8 @@ namespace Visualization {
             int getSampleInterval() const;
             string getSupportedLoadFileFormats();
             string getSupportedSaveFileFormats();
-            void enableDraw(bool enable);
             virtual void draw(int subSceneIndex, bool selectEnabled);
-            void load(string fileName);
             void save(string fileName);
-            void setDisplayRadius(const int radius);
-            void setDisplayRadiusOrigin(float radiusOriginX,
-                                        float radiusOriginY,
-                                        float radiusOriginZ);
-            void useDisplayRadius(bool useRadius);
             virtual void setSampleInterval(const int size);
             virtual void setSurfaceValue(const float value);
             virtual void setMaxSurfaceValue(const float value);
@@ -91,7 +84,6 @@ namespace Visualization {
             virtual void load3DTexture();
 
     protected:
-            void initializeOctree();
             void initializeOctreeTag(VolumeRendererOctreeNodeType * node);
             void calculateOctreeNode(VolumeRendererOctreeNodeType * node);
             void MarchingCube(Volume * vol, Mesh * mesh,

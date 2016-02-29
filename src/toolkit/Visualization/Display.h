@@ -28,9 +28,25 @@ namespace Visualization {
             void setSurfaceValue(const float value);
             void setMaxSurfaceValue(const float value);
             bool setCuttingPlane(float position, float vecX, float vecY, float vecZ);
+
+            void enableDraw(bool enable);
+            void setDisplayRadius(const int radius);
+            void setDisplayRadiusOrigin(float radiusOriginX,
+                                        float radiusOriginY,
+                                        float radiusOriginZ);
+            void load(string fileName);
+            void initializeOctree();
+            void useDisplayRadius(bool useRadius);
+
         private:
             DisplayListType displays;
             DisplayBase * cur;
+
+            bool drawEnabled;
+            int displayRadius;
+            Vec3F radiusOrigin;
+            bool _useDisplayRadius;
+
     };
 }
 
