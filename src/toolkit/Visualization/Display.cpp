@@ -10,14 +10,9 @@
 #include "CrossSection.h"
 #include "Solid.h"
 
-#include "macros.h"
-
 using namespace Visualization;
 
 Display::Display()
-#ifdef BASE
-    : DisplayBase()
-#endif
 {
     displays.push_back(new IsoSurface  );
     displays.push_back(new CrossSection);
