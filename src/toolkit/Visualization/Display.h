@@ -31,9 +31,8 @@ namespace Visualization {
 
             void enableDraw(bool enable);
             void setDisplayRadius(const int radius);
-            void setDisplayRadiusOrigin(float radiusOriginX,
-                                        float radiusOriginY,
-                                        float radiusOriginZ);
+            void setDisplayRadiusOrigin(float radOrigX, float radOrigY,
+                                        float radOrigZ);
             void load(string fileName);
             void initializeOctree();
             void useDisplayRadius(bool useRadius);

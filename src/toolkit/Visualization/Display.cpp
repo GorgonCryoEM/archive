@@ -102,11 +102,10 @@ void Display::setDisplayRadius(const int radius) {
         displayRadius = radius;
 }
 
-void Display::setDisplayRadiusOrigin(float radiusOriginX,
-                                                    float radiusOriginY,
-                                                    float radiusOriginZ)
+void Display::setDisplayRadiusOrigin(float radOrigX, float radOrigY,
+                                     float radOrigZ)
 {
-    radiusOrigin = Vec3F(radiusOriginX, radiusOriginY, radiusOriginZ);
+    radiusOrigin = Vec3F(radOrigX, radOrigY, radOrigZ);
 }
 
 void Display::load(string fileName) {
