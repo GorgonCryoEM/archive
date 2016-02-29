@@ -13,6 +13,7 @@ namespace Visualization {
     : DisplayBase(V)
     {
         displayRadius = 1;
+        _useDisplayRadius = false;
     }
 
     IsoSurface::~IsoSurface() {

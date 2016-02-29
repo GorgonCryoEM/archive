@@ -32,6 +32,7 @@ namespace Visualization {
         private:
             int displayRadius;
             Vec3F radiusOrigin;
+            bool _useDisplayRadius;
 
     };
 

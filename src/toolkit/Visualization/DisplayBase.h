@@ -97,7 +97,6 @@ namespace Visualization {
         int sampleInterval;
         int viewingType;
         Volume cuttingVolume;
-        bool _useDisplayRadius;
 
         VolumeSurfaceMeshType * surfaceMesh;
         NonManifoldMesh * cuttingMesh;
