@@ -33,23 +33,23 @@ bool Display::calculateDisplay() {
     return DisplayBase::calculateDisplay();
 }
 
-void Visualization::Display::draw(int subSceneIndex, bool selectEnabled) {
+void Display::draw(int subSceneIndex, bool selectEnabled) {
     DisplayBase::draw(subSceneIndex, selectEnabled);
 }
 
-void Visualization::Display::setSampleInterval(const int size) {
+void Display::setSampleInterval(const int size) {
     DisplayBase::setSampleInterval(size);
 }
 
-void Visualization::Display::setSurfaceValue(const float value) {
+void Display::setSurfaceValue(const float value) {
     DisplayBase::setSurfaceValue(value);
 }
 
-void Visualization::Display::setMaxSurfaceValue(const float value) {
+void Display::setMaxSurfaceValue(const float value) {
     DisplayBase::setMaxSurfaceValue(value);
 }
 
-bool Visualization::Display::setCuttingPlane(float position, float vecX,
+bool Display::setCuttingPlane(float position, float vecX,
                                              float vecY, float vecZ)
 {
     return DisplayBase::setCuttingPlane(position, vecX, vecY, vecZ);
@@ -67,23 +67,23 @@ bool Display::calculateDisplay() {
     return cur->calculateDisplay();
 }
 
-void Visualization::Display::draw(int subSceneIndex, bool selectEnabled) {
+void Display::draw(int subSceneIndex, bool selectEnabled) {
     cur->draw(subSceneIndex, selectEnabled);
 }
 
-void Visualization::Display::setSampleInterval(const int size) {
+void Display::setSampleInterval(const int size) {
     cur->setSampleInterval(size);
 }
 
-void Visualization::Display::setSurfaceValue(const float value) {
+void Display::setSurfaceValue(const float value) {
     cur->setSurfaceValue(value);
 }
 
-void Visualization::Display::setMaxSurfaceValue(const float value) {
+void Display::setMaxSurfaceValue(const float value) {
     cur->setMaxSurfaceValue(value);
 }
 
-bool Visualization::Display::setCuttingPlane(float position, float vecX,
+bool Display::setCuttingPlane(float position, float vecX,
                                              float vecY, float vecZ)
 {
     return cur->setCuttingPlane(position, vecX, vecY, vecZ);
@@ -98,18 +98,18 @@ void Display::enableDraw(bool enable) {
     }
 }
 
-void Visualization::Display::setDisplayRadius(const int radius) {
+void Display::setDisplayRadius(const int radius) {
         displayRadius = radius;
 }
 
-void Visualization::Display::setDisplayRadiusOrigin(float radiusOriginX,
+void Display::setDisplayRadiusOrigin(float radiusOriginX,
                                                     float radiusOriginY,
                                                     float radiusOriginZ)
 {
     radiusOrigin = Vec3F(radiusOriginX, radiusOriginY, radiusOriginZ);
 }
 
-void Visualization::Display::load(string fileName) {
+void Display::load(string fileName) {
 //    for(DisplayListType::iterator it=displays.begin();
 //            it!=displays.end();
 //            ++it)
@@ -128,7 +128,7 @@ void Visualization::Display::load(string fileName) {
     setDisplayRadiusOrigin(volData->getSizeX()/2, volData->getSizeY()/2, volData->getSizeZ()/2);
 }
 
-void Visualization::Display::initializeOctree() {
+void Display::initializeOctree() {
 #ifdef USE_OCTREE_OPTIMIZATION
     if(octree != NULL) {
         delete octree;
@@ -175,7 +175,7 @@ void Visualization::Display::initializeOctree() {
 #endif
 }
 
-void Visualization::Display::useDisplayRadius(bool useRadius) {
+void Display::useDisplayRadius(bool useRadius) {
     _useDisplayRadius = useRadius;
 }
 
