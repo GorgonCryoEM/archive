@@ -9,10 +9,14 @@
 #define SRC_TOOLKIT_VISUALIZATION_DISPLAY_H_
 
 #include "DisplayBase.h"
+#include "RendererBase.h"
+#include <Core/volume.h>
 
 namespace Visualization {
 
-    class Display {
+    typedef vector<DisplayBase *> DisplayListType;
+
+    class Display : public Volume, public RendererBase {
         public:
             Display();
 
@@ -25,7 +29,7 @@ namespace Visualization {
             void setMaxSurfaceValue(const float value);
             bool setCuttingPlane(float position, float vecX, float vecY, float vecZ);
         private:
-            vector<DisplayBase *> displays;
+            DisplayListType displays;
             DisplayBase * cur;
     };
 }

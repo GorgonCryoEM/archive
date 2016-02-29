@@ -14,9 +14,9 @@ using namespace Visualization;
 
 Display::Display()
 {
-    displays.push_back(new IsoSurface  );
-    displays.push_back(new CrossSection);
-    displays.push_back(new Solid       );
+    displays.push_back(new IsoSurface  (*this));
+    displays.push_back(new CrossSection(*this));
+    displays.push_back(new Solid       (*this));
 
     cur = displays[0];
 //    #ifdef GORGON_DEBUG
