@@ -80,7 +80,6 @@ namespace Visualization {
                                         float radiusOriginY,
                                         float radiusOriginZ);
             void useDisplayRadius(bool useRadius);
-            void setViewingType(const int type);
             virtual void setSampleInterval(const int size);
             virtual void setSurfaceValue(const float value);
             virtual void setMaxSurfaceValue(const float value);
@@ -92,11 +91,6 @@ namespace Visualization {
             virtual void load3DTexture();
 
     protected:
-            bool calculateSurface();
-            bool calculateCuttingSurface();
-            bool calculateSolidRendering();
-            void load3DTextureSolidRendering();
-            void load3DTextureCrossSection();
             void initializeOctree();
             void initializeOctreeTag(VolumeRendererOctreeNodeType * node);
             void calculateOctreeNode(VolumeRendererOctreeNodeType * node);
