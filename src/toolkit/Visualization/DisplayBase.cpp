@@ -53,18 +53,6 @@ namespace Visualization {
     }
 
 
-    void DisplayBase::initializeOctreeTag(VolumeRendererOctreeNodeType * node) {
-        if(node != NULL) {
-            Range tag;
-            node->tag = tag;
-            if (!node->isLeaf) {
-                for(int i = 0; i < 8; i++) {
-                    initializeOctreeTag(node->children[i]);
-                }
-            }
-        }
-    }
-
     void DisplayBase::draw(int subSceneIndex, bool selectEnabled) {
     }
 

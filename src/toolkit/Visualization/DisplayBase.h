@@ -83,7 +83,6 @@ namespace Visualization {
             virtual void load3DTexture();
 
     protected:
-            void initializeOctreeTag(VolumeRendererOctreeNodeType * node);
             void calculateOctreeNode(VolumeRendererOctreeNodeType * node);
             void MarchingCube(Volume * vol, Mesh * mesh,
                               const float iso_level, int iX, int iY, int iZ,
