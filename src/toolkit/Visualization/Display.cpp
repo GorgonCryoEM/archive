@@ -25,6 +25,7 @@ Display::Display()
           cout<<getSize()<<endl;
 //    #endif
 
+
 }
 
 #ifdef BASE
@@ -130,7 +131,14 @@ void Display::load(string fileName) {
     updateBoundingBox();
 
     cur->load3DTexture();
-    calculateDisplay();
+    bool calc = calculateDisplay();
+//    #ifdef GORGON_DEBUG
+          cout<<"\033[33mDEBUG: File:   Display.cpp"<<endl;
+          cout<<"DEBUG: Method: Display::load(string)\033[0m"<<endl;
+          cout<<"calculateDisplay(): "<<calc<<endl;
+          cout<<"getSize(): "<<getSize()<<endl;
+//    #endif
+
     draw(0, true);
 
     #ifdef _WIN32

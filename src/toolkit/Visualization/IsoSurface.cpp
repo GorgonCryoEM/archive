@@ -74,6 +74,14 @@ namespace Visualization {
         #endif
         //printf("Marching Cubes called %d times\n", marchingCubeCallCount);
 
+//            #ifdef GORGON_DEBUG
+                  cout<<"\033[32mDEBUG: File:   IsoSurface.cpp"<<endl;
+                  cout<<"DEBUG: Method: IsoSurface::calculateDisplay()\033[0m"<<endl;
+                  cout<<"Vol: "<<vol<<endl;
+                  cout<<"SurfaceMesh: "<<surfaceMesh<<endl;
+                  cout<<"SurfaceMesh: "<<*surfaceMesh<<endl;
+//            #endif
+
             return redraw;
 
     }
