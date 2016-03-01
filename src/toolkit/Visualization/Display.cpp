@@ -106,6 +106,8 @@ void Display::setDisplayRadiusOrigin(float radOrigX, float radOrigY,
                                      float radOrigZ)
 {
     radiusOrigin = Vec3F(radOrigX, radOrigY, radOrigZ);
+    cur->load3DTexture();
+    calculateDisplay();
 }
 
 void Display::load(string fileName) {
@@ -126,6 +128,10 @@ void Display::load(string fileName) {
 
     initializeOctree();
     updateBoundingBox();
+
+    cur->load3DTexture();
+    calculateDisplay();
+    draw(0, true);
 
     #ifdef _WIN32
         glTexImage3D = (PFNGLTEXIMAGE3DPROC) wglGetProcAddress("glTexImage3D");
