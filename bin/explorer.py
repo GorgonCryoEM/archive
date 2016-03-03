@@ -65,6 +65,7 @@ def main():
     window.show()
     window.raise_()
     window.volumeViewer.load(args.volume)
+    window.skeletonViewer.load(args.skeleton)
     
 #     vol = Explorer.VolumeViewer(app)
 #     vol.loadDataFromFile(args.volume)
