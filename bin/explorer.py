@@ -70,10 +70,11 @@ def main():
     window.resize(800, 600)
 #     window.move(300,50)
     window.show()
-    window.raise_()
     window.volumeViewer.load(args.volume)
     window.skeletonViewer.load(args.skeleton)
     
+    window.raise_()
+    window1.raise_()
 #     vol = Explorer.VolumeViewer(app)
 #     vol.loadDataFromFile(args.volume)
 #     mainCamera = Explorer.Camera([vol], window)
