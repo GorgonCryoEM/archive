@@ -14,7 +14,7 @@
 //#include <GraphMatch/StandardGraph.h>
 //#include <GraphMatch/SkeletonReader.h>
 #include "GraphMatch/Shape.h"
-//#include <GraphMatch/VectorMath.h>
+#include "MathTools/Vector3.h"
 //#include <MathTools/LinearSolver.h>
 //#include <ProteinMorph/SSEFlexibleFitter.h>
 //#include <ProteinMorph/SSECorrespondenceNode.h>
@@ -43,9 +43,9 @@ namespace Visualization {
 
             vector<Shape*> * GetHelices();
 
-            void AddHelix(Vector3DFloat p1, Vector3DFloat p2);
+            void AddHelix(Vec3F p1, Vec3F p2);
             void StartNewSSE();
-            void AddSSEPoint(Vector3DFloat p);
+            void AddSSEPoint(Vec3F p);
             void FinalizeSheet();
             void FinalizeHelix();
             void Draw(int subSceneIndex, bool selectEnabled);
@@ -58,10 +58,10 @@ namespace Visualization {
             void SetSheetColor(int index, float r, float g, float b, float a);
             void SetSSEColor(int index, float r, float g, float b, float a);
             void SetSSEOrientationFlips(vector<bool>);
-            bool SelectionRotate(Vector3DFloat centerOfMass, Vector3DFloat rotationAxis, float angle);
+            bool SelectionRotate(Vec3F centerOfMass, Vec3F rotationAxis, float angle);
             int SelectionObjectCount();
-            Vector3DFloat SelectionCenterOfMass();
-            bool SelectionMove(Vector3DFloat moveDirection);
+            Vec3F SelectionCenterOfMass();
+            bool SelectionMove(Vec3F moveDirection);
             bool SelectionClear();
             void SelectionToggle(int subsceneIndex, bool forceTrue, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
             void SaveHelixFile(string fileName);
@@ -70,13 +70,13 @@ namespace Visualization {
             string GetSupportedHelixSaveFileFormats();
             string GetSupportedSheetLoadFileFormats();
             string GetSupportedSheetSaveFileFormats();
-            Vector3DFloat Get3DCoordinates(int subsceneIndex, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
+            Vec3F Get3DCoordinates(int subsceneIndex, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
             void FitSelectedSSEs(Volume * vol);
             void RemoveHelices();
             void RemoveSheets();
             void RemoveSelectedSSEs();
             int GetHelixCount();
-            Vector3DFloat GetHelixCorner(int helixIx, int cornerIx);
+            Vec3F GetHelixCorner(int helixIx, int cornerIx);
             void UpdateBoundingBox();
 
             vector<int> GetSelectedHelixIndices();
@@ -98,7 +98,7 @@ namespace Visualization {
             int graphSheetCount;
             bool selectedSheets[256];
             bool selectedGraphSheets[256];
-            vector<Vector3DFloat> tempSSEPoints;
+            vector<Vec3F> tempSSEPoints;
 
             vector<bool> helixFlips;
             vector<int> selectedHelices;
