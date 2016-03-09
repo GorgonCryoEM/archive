@@ -7,6 +7,7 @@
 
 #include "SSERenderer.h"
 #include "Foundation/StringUtils.h"
+#include <GraphMatch/SkeletonReader.h>
 
 namespace Visualization {
 
@@ -88,7 +89,7 @@ namespace Visualization {
             for(int i = 0; i < (int)helices.size(); i++) {
                 glPushAttrib(GL_LIGHTING_BIT);
                 if(isObjectSpecificColoring) {
-                    helices[i]->getColor(colorR, colorG, colorB, colorA);
+                    helices[i]->GetColor(colorR, colorG, colorB, colorA);
                     OpenGLUtils::SetColor(colorR, colorG, colorB, colorA);
 
                 }
@@ -191,7 +192,7 @@ namespace Visualization {
                 // color code
                 if(sheetMesh->faces[i].tag.id != prevSheet) {
                     thisSheet = (int) (sheetMesh->faces[i].tag.id);
-                    sheets[thisSheet-1]->getColor(colorR, colorG, colorB, colorA);
+                    sheets[thisSheet-1]->GetColor(colorR, colorG, colorB, colorA);
                     prevSheet = thisSheet;
                 }
                 if(isObjectSpecificColoring) {
@@ -242,7 +243,7 @@ namespace Visualization {
                 if(graphSheetMesh->faces[i].tag.id != prevSheet) {
                     //cout << "picking graph sheet color. i=" << i << ", id=" << (int) (graphSheetMesh->faces[i].tag.id) << endl;
                     thisSheet = (int) (graphSheetMesh->faces[i].tag.id);
-                    sheets[thisSheet-1]->getColor(colorR, colorG, colorB, colorA); // probably gets the wrong color.
+                    sheets[thisSheet-1]->GetColor(colorR, colorG, colorB, colorA); // probably gets the wrong color.
                     prevSheet = thisSheet;
                 }
 
@@ -341,26 +342,13 @@ namespace Visualization {
         UpdateBoundingBox();
     }
 
-    void SSERenderer::LoadSheetFile(string fileName) {
-        //vector<GeometricShape *> sheets;
-        sheets.clear();
-        if(sheetMesh != NULL) {
-            delete sheetMesh;
-        }
-        SkeletonReader::ReadSheetFile((char *)fileName.c_str(), sheets);
-
-        SheetListToMesh(sheets);
-
-        UpdateBoundingBox();
-    }
-
     void SSERenderer::SheetListToMesh(vector<Shape*> & sheets) {
         if(sheetMesh != NULL) {
             delete sheetMesh;
         }
         sheetMesh = new NonManifoldMesh_SheetIds();
 
-        Point3 pt;
+        Vec3D pt;
         vector<int> indices;
         SheetIdsAndSelect faceTag;
         faceTag.selected = false;
@@ -386,7 +374,6 @@ namespace Visualization {
     }
 
     void SSERenderer::Unload() {
-        RendererBase::Unload();
         for(unsigned int i = 0; i < helices.size(); i++) {
             delete helices[i];
         }
@@ -423,7 +410,7 @@ namespace Visualization {
         Volume* vol = new Volume( dimx, dimy, dimz) ;
         vol->setOrigin(xmin, ymin, zmin);
         for (unsigned int i = 0; i < sse->internalCells.size(); i++) {
-            vol->setDataAt( sse->internalCells[i].x-xmin, sse->internalCells[i].y-ymin, sse->internalCells[i].z-zmin, 1.0 ) ;
+            (*vol)( sse->internalCells[i].x-xmin, sse->internalCells[i].y-ymin, sse->internalCells[i].z-zmin) = 1.0;
         }
 
         // make a mesh from the volume
@@ -432,9 +419,9 @@ namespace Visualization {
         // add offset to all points in new mesh
         for (unsigned int i = 0; i < thisSheetMesh->vertices.size(); i++) {
             Vec3F newpos = thisSheetMesh->vertices[i].position;
-            newpos.values[0] *= scalex;
-            newpos.values[1] *= scaley;
-            newpos.values[2] *= scalez;
+            newpos[0] *= scalex;
+            newpos[1] *= scaley;
+            newpos[2] *= scalez;
             thisSheetMesh->vertices[i].position = newpos + Vec3F(xmin * scalex, ymin * scaley, zmin * scalez) + Vec3F(offsetx, offsety, offsetz);
         }
 

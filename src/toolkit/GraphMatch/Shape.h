@@ -102,7 +102,7 @@ namespace GraphMatch {
 
     }
 
-    bool GeometricShape::GetSelected() {
+    bool Shape::GetSelected() {
         return selected;
     }
 
@@ -392,16 +392,11 @@ namespace GraphMatch {
         UpdateWorldToObjectMatrix();
     }
 
-    void Shape::SetCenter(Vec3D center) {
-    void GeometricShape::SetColor(float r, float g, float b, float a) {
+    void Shape::SetColor(float r, float g, float b, float a) {
         colorR = r;
         colorG = g;
         colorB = b;
         colorA = a;
-    }
-
-        this->centerPoint = center;
-        UpdateWorldToObjectMatrix();
     }
 
     void Shape::SetCenter(Vec3F center) {
@@ -419,16 +414,14 @@ namespace GraphMatch {
         UpdateWorldToObjectMatrix();
     }
 
-    void Shape::UpdateWorldToObjectMatrix() {
-        worldToObject = Matrix4::translation(centerPoint) * rotationMatrix * Matrix4::scaling(radius*2, height, radius*2);
-        objectToWorld = Matrix4::scaling(1.0/(radius*2.0), 1.0/height, 1.0/(radius*2.0)) * inverseRotationMatrix * Matrix4::translation(Vec3D(-centerPoint[0], -centerPoint[1], -centerPoint[2]));
-    void GeometricShape::GetColor(float & r, float & g, float & b, float & a) {
+    void Shape::GetColor(float & r, float & g, float & b, float & a) {
         r = colorR;
         g = colorG;
         b = colorB;
         a = colorA;
     }
-    void GeometricShape::SetSelected(bool selected) {
+
+    void Shape::SetSelected(bool selected) {
         this->selected = selected;
     }
 
@@ -505,6 +498,7 @@ namespace GraphMatch {
         axis = Vec3F((float)x, (float)y, (float)z);
         return;
     }
+
     Shape * Shape::CreateHelix(Vec3F p1, Vec3F p2, float radius) {
         Shape * newHelix = new Shape();
         newHelix->shapeType = GRAPHEDGE_HELIX;

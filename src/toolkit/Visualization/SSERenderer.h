@@ -12,18 +12,17 @@
 //#include "MeshRenderer.h"
 //#include <ProteinMorph/SheetGenerator.h>
 //#include <GraphMatch/StandardGraph.h>
-//#include <GraphMatch/SkeletonReader.h>
 #include "GraphMatch/Shape.h"
 #include "MathTools/Vector3.h"
 #include <MathTools/LinearSolver.h>
-//#include <ProteinMorph/SSEFlexibleFitter.h>
+#include <ProteinMorph/SSEFlexibleFitter.h>
 //#include <ProteinMorph/SSECorrespondenceNode.h>
 //#include <vector>
 //#include <map>
 //#include <boost/tuple/tuple.hpp>
 #include "Core/volume.h"
 
-//using namespace Protein_Morph;
+using namespace Protein_Morph;
 //using namespace GraySkeletonCPP;
 using namespace GraphMatch;
 //using namespace MathTools;
@@ -50,7 +49,6 @@ namespace Visualization {
             void FinalizeHelix();
             void Draw(int subSceneIndex, bool selectEnabled);
             void LoadHelixFile(string fileName);
-            void LoadSheetFile(string fileName);
             void Unload();
             void LoadGraphSSE(int index, Shape* sse, float offsetx, float offsety, float offsetz, float scalex, float scaley, float scalez);
             void UnloadGraphSSEs();
