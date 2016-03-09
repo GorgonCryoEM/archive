@@ -35,13 +35,13 @@ namespace Visualization {
         return selectedHelices;
     }
 
-    vector<GeometricShape*> * SSERenderer::GetHelices(){
+    vector<Shape*> * SSERenderer::GetHelices(){
         return &helices;
     }
 
     void SSERenderer::AddHelix(Vector3DFloat p1, Vector3DFloat p2) {
 
-        GeometricShape * newHelix = GeometricShape::CreateHelix(p1, p2, 2.5);
+        Shape * newHelix = Shape::CreateHelix(p1, p2, 2.5);
 
         helices.push_back(newHelix);
         UpdateBoundingBox();
@@ -79,7 +79,7 @@ namespace Visualization {
             center = center * (1.0/(double)tempSSEPoints.size());
         }
 
-        GeometricShape * sheetShape = new GeometricShape();
+        Shape * sheetShape = new Shape();
         sheetShape->geometricShapeType = GRAPHEDGE_SHEET;
         sheetShape->SetCenter(center);
 
@@ -400,7 +400,7 @@ namespace Visualization {
         UpdateBoundingBox();
     }
 
-    void SSERenderer::SheetListToMesh(vector<GeometricShape*> & sheets) {
+    void SSERenderer::SheetListToMesh(vector<Shape*> & sheets) {
         if(sheetMesh != NULL) {
             delete sheetMesh;
         }
@@ -452,7 +452,7 @@ namespace Visualization {
         UpdateBoundingBox();
     }
 
-    void SSERenderer::LoadGraphSSE(int index, GeometricShape* sse, float offsetx, float offsety, float offsetz, float scalex, float scaley, float scalez) {
+    void SSERenderer::LoadGraphSSE(int index, Shape* sse, float offsetx, float offsety, float offsetz, float scalex, float scaley, float scalez) {
         // make a volume from the internal cells
         int xmin=MAXINT, xmax=-MAXINT, ymin=MAXINT, ymax=-MAXINT, zmin=MAXINT, zmax=-MAXINT;
         for (unsigned int i = 0; i < sse->internalCells.size(); i++) {
@@ -813,7 +813,7 @@ namespace Visualization {
 
 
     void SSERenderer::SaveHelixFileVRML(FILE* fout) {
-        GeometricShape::WriteToFile(this->helices, fout);
+        Shape::WriteToFile(this->helices, fout);
     }
 
     void SSERenderer::SaveHelixFileSSE(FILE* fout) {
@@ -1025,7 +1025,7 @@ namespace Visualization {
     }
 
     void SSERenderer::RemoveSelectedSSEs() {
-        vector<GeometricShape*> newHelices;
+        vector<Shape*> newHelices;
         for(unsigned int i = 0; i < helices.size(); i++) {
             if(helices[i]->GetSelected()) {
                 delete helices[i];
@@ -1036,7 +1036,7 @@ namespace Visualization {
         helices = newHelices;
 
 
-        vector<GeometricShape*> newSheets;
+        vector<Shape*> newSheets;
         for(int i = 0; i < (int)sheets.size(); i++) {
             if(sheets[i]->GetSelected()) {
                 delete sheets[i];
