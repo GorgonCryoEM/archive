@@ -117,7 +117,7 @@ BOOST_PYTHON_MODULE(@current_pylib@)
 //        .def("setDisplayStyle", &RendererBase::setDisplayStyle)
 //        .def("setObjectSpecificColoring", &RendererBase::setObjectSpecificColoring)
 //        .def("updateBoundingBox", &RendererBase::UpdateBoundingBox)
-//        .def("clearOtherHighlights", &RendererBase::ClearOtherHighlights)
+        .def("clearOtherHighlights", &RendererBase::clearOtherHighlights)
         .def("drawSphere", &RendererBase::drawSphere)
         .def("drawCylinder", &RendererBase::drawCylinder)
         .def("drawLine", &RendererBase::drawLine)
@@ -159,6 +159,7 @@ BOOST_PYTHON_MODULE(@current_pylib@)
 //        .def("performSmoothLaplacian", &Display::performSmoothLaplacian)     
         .def("setObjectSpecificColoring", &Display::setObjectSpecificColoring)
         .def("updateBoundingBox", &Display::updateBoundingBox)
+        .def("clearOtherHighlights", &Display::clearOtherHighlights)
     ;
 
   class_<NonManifoldMesh, bases<Volume> >("NonManifoldMesh", init<>())
@@ -166,7 +167,7 @@ BOOST_PYTHON_MODULE(@current_pylib@)
   
   void (MeshRenderer::*load)(string fileName) = &MeshRenderer::load;
   
-  class_< MeshRenderer, bases<Volume> >("MeshRenderer", init<>())
+  class_< MeshRenderer, bases<Volume, RendererBase> >("MeshRenderer", init<>())
       .def("draw", &MeshRenderer::draw)
 //      .def("drawBoundingBox", &MeshRenderer::DrawBoundingBox)
       .def("loadFile", load)
