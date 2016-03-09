@@ -135,9 +135,9 @@ namespace MathTools {
         MatrixFloat t2 = MatrixFloat::Identity(4);
         MatrixFloat t3 = MatrixFloat::Identity(4);
         for(unsigned int i = 0; i < 3; i++) {
-            t1.SetValue(-c1.values[i], i, 3);
-            t2.SetValue(c1.values[i], i, 3);
-            t3.SetValue(c2.values[i] - c1.values[i], i, 3);
+            t1.SetValue(-c1[i], i, 3);
+            t2.SetValue(c1[i], i, 3);
+            t3.SetValue(c2[i] - c1[i], i, 3);
         }
 
         MatrixFloat transform = t3 * t2 * rot4 * t1;

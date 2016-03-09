@@ -47,7 +47,6 @@ namespace Visualization {
             void AddHelix(Vec3F p1, Vec3F p2);
             void StartNewSSE();
             void AddSSEPoint(Vec3F p);
-            void FinalizeSheet();
             void FinalizeHelix();
             void Draw(int subSceneIndex, bool selectEnabled);
             void LoadHelixFile(string fileName);
@@ -103,7 +102,7 @@ namespace Visualization {
 
             vector<bool> helixFlips;
             vector<int> selectedHelices;
-            vector < boost::tuple<int,int> > corrs;
+            vector < pair<int,int> > corrs;
             vector<int> selectedPDBHelices;
     };
 

@@ -6,6 +6,7 @@
  */
 
 #include "SSERenderer.h"
+#include "Foundation/StringUtils.h"
 
 namespace Visualization {
 
@@ -61,46 +62,6 @@ namespace Visualization {
         tempSSEPoints.push_back(p);
     }
 
-    void SSERenderer::FinalizeSheet() {
-        if(sheetMesh == NULL) {
-            sheetMesh = new NonManifoldMesh_SheetIds();
-            sheetCount = 0;
-        }
-
-
-        vector<int> vertexIxs;
-        Vec3F center = Vec3F(0,0,0);
-
-        for(unsigned int i = 0; i < tempSSEPoints.size(); i++) {
-            vertexIxs.push_back(sheetMesh->AddVertex(tempSSEPoints[i], false));
-            center+= tempSSEPoints[i];
-        }
-        if(tempSSEPoints.size() > 0) {
-            center = center * (1.0/(double)tempSSEPoints.size());
-        }
-
-        Shape * sheetShape = new Shape();
-        sheetShape->geometricShapeType = GRAPHEDGE_SHEET;
-        sheetShape->SetCenter(center);
-
-        sheets.push_back(sheetShape);
-
-        sheetCount++;
-
-        SheetIdsAndSelect sheetTag;
-        sheetTag.id = sheetCount;
-        sheetTag.selected = false;
-
-
-        vector<SheetGeneratorTriangle> newTriangles = SheetGenerator::sheetGenerator(tempSSEPoints, vertexIxs);
-        for(unsigned int i = 0; i < newTriangles.size(); i++) {
-            sheetMesh->AddTriangle(newTriangles[i].a, newTriangles[i].b, newTriangles[i].c, NULL, sheetTag);
-        }
-
-        tempSSEPoints.clear();
-        UpdateBoundingBox();
-    }
-
     void SSERenderer::Draw(int subSceneIndex, bool selectEnabled) {
         GLfloat emissionColor[4] = {1.0, 1.0, 1.0, 1.0};
         GLfloat frontColor[4] = {1.0, 0.0, 0.0, 1.0};
@@ -124,11 +85,10 @@ namespace Visualization {
                 }
             }
 
-            Point3 pt;
             for(int i = 0; i < (int)helices.size(); i++) {
                 glPushAttrib(GL_LIGHTING_BIT);
                 if(isObjectSpecificColoring) {
-                    helices[i]->GetColor(colorR, colorG, colorB, colorA);
+                    helices[i]->getColor(colorR, colorG, colorB, colorA);
                     OpenGLUtils::SetColor(colorR, colorG, colorB, colorA);
 
                 }
@@ -162,15 +122,15 @@ namespace Visualization {
                         if(!helixFlips[i]){
 
                             OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
-                            DrawSphere(corner2, 1.0);
+                            drawSphere(corner2, 1.0);
                             OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
-                            DrawSphere(corner1, 1.0);
+                            drawSphere(corner1, 1.0);
                             fflush(stdout);
                         }else{
                             OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
-                            DrawSphere(corner1, 1.0);
+                            drawSphere(corner1, 1.0);
                             OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
-                            DrawSphere(corner2, 1.0);
+                            drawSphere(corner2, 1.0);
                             fflush(stdout);
                         }
                     }
@@ -183,15 +143,15 @@ namespace Visualization {
                         Vec3F corner2 = GetHelixCorner(i, 1);
                         if(!helixFlips[i]){
                             OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
-                            DrawSphere(corner2, 1.0);
+                            drawSphere(corner2, 1.0);
                             OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
-                            DrawSphere(corner1, 1.0);
+                            drawSphere(corner1, 1.0);
                             fflush(stdout);
                         }else{
                             OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
-                            DrawSphere(corner1, 1.0);
+                            drawSphere(corner1, 1.0);
                             OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
-                            DrawSphere(corner2, 1.0);
+                            drawSphere(corner2, 1.0);
                             fflush(stdout);
                         }
                     }
@@ -231,7 +191,7 @@ namespace Visualization {
                 // color code
                 if(sheetMesh->faces[i].tag.id != prevSheet) {
                     thisSheet = (int) (sheetMesh->faces[i].tag.id);
-                    sheets[thisSheet-1]->GetColor(colorR, colorG, colorB, colorA);
+                    sheets[thisSheet-1]->getColor(colorR, colorG, colorB, colorA);
                     prevSheet = thisSheet;
                 }
                 if(isObjectSpecificColoring) {
@@ -282,7 +242,7 @@ namespace Visualization {
                 if(graphSheetMesh->faces[i].tag.id != prevSheet) {
                     //cout << "picking graph sheet color. i=" << i << ", id=" << (int) (graphSheetMesh->faces[i].tag.id) << endl;
                     thisSheet = (int) (graphSheetMesh->faces[i].tag.id);
-                    sheets[thisSheet-1]->GetColor(colorR, colorG, colorB, colorA); // probably gets the wrong color.
+                    sheets[thisSheet-1]->getColor(colorR, colorG, colorB, colorA); // probably gets the wrong color.
                     prevSheet = thisSheet;
                 }
 
@@ -362,9 +322,6 @@ namespace Visualization {
 
     void SSERenderer::LoadHelixFile(string fileName) {
 
-        if(sheetMesh == NULL) {
-            Renderer::LoadFile(fileName);
-        }
         for(unsigned int i = 0; i < helices.size(); i++) {
             delete helices[i];
         }
@@ -385,9 +342,6 @@ namespace Visualization {
     }
 
     void SSERenderer::LoadSheetFile(string fileName) {
-        if(helices.size() == 0) {
-            Renderer::LoadFile(fileName);
-        }
         //vector<GeometricShape *> sheets;
         sheets.clear();
         if(sheetMesh != NULL) {
@@ -432,7 +386,7 @@ namespace Visualization {
     }
 
     void SSERenderer::Unload() {
-        Renderer::Unload();
+        RendererBase::Unload();
         for(unsigned int i = 0; i < helices.size(); i++) {
             delete helices[i];
         }
@@ -570,20 +524,20 @@ namespace Visualization {
     }
 
     void SSERenderer::SetHelixColor(int index, float r, float g, float b, float a) {
-        helices[index]->SetColor(r, g, b, a);
+        helices[index]->setColor(r, g, b, a);
     }
 
     void SSERenderer::SetSheetColor(int index, float r, float g, float b, float a) {
-        sheets[index]->SetColor(r, g, b, a);
+        sheets[index]->setColor(r, g, b, a);
     }
 
     // set the color of an SSE. assumes that SSEs are indexed with helices first and sheets second.
     void SSERenderer::SetSSEColor(int index, float r, float g, float b, float a) {
         int numHelices = helices.size();
         if (index < numHelices) {
-            helices[index]->SetColor(r, g, b, a);
+            helices[index]->setColor(r, g, b, a);
         } else {
-            sheets[index - numHelices]->SetColor(r, g, b, a);
+            sheets[index - numHelices]->setColor(r, g, b, a);
         }
     }
 
@@ -705,7 +659,7 @@ namespace Visualization {
 
         Vec3F centerOfMass;
         if(totalCount == 0) {
-            centerOfMass = Renderer::SelectionCenterOfMass();
+            centerOfMass = RendererBase::SelectionCenterOfMass();
         } else if ((helixCount > 0) && (sheetCount > 0)) {
             centerOfMass = (helixCenterOfMass + sheetsCenterOfMass) * (1.0f/(float)totalCount);
         } else if (helixCount > 0) {
@@ -748,7 +702,7 @@ namespace Visualization {
     }
 
     bool SSERenderer::SelectionClear() {
-        if(Renderer::SelectionClear()) {
+        if(RendererBase::SelectionClear()) {
 
             for(unsigned int i = 0; i < helices.size(); i++) {
                 helices[i]->SetSelected(false);
@@ -783,7 +737,7 @@ namespace Visualization {
     }
 
     void SSERenderer::SelectionToggle(int subsceneIndex, bool forceTrue, int ix0, int ix1, int ix2, int ix3, int ix4) {
-        Renderer::SelectionToggle(subsceneIndex, forceTrue, ix0, ix1, ix2, ix3, ix4);
+        RendererBase::SelectionToggle(subsceneIndex, forceTrue, ix0, ix1, ix2, ix3, ix4);
         if((subsceneIndex == 0) && (ix0 >= 0) && (ix0 <= (int)helices.size())) {
             if(forceTrue || !helices[ix0]->GetSelected())
                 selectedHelices.push_back(ix0);
