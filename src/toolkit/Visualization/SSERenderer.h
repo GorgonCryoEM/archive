@@ -15,18 +15,19 @@
 //#include <GraphMatch/SkeletonReader.h>
 #include "GraphMatch/Shape.h"
 #include "MathTools/Vector3.h"
-//#include <MathTools/LinearSolver.h>
+#include <MathTools/LinearSolver.h>
 //#include <ProteinMorph/SSEFlexibleFitter.h>
 //#include <ProteinMorph/SSECorrespondenceNode.h>
 //#include <vector>
 //#include <map>
 //#include <boost/tuple/tuple.hpp>
+#include "Core/volume.h"
 
 //using namespace Protein_Morph;
 //using namespace GraySkeletonCPP;
 using namespace GraphMatch;
 //using namespace MathTools;
-//using namespace SkeletonMaker;
+using namespace SkeletonMaker;
 //using namespace std;
 //using namespace boost::tuples;
 
