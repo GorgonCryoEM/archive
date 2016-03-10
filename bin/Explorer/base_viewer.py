@@ -84,10 +84,6 @@ class BaseViewer(QtOpenGL.QGLWidget):
         if(hasattr(self.app, "mainCamera")):
             self.app.mainCamera.updateGL()
         
-    def setDisplayStyle(self, style):
-        self.displayStyle = style
-        self.emitModelVisualizationChanged()
-
     def setMaterials(self, color):
         glColor4f(color.redF(), color.greenF(), color.blueF(), color.alphaF())
         diffuseMaterial = [color.redF(), color.greenF(), color.blueF(), color.alphaF()]
