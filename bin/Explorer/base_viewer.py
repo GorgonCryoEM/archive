@@ -49,15 +49,12 @@ class BaseViewer(QtOpenGL.QGLWidget):
         self.renderer.setSpacing(x, y, z)
         
     def setLocation(self, x, y, z):
-        self.setLocationNoEmit(x, y, z)
-        self.app.mainCamera.updateGL()
-        
-    def setLocationNoEmit(self, x, y, z):
         self.renderer.setOrigin(x, y, z)
         self.visualizationOptions.ui.doubleSpinBoxLocationX.setValue(x)
         self.visualizationOptions.ui.doubleSpinBoxLocationY.setValue(y)
         self.visualizationOptions.ui.doubleSpinBoxLocationZ.setValue(z)
-                        
+        self.app.mainCamera.updateGL()
+        
     def objectToWorldCoordinates(self, objectCoords):
         #Need to apply rotations
         origin = [self.renderer.getOriginX(), self.renderer.getOriginY(), self.renderer.getOriginZ()]
