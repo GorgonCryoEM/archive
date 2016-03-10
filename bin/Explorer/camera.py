@@ -112,12 +112,6 @@ class Camera(QtOpenGL.QGLWidget):
             self.setGlProjection()
             self.emitCameraChanged()
     
-    def setCuttingPlane(self, cuttingPlane):
-        newCuttingPlane = min(max(cuttingPlane, -1.0), 1.0)
-        if(self.cuttingPlane != newCuttingPlane):
-            self.cuttingPlane = newCuttingPlane
-            self.setRendererCuttingPlanes()
-    
     def setRendererCuttingPlanes(self):
         for s in self.scene:
             if(s.renderer.setCuttingPlane(self.cuttingPlane, self.look[0], self.look[1], self.look[2])):
@@ -146,7 +140,6 @@ class Camera(QtOpenGL.QGLWidget):
         self.setEye(Vec3(self.center[0], self.center[1], self.center[2] - distance))
         self.setUp(Vec3(0, -1, 0))
         centerDistance = (self.eye - self.center).length()
-        self.setCuttingPlane(0.0)
          
         self.updateGL()
     
