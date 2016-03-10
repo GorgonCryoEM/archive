@@ -103,12 +103,6 @@ class BaseViewer(QtOpenGL.QGLWidget):
     def getModelColor(self):
         return self.modelColor
 
-    def getModel2Color(self):
-        return QtGui.QColor(180, 180, 180, 150)
-    
-    def getModel3Color(self):
-        return QtGui.QColor(180, 180, 180, 150)
-    
     def setMaterials(self, color):
         glColor4f(color.redF(), color.greenF(), color.blueF(), color.alphaF())
         diffuseMaterial = [color.redF(), color.greenF(), color.blueF(), color.alphaF()]
@@ -196,11 +190,11 @@ class BaseViewer(QtOpenGL.QGLWidget):
         
         self.emitDrawingModel()
         
-        colors     = self.getDrawColors()
+        colors     = self.getModelColor()
                 
         for i in range(len(self.glLists)):
             if(self.loaded):
-                self.setMaterials(colors[i])
+                self.setMaterials(colors)
                 self.initializeGLDisplayType()
                 glCallList(self.glLists[i])
                 self.unInitializeGLDisplayType();
@@ -223,34 +217,30 @@ class BaseViewer(QtOpenGL.QGLWidget):
 
             self.loaded = False
         
-    def getDrawColors(self):
-        return [self.getModelColor(),  self.getModel2Color(), self.getModel3Color()]
-    
     def modelChanged(self):
         for list in self.glLists:
             glDeleteLists(list,1)
         self.glLists = []
             
-        colors = self.getDrawColors()
+        colors = self.getModelColor()
         
         glPushAttrib(GL_LIGHTING_BIT | GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT)
                          
         if(self.loaded):
-            for i in range(3):
-                list = glGenLists(1)
-                glNewList(list, GL_COMPILE)
-                self.glLists.append(list)
+            list = glGenLists(1)
+            glNewList(list, GL_COMPILE)
+            self.glLists.append(list)
 
-                if(colors[i].alpha() < 255):
-                    glDepthFunc(GL_LESS)
-                    glColorMask(False, False, False, False)
-                    self.renderer.draw(i, False)
-                    glDepthFunc(GL_LEQUAL)
-                    glColorMask(True, True, True, True)
-                    self.renderer.draw(i, self.selectEnabled or self.mouseMoveEnabled)
-                else:
-                    self.renderer.draw(i, self.selectEnabled or self.mouseMoveEnabled)
-                glEndList()
+            if(colors.alpha() < 255):
+                glDepthFunc(GL_LESS)
+                glColorMask(False, False, False, False)
+                self.renderer.draw(0, False)
+                glDepthFunc(GL_LEQUAL)
+                glColorMask(True, True, True, True)
+                self.renderer.draw(0, self.selectEnabled or self.mouseMoveEnabled)
+            else:
+                self.renderer.draw(0, self.selectEnabled or self.mouseMoveEnabled)
+            glEndList()
                                     
         glPopAttrib()
 
