@@ -25,7 +25,6 @@ class BaseViewer(QtOpenGL.QGLWidget):
         self.connect(self, QtCore.SIGNAL("modelLoaded()"), self.modelChanged)
 
         self.glLists = []
-        self.showBox = False
         self.twoWayLighting = False
         
         self.multipleSelection = True
@@ -156,11 +155,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
         glPushAttrib(GL_DEPTH_BUFFER_BIT | GL_LIGHTING_BIT | GL_ENABLE_BIT | GL_COLOR_BUFFER_BIT)
         glEnable(GL_DEPTH_TEST);
         glDepthMask(GL_TRUE);
-        
-        if(self.loaded and self.showBox):
-            self.setMaterials(self.getBoundingBoxColor())
-            self.renderer.drawBoundingBox()
-        
+                
         self.emitDrawingModel()
         
         for i in range(len(self.glLists)):
