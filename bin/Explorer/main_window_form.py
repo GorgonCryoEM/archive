@@ -23,24 +23,11 @@ class MainWindowForm(QtGui.QMainWindow):
         self.mainCamera = Camera(self.scenes, self)
         self.setCentralWidget(self.mainCamera)
         
-        self.dockWidgets = []
-                
         self.statusBar().showMessage(self.tr("Gorgon: Protein Visualization Suite"))
         self.setWindowTitle(self.tr("Gorgon Explorer - v" + version))
         pathname = os.path.abspath(os.path.dirname(sys.argv[0]))
         self.setWindowIcon(QtGui.QIcon(pathname + '/gorgon.ico'))
         
-    def addDockWidget (self, area, dockwidget):
-        QtGui.QMainWindow.addDockWidget(self, area, dockwidget)
-        dockwidget.area = area
-        dockwidget.dockLocationChanged.connect(self.dockLocationChanged(dockwidget))
-        
-    def removeDockWidget (self, dockwidget):
-        QtGui.QMainWindow.removeDockWidget(self, dockwidget)
-        if(dockwidget in self.dockWidgets):
-            self.dockWidgets.remove(dockwidget)
-            dockwidget.dockLocationChanged.disconnect()
-    
     def exitApplication(self):
         QtGui.qApp.closeAllWindows()
             
@@ -51,9 +38,3 @@ class MainWindowForm(QtGui.QMainWindow):
 #             event.accept()
 #         else:
 #             event.ignore()
-
-    def dockLocationChanged(self, widget):
-        def dockLocationChanged_widget(area):
-            widget.area = area
-        return dockLocationChanged_widget
-
