@@ -57,10 +57,6 @@ class Camera(QtOpenGL.QGLWidget):
         for s in self.scene:
             self.connect(s, QtCore.SIGNAL("viewerSetCenterLocal(float, float, float, float)"), self.sceneSetCenterLocal)
             self.connect(s, QtCore.SIGNAL("viewerSetCenter(float, float, float, float)"), self.sceneSetCenter)
-            self.connect(s, QtCore.SIGNAL("modelChanged()"), self.modelChanged)
-            self.connect(s, QtCore.SIGNAL("modelLoaded()"), self.modelChanged)
-            self.connect(s, QtCore.SIGNAL("modelUnloaded()"), self.modelChanged)
-            self.connect(s, QtCore.SIGNAL("modelVisualizationChanged()"), self.modelChanged)
     
     def setEye(self, v):
         if(self.eye != v):
@@ -165,7 +161,6 @@ class Camera(QtOpenGL.QGLWidget):
         self.setUp(Vec3(0, -1, 0))
         centerDistance = (self.eye - self.center).length()
         self.setCuttingPlane(0.0)
-        self.modelChanged()
          
         self.updateGL()
     
@@ -482,19 +477,6 @@ class Camera(QtOpenGL.QGLWidget):
             elif (not (event.modifiers() & QtCore.Qt.ALT) and not (event.modifiers() & QtCore.Qt.CTRL)):     # Zoom in / out
                 self.setNearFarZoom(self.near, self.far, self.eyeZoom + direction * 10.0/360.0)
             self.updateGL()
-        
-    def modelChanged(self):
-        minDistance = 1000000000000.0
-        maxDistance = 0.0
-        eyeDist = (self.eye - self.center).length()
-        for s in self.scene:
-            if(s.loaded):
-                (center, distance) = s.getCenterAndDistance()
-                modelDist = (self.center - center).length()
-                minDistance = min(minDistance, eyeDist - modelDist - distance/2.0)
-                maxDistance = max(maxDistance, eyeDist + modelDist + distance/2.0)
-        self.setNearFarZoom(minDistance, maxDistance, self.eyeZoom)
-        self.updateGL()
         
     def emitCameraChanged(self):
         self.emit(QtCore.SIGNAL("cameraChanged()"))
