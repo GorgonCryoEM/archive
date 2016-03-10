@@ -46,9 +46,6 @@ class Camera(QtOpenGL.QGLWidget):
         self.eyeZoom = 0.26
         
         self.setEyeRotation(0.0, 0.0, 0.0)
-        self.setCenter     (self.center)
-        self.setEye        (self.eye)
-        self.setUp         (self.up)
         self.lastPos = QtCore.QPoint()
         
         for i in range(len(self.scene)):
@@ -68,8 +65,6 @@ class Camera(QtOpenGL.QGLWidget):
                 self.look  = Vec3(0,1,0)
                 self.right = Vec3(1,0,0)
                 self.up    = Vec3(0,0,1)
-            self.setRendererCuttingPlanes()
-            self.emitCameraChanged()
     
     def setCenter(self, v):
         if(self.center != v):
@@ -80,9 +75,6 @@ class Camera(QtOpenGL.QGLWidget):
             except:
                 self.look  = Vec3(0,1,0)
                 self.right = Vec3(1,0,0)
-            self.setRendererCuttingPlanes()
-            self.setRendererCenter()
-            self.emitCameraChanged()
         
     def setUp(self, v):
         if(self.up != v.normalize()):
@@ -130,12 +122,7 @@ class Camera(QtOpenGL.QGLWidget):
         for s in self.scene:
             if(s.renderer.setCuttingPlane(self.cuttingPlane, self.look[0], self.look[1], self.look[2])):
                 s.emitModelChanged()
-                
-    def setRendererCenter(self):
-        for s in self.scene:
-            if(s.setCenter(self.center)):
-                s.emitModelChanged()
-                 
+
     def sceneSetCenter(self, cX, cY, cZ, d):
         sceneMin = [cX, cY, cZ]
         sceneMax = [cX, cY, cZ]
