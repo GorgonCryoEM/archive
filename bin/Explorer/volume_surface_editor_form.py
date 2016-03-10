@@ -1,23 +1,11 @@
 from PyQt4 import QtCore, QtGui
-from base_dock_widget import BaseDockWidget
-# import threading
 
 
-class VolumeSurfaceEditorForm(BaseDockWidget):
-    ViewingTypeIsoSurface, ViewingTypeCrossSection, ViewingTypeSolid = range(3)
+class VolumeSurfaceEditorForm(QtGui.QWidget):
     
     def __init__(self, main, volumeViewer, parent=None):
-        BaseDockWidget.__init__(self,
-                                main,
-                                "&Volume - Surface Editor",
-                                "Modify the volume surface",
-                                "show_VolumeSurfaceEditor",
-                                "window-VolumeSurfaceEditor",
-                                "window",
-                                QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea | QtCore.Qt.BottomDockWidgetArea,
-                                QtCore.Qt.BottomDockWidgetArea,
-                                parent)
-        self.app = main
+        QtGui.QWidget.__init__(self, parent)
+
         self.viewer = volumeViewer
         self.connect(self.viewer, QtCore.SIGNAL("modelLoadedPreDraw()"), self.modelLoadedPreDraw)
      
