@@ -276,19 +276,6 @@ class Camera(QtOpenGL.QGLWidget):
 #
 #         self.sceneID = sceneId
             
-    def processMouseMove(self, mouseHits, event):
-        print "%s: processMouseMove(self, mouseHits, event):" % __name__
-        print mouseHits
-        
-#         self.emitMouseMovedRaw(mouseHits, event)
-                          
-        globalMinDepth = self.far + 1
-        minNames = list()
-        sceneId = self.sceneID
-#         if(sceneId >= 0):
-#             self.scene[sceneId].processMouseMove(mouseHits, event)
-        print sceneId
-       
     def pickObject(self, x, y):
         viewport = list(glGetIntegerv(GL_VIEWPORT))
         glSelectBuffer(10000)
