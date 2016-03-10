@@ -345,13 +345,6 @@ class Camera(QtOpenGL.QGLWidget):
             if(s.renderer.selectionRotate(selectionCOM, selectionAxis, moveLength.length())):
                 s.emitModelChanged()
                      
-    def mousePressEvent(self, event):
-        self.mouseDownPoint    = QtCore.QPoint(event.pos())
-        self.mouseMovePoint    = QtCore.QPoint(event.pos())
-        self.mouseLeftPressed  = (event.buttons() & QtCore.Qt.LeftButton)
-        self.mouseMidPressed   = (event.buttons() & QtCore.Qt.MidButton)
-        self.mouseRightPressed = (event.buttons() & QtCore.Qt.RightButton)
-        
     def mouseMoveEvent(self, event):
         dx = event.x() - self.mouseMovePoint.x()
         dy = event.y() - self.mouseMovePoint.y()
