@@ -22,14 +22,10 @@ class BaseViewer(QtOpenGL.QGLWidget):
         self.loaded = False
         self.selectEnabled = True
         self.mouseMoveEnabled = True
-        self.mouseMoveEnabledRay = True
         self.isClosedMesh = True
-        self.viewerAutonomous = True
         self.displayStyle = self.DisplayStyleSmooth;
         self.rotation = self.identityMatrix()
-        self.connect(self, QtCore.SIGNAL("modelChanged()"), self.modelChanged)
         self.connect(self, QtCore.SIGNAL("modelLoaded()"), self.modelChanged)
-        self.connect(self, QtCore.SIGNAL("modelUnloaded()"), self.modelChanged)
 
         self.glLists = []
         self.showBox = False
