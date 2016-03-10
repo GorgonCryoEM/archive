@@ -27,6 +27,7 @@ class Camera(QtOpenGL.QGLWidget):
 							   Vec3(-1000,-1000,-1000)
 							   ]
         self.lightsUseEyePosition = [True, False]
+        
         self.mouseMovePoint = QtCore.QPoint(0,0)
         self.mouseDownPoint = QtCore.QPoint(0,0)
         self.mouseLeftPressed  = False

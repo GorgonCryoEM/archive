@@ -14,21 +14,26 @@ class BaseViewer(QtOpenGL.QGLWidget):
     
     def __init__(self, main, parent=None):
         QtOpenGL.QGLWidget.__init__(self, parent)
+        
         self.app = main
         self.sceneIndex = -1;
+        
         self.loaded = False
         self.selectEnabled = True
+        self.multipleSelection = True
         self.mouseMoveEnabled = True
+        
         self.isClosedMesh = True
+        
         self.displayStyle = self.DisplayStyleSmooth;
-        self.rotation = self.identityMatrix()
-        self.connect(self, QtCore.SIGNAL("modelLoaded()"), self.modelChanged)
 
-        self.glLists = []
         self.twoWayLighting = False
         
-        self.multipleSelection = True
         self.modelColor = QtGui.QColor(180, 180, 180, 150)
+
+        self.rotation = self.identityMatrix()
+        self.glLists = []
+        self.connect(self, QtCore.SIGNAL("modelLoaded()"), self.modelChanged)
         
     def identityMatrix(self):
         return [[1.0, 0.0, 0.0, 0.0],
