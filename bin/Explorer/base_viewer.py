@@ -15,9 +15,6 @@ class BaseViewer(QtOpenGL.QGLWidget):
     def __init__(self, main, parent=None):
         QtOpenGL.QGLWidget.__init__(self, parent)
         self.app = main
-        self.title = "Untitled"
-        self.shortTitle = "UNT"
-        self.fileName = "";
         self.sceneIndex = -1;
         self.loaded = False
         self.selectEnabled = True
