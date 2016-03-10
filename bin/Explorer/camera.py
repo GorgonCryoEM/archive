@@ -55,7 +55,6 @@ class Camera(QtOpenGL.QGLWidget):
             self.scene[i].sceneIndex = i;
 
         for s in self.scene:
-            self.connect(s, QtCore.SIGNAL("viewerSetCenterLocal(float, float, float, float)"), self.sceneSetCenterLocal)
             self.connect(s, QtCore.SIGNAL("viewerSetCenter(float, float, float, float)"), self.sceneSetCenter)
     
     def setEye(self, v):
@@ -164,17 +163,6 @@ class Camera(QtOpenGL.QGLWidget):
          
         self.updateGL()
     
-    def sceneSetCenterLocal(self, centerX, centerY, centerZ, distance):
-        
-        self.setCenter(Vec3(centerX, centerY, centerZ))
-        self.setEye(Vec3(self.center[0], self.center[1], self.center[2] - distance))
-        self.setUp(Vec3(0, -1, 0))
-        centerDistance = (self.eye - self.center).length()
-        self.setCuttingPlane(0.0)
-        self.modelChanged()
-         
-        self.updateGL()
-     
     def minimumSizeHint(self):
         return QtCore.QSize(50, 50)
 
