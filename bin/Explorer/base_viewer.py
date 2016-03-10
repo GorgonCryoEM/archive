@@ -88,9 +88,6 @@ class BaseViewer(QtOpenGL.QGLWidget):
         self.displayStyle = style
         self.emitModelVisualizationChanged()
 
-    def getModelColor(self):
-        return self.modelColor
-
     def setMaterials(self, color):
         glColor4f(color.redF(), color.greenF(), color.blueF(), color.alphaF())
         diffuseMaterial = [color.redF(), color.greenF(), color.blueF(), color.alphaF()]
@@ -180,11 +177,9 @@ class BaseViewer(QtOpenGL.QGLWidget):
         
         self.emitDrawingModel()
         
-        colors     = self.getModelColor()
-                
         for i in range(len(self.glLists)):
             if(self.loaded):
-                self.setMaterials(colors)
+                self.setMaterials(self.modelColor)
                 self.initializeGLDisplayType()
                 glCallList(self.glLists[i])
                 self.unInitializeGLDisplayType();
@@ -212,8 +207,6 @@ class BaseViewer(QtOpenGL.QGLWidget):
             glDeleteLists(list,1)
         self.glLists = []
             
-        colors = self.getModelColor()
-        
         glPushAttrib(GL_LIGHTING_BIT | GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT)
                          
         if(self.loaded):
@@ -221,7 +214,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
             glNewList(list, GL_COMPILE)
             self.glLists.append(list)
 
-            if(colors.alpha() < 255):
+            if(self.modelColor.alpha() < 255):
                 glDepthFunc(GL_LESS)
                 glColorMask(False, False, False, False)
                 self.renderer.draw(0, False)
