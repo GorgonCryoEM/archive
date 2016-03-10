@@ -234,21 +234,6 @@ class Camera(QtOpenGL.QGLWidget):
         for s in self.scene:
             s.processMouseWheel(direction, event)
      
-    def processMouseDown(self, mouseHits, event):
-        globalMinDepth = self.far + 1
-        minNames = list()
-        sceneId = -1
-        for hit_record in mouseHits:
-            minDepth, maxDepth, names = hit_record
-            names = list(names)
-            if(globalMinDepth > minDepth):
-                globalMinDepth = minDepth
-                minNames = names
-        if(minNames != list()):
-            sceneId = minNames[0];
-            minNames.pop(0)
-        self.selectedScene = sceneId;
-            
     def processMouseClick(self, mouseHits, event, leftPressed, midPressed, rightPressed):
         print "In method: processMouseClick"
         print mouseHits
@@ -394,7 +379,6 @@ class Camera(QtOpenGL.QGLWidget):
         self.mouseLeftPressed  = (event.buttons() & QtCore.Qt.LeftButton)
         self.mouseMidPressed   = (event.buttons() & QtCore.Qt.MidButton)
         self.mouseRightPressed = (event.buttons() & QtCore.Qt.RightButton)
-        self.processMouseDown(self.pickObject(self.mouseDownPoint.x(), self.mouseDownPoint.y()), event)
         
     def mouseReleaseEvent(self, event):
         self.mouseUpPoint = QtCore.QPoint(event.pos())
