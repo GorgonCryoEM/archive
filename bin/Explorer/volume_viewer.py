@@ -16,16 +16,17 @@ class VolumeViewer(BaseViewer):
 
         self.renderer = Display()
         
+        self.renderer.enableDraw(True)
+        
         self.connect(self, QtCore.SIGNAL("modelLoadedPreDraw()"), self.modelLoadedPreDraw)
 
     def modelLoadedPreDraw(self):
-        self.renderer.enableDraw(False)
         maxDensity = self.renderer.getMaxDensity()
         minDensity = self.renderer.getMinDensity()
+
         defaultDensity = (minDensity + maxDensity) / 2
-        
         maxRadius = int(max(self.renderer.getMax(0)/2, self.renderer.getMax(1)/2, self.renderer.getMax(2)/2));
+        
         self.renderer.setSampleInterval(1)
         self.renderer.setSurfaceValue(defaultDensity)
         self.renderer.setDisplayRadius(maxRadius)
-        self.renderer.enableDraw(True)
