@@ -80,10 +80,6 @@ class BaseViewer(QtOpenGL.QGLWidget):
         scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
         return Vec3([worldCoords[i] / scale[i] for i in range(3)])
         
-    def repaintCamera(self):
-        if(hasattr(self.app, "mainCamera")):
-            self.app.mainCamera.updateGL()
-        
     def setMaterials(self, color):
         glColor4f(color.redF(), color.greenF(), color.blueF(), color.alphaF())
         diffuseMaterial = [color.redF(), color.greenF(), color.blueF(), color.alphaF()]
