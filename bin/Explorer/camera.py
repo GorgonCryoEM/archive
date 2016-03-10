@@ -234,48 +234,6 @@ class Camera(QtOpenGL.QGLWidget):
         for s in self.scene:
             s.processMouseWheel(direction, event)
      
-    def processMouseClick(self, mouseHits, event, leftPressed, midPressed, rightPressed):
-        print "In method: processMouseClick"
-        print mouseHits
-#         self.emitMouseClickedRaw(mouseHits, event)
-
-#         globalMinDepth = self.far + 1
-#         minNames = list()
-#         sceneId = -1
-#         for hit_record in mouseHits:
-#             minDepth, maxDepth, names = hit_record
-#             print hit_record, names
-#             names = list(names)
-#             if(self.scene[names[0]].selectEnabled and globalMinDepth > minDepth):
-#                 globalMinDepth = minDepth
-#                 minNames = names
-#         if(minNames != list()):
-#             sceneId = minNames[0]
-#             minNames.pop(0)
-#
-#         print "sceneID: %d" % sceneId
-#         self.sceneID = sceneId
-#         if (leftPressed):
-#             print "if (leftPressed)"
-#             if (event.modifiers() & QtCore.Qt.CTRL):        # Multiple selection mode
-#                 print "if (event.modifiers() & QtCore.Qt.CTRL)"
-# #                 if (sceneId >= 0):
-# #                     self.scene[sceneId].processMouseClick(mouseHits, event, False)
-# #             else:                                           # Single selection mode
-# #                 print "else (leftPressed)"
-# #                 for i in range(len(self.scene)):
-# #                     self.scene[i].clearSelection()
-# #                     self.scene[i].renderer.clearOtherHighlights()
-# #                     self.scene[i].emitModelChanged()
-# #
-# #                 self.scene[sceneId].processMouseClick(mouseHits, event, True)
-#
-#         elif (rightPressed):                                # Focusing on current point
-#             if(sceneId >= 0):
-#                 self.scene[sceneId].emitElementClicked(minNames, event)
-#
-#         self.sceneID = sceneId
-            
     def resizeGL(self, width, height):
         if(height > 0):
             self.aspectRatio = width/(1.0*height)
