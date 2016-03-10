@@ -411,9 +411,3 @@ class Camera(QtOpenGL.QGLWidget):
         
     def emitCameraChanged(self):
         self.emit(QtCore.SIGNAL("cameraChanged()"))
-            
-    def emitMouseMovedRaw(self, mouseHits, event):
-        self.emit(QtCore.SIGNAL("mouseMovedRAW(PyQt_PyObject, QMouseEvent)"), mouseHits, event)
-
-    def emitMouseClickedRaw(self, mouseHits, event):
-        self.emit(QtCore.SIGNAL("mouseClickedRAW(PyQt_PyObject, QMouseEvent)"), mouseHits, event)
