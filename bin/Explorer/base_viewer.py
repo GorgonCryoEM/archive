@@ -26,9 +26,6 @@ class BaseViewer(QtOpenGL.QGLWidget):
         self.isClosedMesh = True
         self.viewerAutonomous = True
         self.displayStyle = self.DisplayStyleSmooth;
-        self.modelVisible = True
-        self.model2Visible = True
-        self.model3Visible = True
         self.rotation = self.identityMatrix()
         self.connect(self, QtCore.SIGNAL("modelChanged()"), self.modelChanged)
         self.connect(self, QtCore.SIGNAL("modelLoaded()"), self.modelChanged)
@@ -198,11 +195,10 @@ class BaseViewer(QtOpenGL.QGLWidget):
         
         self.emitDrawingModel()
         
-        visibility = self.getDrawVisibility()
         colors     = self.getModelColor()
                 
         for i in range(len(self.glLists)):
-            if(self.loaded and visibility[i]):
+            if(self.loaded):
                 self.setMaterials(colors)
                 self.initializeGLDisplayType()
                 glCallList(self.glLists[i])
@@ -226,15 +222,11 @@ class BaseViewer(QtOpenGL.QGLWidget):
 
             self.loaded = False
         
-    def getDrawVisibility(self):
-        return [self.modelVisible, self.model2Visible, self.model3Visible]
-        
     def modelChanged(self):
         for list in self.glLists:
             glDeleteLists(list,1)
         self.glLists = []
             
-        visibility = self.getDrawVisibility()
         colors = self.getModelColor()
         
         glPushAttrib(GL_LIGHTING_BIT | GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT)
