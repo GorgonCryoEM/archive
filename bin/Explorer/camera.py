@@ -11,8 +11,8 @@ from .libs import Vec3
 
 class Camera(QtOpenGL.QGLWidget):
 
-    def __init__(self, scene, main, parent=None):
-        QtOpenGL.QGLWidget.__init__(self, parent)
+    def __init__(self, scene, main):
+        QtOpenGL.QGLWidget.__init__(self, main)
         
         self.app = main
         self.sceneID = -1
@@ -158,8 +158,8 @@ class Camera(QtOpenGL.QGLWidget):
             glutInit(sys.argv)      #This must be here to get it to work with Freeglut.
             #otherwise you get: "freeglut  ERROR:  Function <glutWireCube> called without first calling 'glutInit'."
        
-        backgroundColor = QtGui.QColor(0, 0, 0, 255)
-        glClearColor(backgroundColor.redF(), backgroundColor.greenF(), backgroundColor.blueF(), backgroundColor.alphaF())
+        bkgCol = QtGui.QColor(0, 0, 0, 255)
+        glClearColor(bkgCol.redF(), bkgCol.greenF(), bkgCol.blueF(), bkgCol.alphaF())
         glClearDepth( 1.0 )
         
         self.setLights()
@@ -182,17 +182,17 @@ class Camera(QtOpenGL.QGLWidget):
 
     def setLights(self):
         glLight = [GL_LIGHT0, GL_LIGHT1]
-        light0Color = QtGui.QColor(255, 255, 255, 255)
-        light1Color = QtGui.QColor(255, 255, 255, 255)
+        light0Col = QtGui.QColor(255, 255, 255, 255)
+        light1Col = QtGui.QColor(255, 255, 255, 255)
 
-        lightsColor = [[light0Color.redF(), light0Color.greenF(), light0Color.blueF(), 1.0],
-                       [light1Color.redF(), light1Color.greenF(), light1Color.blueF(), 1.0]
+        lightsCol = [[light0Col.redF(), light0Col.greenF(), light0Col.blueF(), 1.0],
+                       [light1Col.redF(), light1Col.greenF(), light1Col.blueF(), 1.0]
                        ]
         for i in range(2):
             if(self.lightsEnabled[i]):
-                afPropertiesAmbient = [lightsColor[i][0]*0.3, lightsColor[i][1]*0.3, lightsColor[i][2]*0.3, 1.00]
-                afPropertiesDiffuse = lightsColor[i]
-                afPropertiesSpecular = [lightsColor[i][0]*0.1, lightsColor[i][0]*0.1, lightsColor[i][0]*0.1, 1.00]
+                afPropertiesAmbient = [lightsCol[i][0]*0.3, lightsCol[i][1]*0.3, lightsCol[i][2]*0.3, 1.00]
+                afPropertiesDiffuse = lightsCol[i]
+                afPropertiesSpecular = [lightsCol[i][0]*0.1, lightsCol[i][0]*0.1, lightsCol[i][0]*0.1, 1.00]
                 if(self.lightsUseEyePosition[i]):
                     afLightPosition = [self.eye[0], self.eye[1], self.eye[2], 1.0]
                 else:
@@ -240,23 +240,23 @@ class Camera(QtOpenGL.QGLWidget):
         #glOrtho(-200 * self.eyeZoom, 200 * self.eyeZoom, -200 * self.eyeZoom, 200 * self.eyeZoom, self.near, self.far)
         glMatrixMode(GL_MODELVIEW)
     
-    def mouseMoveEvent(self, event):
-        dx = event.x() - self.mouseMovePoint.x()
-        dy = event.y() - self.mouseMovePoint.y()
+    def mouseMoveEvent(self, e):
+        dx = e.x() - self.mouseMovePoint.x()
+        dy = e.y() - self.mouseMovePoint.y()
                         
-        if (event.buttons() & QtCore.Qt.LeftButton):
-            if (event.buttons() & QtCore.Qt.RightButton):           # Rolling the scene
+        if (e.buttons() & QtCore.Qt.LeftButton):
+            if (e.buttons() & QtCore.Qt.RightButton):           # Rolling the scene
                 self.setEyeRotation(0, 0, dx)
             else:
-                if event.modifiers() & QtCore.Qt.CTRL:           # Rotating the selection
-                    print "event.modifiers() & QtCore.Qt.CTRL"
+                if e.modifiers() & QtCore.Qt.CTRL:           # Rotating the selection
+                    print "e.modifiers() & QtCore.Qt.CTRL"
                     self.selectedScene = 3
                     self.rotateSelectedScene(dx, dy)
                 else:                                               # Rotating the scene
                     self.setEyeRotation(-dx, dy, 0)
             
-        elif (event.buttons() & QtCore.Qt.RightButton):
-            if event.modifiers() & QtCore.Qt.CTRL:                 # Translating the selection
+        elif (e.buttons() & QtCore.Qt.RightButton):
+            if e.modifiers() & QtCore.Qt.CTRL:                 # Translating the selection
                 self.moveSelectedScene(dx, dy)
             else:                                                   # Translating the scene
                 newDx = (self.eye - self.center).length() * abs(tan(pi * self.eyeZoom)) * dx / float(self.width())
@@ -267,7 +267,7 @@ class Camera(QtOpenGL.QGLWidget):
                 self.setEye(newEye)
                 self.setCenter(newCenter)
                 
-        self.mouseMovePoint = QtCore.QPoint(event.pos())
+        self.mouseMovePoint = QtCore.QPoint(e.pos())
 
         self.updateGL()
     
