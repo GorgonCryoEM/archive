@@ -15,12 +15,13 @@ class Camera(QtOpenGL.QGLWidget):
         QtOpenGL.QGLWidget.__init__(self, parent)
         
         self.app = main
+        self.sceneID = -1
 
         self.near = 0
         self.cuttingPlane = 0.0
         self.scene = scene
-        self.mouseTrackingEnabled    = True
-        self.mouseTrackingEnabledRay = True
+        self.mouseTrackingEnabled    = False
+        self.mouseTrackingEnabledRay = False
         self.aspectRatio   = 1.0
         self.selectedScene = -1
         self.lightsEnabled = [True, False]
@@ -281,56 +282,59 @@ class Camera(QtOpenGL.QGLWidget):
         self.selectedScene = sceneId;
             
     def processMouseClick(self, mouseHits, event, leftPressed, midPressed, rightPressed):
-        self.emitMouseClickedRaw(mouseHits, event)
+        print "In method: processMouseClick"
+        print mouseHits
+#         self.emitMouseClickedRaw(mouseHits, event)
 
-        globalMinDepth = self.far + 1
-        minNames = list()
-        sceneId = -1
-        for hit_record in mouseHits:
-            minDepth, maxDepth, names = hit_record
-            names = list(names)
-            if(self.scene[names[0]].selectEnabled and globalMinDepth > minDepth):
-                globalMinDepth = minDepth
-                minNames = names
-        if(minNames != list()):
-            sceneId = minNames[0]
-            minNames.pop(0)
-            
-        if (leftPressed):
-            if (event.modifiers() & QtCore.Qt.CTRL):        # Multiple selection mode
-                if (sceneId >= 0):
-                    self.scene[sceneId].processMouseClick(minNames, event, False)
-            else:                                           # Single selection mode
-                for i in range(len(self.scene)):
-                    self.scene[i].clearSelection()
-                    self.scene[i].renderer.clearOtherHighlights()
-                    self.scene[i].emitModelChanged()
-                
-                for i in range(len(self.scene)):
-                    if (i == sceneId):
-                        self.scene[sceneId].processMouseClick(minNames, event, True)
-                        
-        elif (rightPressed):                                # Focusing on current point
-            if(sceneId >= 0):
-                self.scene[sceneId].emitElementClicked(minNames, event)
+#         globalMinDepth = self.far + 1
+#         minNames = list()
+#         sceneId = -1
+#         for hit_record in mouseHits:
+#             minDepth, maxDepth, names = hit_record
+#             print hit_record, names
+#             names = list(names)
+#             if(self.scene[names[0]].selectEnabled and globalMinDepth > minDepth):
+#                 globalMinDepth = minDepth
+#                 minNames = names
+#         if(minNames != list()):
+#             sceneId = minNames[0]
+#             minNames.pop(0)
+#
+#         print "sceneID: %d" % sceneId
+#         self.sceneID = sceneId
+#         if (leftPressed):
+#             print "if (leftPressed)"
+#             if (event.modifiers() & QtCore.Qt.CTRL):        # Multiple selection mode
+#                 print "if (event.modifiers() & QtCore.Qt.CTRL)"
+# #                 if (sceneId >= 0):
+# #                     self.scene[sceneId].processMouseClick(mouseHits, event, False)
+# #             else:                                           # Single selection mode
+# #                 print "else (leftPressed)"
+# #                 for i in range(len(self.scene)):
+# #                     self.scene[i].clearSelection()
+# #                     self.scene[i].renderer.clearOtherHighlights()
+# #                     self.scene[i].emitModelChanged()
+# #
+# #                 self.scene[sceneId].processMouseClick(mouseHits, event, True)
+#
+#         elif (rightPressed):                                # Focusing on current point
+#             if(sceneId >= 0):
+#                 self.scene[sceneId].emitElementClicked(minNames, event)
+#
+#         self.sceneID = sceneId
             
     def processMouseMove(self, mouseHits, event):
-        self.emitMouseMovedRaw(mouseHits, event)
+        print "%s: processMouseMove(self, mouseHits, event):" % __name__
+        print mouseHits
+        
+#         self.emitMouseMovedRaw(mouseHits, event)
                           
         globalMinDepth = self.far + 1
         minNames = list()
-        sceneId = -1
-        for hit_record in mouseHits:
-            minDepth, maxDepth, names = hit_record
-            names = list(names)
-            if(self.scene[names[0]].mouseMoveEnabled and globalMinDepth > minDepth):
-                globalMinDepth = minDepth
-                minNames = names
-        if(minNames != list()):
-            sceneId = minNames[0];
-            minNames.pop(0)
-        if(sceneId >= 0):
-            self.scene[sceneId].processMouseMove(minNames, event)
+        sceneId = self.sceneID
+#         if(sceneId >= 0):
+#             self.scene[sceneId].processMouseMove(mouseHits, event)
+        print sceneId
        
     def pickObject(self, x, y):
         viewport = list(glGetIntegerv(GL_VIEWPORT))
@@ -398,6 +402,8 @@ class Camera(QtOpenGL.QGLWidget):
                 s.emitModelChanged()
 
     def rotateSelectedScene(self, dx, dy):
+        print "In: rotateSelectedScene"
+        print "SelectedScene: %d" % self.selectedScene
         newDx = (self.eye - self.center).length() * abs(tan(pi * self.eyeZoom)) * dx / float(self.width())
         newDy = (self.eye - self.center).length() * abs(tan(pi * self.eyeZoom)) * dy / float(self.height())
 
@@ -471,6 +477,8 @@ class Camera(QtOpenGL.QGLWidget):
                 self.setEyeRotation(0, 0, dx)
             else:
                 if event.modifiers() & QtCore.Qt.CTRL:           # Rotating the selection
+                    print "event.modifiers() & QtCore.Qt.CTRL"
+                    self.selectedScene = 3
                     self.rotateSelectedScene(dx, dy)
                 else:                                               # Rotating the scene
                     self.setEyeRotation(-dx, dy, 0)
