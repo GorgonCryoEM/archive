@@ -184,7 +184,9 @@ class Camera(QtOpenGL.QGLWidget):
         light0Color = QtGui.QColor(255, 255, 255, 255)
         light1Color = QtGui.QColor(255, 255, 255, 255)
 
-        lightsColor = [[light0Color.redF(), light0Color.greenF(), light0Color.blueF(), 1.0],[light1Color.redF(), light1Color.greenF(), light1Color.blueF(), 1.0]]
+        lightsColor = [[light0Color.redF(), light0Color.greenF(), light0Color.blueF(), 1.0],
+                       [light1Color.redF(), light1Color.greenF(), light1Color.blueF(), 1.0]
+                       ]
         for i in range(2):
             if(self.lightsEnabled[i]):
                 afPropertiesAmbient = [lightsColor[i][0]*0.3, lightsColor[i][1]*0.3, lightsColor[i][2]*0.3, 1.00]
