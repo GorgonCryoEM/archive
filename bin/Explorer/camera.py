@@ -308,15 +308,6 @@ class Camera(QtOpenGL.QGLWidget):
         #glOrtho(-200 * self.eyeZoom, 200 * self.eyeZoom, -200 * self.eyeZoom, 200 * self.eyeZoom, self.near, self.far)
         glMatrixMode(GL_MODELVIEW)
     
-    def moveSelectedScene(self, dx, dy):
-        newDx = (self.eye - self.center).length() * abs(tan(pi * self.eyeZoom)) * dx / float(self.width())
-        newDy = (self.eye - self.center).length() * abs(tan(pi * self.eyeZoom)) * dy / float(self.height())
-        moveDirection = self.up*(-newDy) + self.right*newDx
-        dirVec = Vec3(moveDirection)
-        for s in self.scene:
-            if(s.renderer.selectionMove(dirVec)):
-                s.emitModelChanged()
-
     def mouseMoveEvent(self, event):
         dx = event.x() - self.mouseMovePoint.x()
         dy = event.y() - self.mouseMovePoint.y()
