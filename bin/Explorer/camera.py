@@ -20,8 +20,6 @@ class Camera(QtOpenGL.QGLWidget):
         self.near = 0
         self.cuttingPlane = 0.0
         self.scene = scene
-        self.mouseTrackingEnabled    = False
-        self.mouseTrackingEnabledRay = False
         self.aspectRatio   = 1.0
         self.selectedScene = -1
         self.lightsEnabled = [True, False]
@@ -63,7 +61,6 @@ class Camera(QtOpenGL.QGLWidget):
             self.connect(s, QtCore.SIGNAL("modelLoaded()"), self.modelChanged)
             self.connect(s, QtCore.SIGNAL("modelUnloaded()"), self.modelChanged)
             self.connect(s, QtCore.SIGNAL("modelVisualizationChanged()"), self.modelChanged)
-            self.connect(s, QtCore.SIGNAL("mouseTrackingChanged()"), self.refreshMouseTracking)
     
     def setEye(self, v):
         if(self.eye != v):
@@ -384,15 +381,6 @@ class Camera(QtOpenGL.QGLWidget):
         #glOrtho(-200 * self.eyeZoom, 200 * self.eyeZoom, -200 * self.eyeZoom, 200 * self.eyeZoom, self.near, self.far)
         glMatrixMode(GL_MODELVIEW)
     
-    def refreshMouseTracking(self):
-        self.mouseTrackingEnabled    = False
-        self.mouseTrackingEnabledRay = False
-        for s in self.scene:
-            self.mouseTrackingEnabled    = self.mouseTrackingEnabled    or s.mouseMoveEnabled
-            self.mouseTrackingEnabledRay = self.mouseTrackingEnabledRay or s.mouseMoveEnabledRay
-        self.setMouseTracking(self.mouseTrackingEnabled or self.mouseTrackingEnabledRay)
-        self.updateGL()
-     
     def moveSelectedScene(self, dx, dy):
         newDx = (self.eye - self.center).length() * abs(tan(pi * self.eyeZoom)) * dx / float(self.width())
         newDy = (self.eye - self.center).length() * abs(tan(pi * self.eyeZoom)) * dy / float(self.height())
@@ -454,22 +442,7 @@ class Camera(QtOpenGL.QGLWidget):
                 self.updateGL()
 #                 time.sleep(0.01)
             
-        if(self.mouseTrackingEnabledRay):
-            ray = self.getMouseRay(event.x(), event.y())
-            for s in self.scene:
-                if(s.mouseMoveEnabledRay):
-                    s.processMouseClickRay(ray, 0.1, self.eye, event)
-
     def mouseMoveEvent(self, event):
-        if(self.mouseTrackingEnabledRay):
-            ray = self.getMouseRay(event.x(), event.y())
-            for s in self.scene:
-                if(s.mouseMoveEnabledRay):
-                    s.processMouseMoveRay(ray, 0.1, self.eye, event)
-                       
-        if(self.mouseTrackingEnabled):
-            self.processMouseMove(self.pickObject(event.x(), event.y()), event)
-
         dx = event.x() - self.mouseMovePoint.x()
         dy = event.y() - self.mouseMovePoint.y()
                         
