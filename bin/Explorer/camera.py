@@ -210,9 +210,6 @@ class Camera(QtOpenGL.QGLWidget):
                   self.up[0], self.up[1], self.up[2])
         
     def paintGL(self):
-        self.drawScene()
-              
-    def drawScene(self):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glEnable(GL_DEPTH_TEST)
         glMatrixMode(GL_MODELVIEW)
