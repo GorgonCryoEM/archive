@@ -295,21 +295,6 @@ class Camera(QtOpenGL.QGLWidget):
         mouseHits = glRenderMode(GL_RENDER)
         return mouseHits
 
-    def getMouseRay(self, x, y):
-        glMatrixMode(GL_MODELVIEW)
-        glPushMatrix()
-        self.setGluLookAt()
-        viewport = glGetIntegerv(GL_VIEWPORT)
-        modelview = glGetDoublev(GL_MODELVIEW_MATRIX)
-        projection = glGetDoublev(GL_PROJECTION_MATRIX)
-        oglX = x
-        oglY = viewport[3] - y
-        oglZ = glReadPixels(oglX, oglY, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT)[0][0]
-        
-        p2 = gluUnProject(oglX, oglY, oglZ, modelview, projection, viewport)
-        glPopMatrix()
-        return Vec3(p2) - self.eye
-                
     def resizeGL(self, width, height):
         if(height > 0):
             self.aspectRatio = width/(1.0*height)
