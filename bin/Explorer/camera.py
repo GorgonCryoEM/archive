@@ -276,25 +276,6 @@ class Camera(QtOpenGL.QGLWidget):
 #
 #         self.sceneID = sceneId
             
-    def pickObject(self, x, y):
-        viewport = list(glGetIntegerv(GL_VIEWPORT))
-        glSelectBuffer(10000)
-        glRenderMode(GL_SELECT)
-
-        glInitNames()
-        glMatrixMode(GL_PROJECTION)
-        glPushMatrix()
-        glLoadIdentity()
-        gluPickMatrix(x, viewport[3]-y, 5, 5, viewport)
-        gluPerspective(180 * self.eyeZoom, self.aspectRatio, self.near, self.far)
-        self.drawScene()
-        glMatrixMode(GL_PROJECTION)
-        glPopMatrix()
-        glFlush()
-
-        mouseHits = glRenderMode(GL_RENDER)
-        return mouseHits
-
     def resizeGL(self, width, height):
         if(height > 0):
             self.aspectRatio = width/(1.0*height)
