@@ -352,22 +352,6 @@ class Camera(QtOpenGL.QGLWidget):
         self.mouseMidPressed   = (event.buttons() & QtCore.Qt.MidButton)
         self.mouseRightPressed = (event.buttons() & QtCore.Qt.RightButton)
         
-    def mouseReleaseEvent(self, event):
-        self.mouseUpPoint = QtCore.QPoint(event.pos())
-        #Enter selection mode only if we didnt move the mouse much.. (If the mouse was moved, then we assume a camera motion instead of a selection
-        dx = self.mouseUpPoint.x() - self.mouseDownPoint.x()
-        dy = self.mouseUpPoint.y() - self.mouseDownPoint.y()
-             
-        if (pow(self.mouseDownPoint.x() - self.mouseUpPoint.x(), 2) + pow(self.mouseDownPoint.y() - self.mouseUpPoint.y(), 2) <= 2):
-            self.processMouseClick(self.pickObject(self.mouseUpPoint.x(), self.mouseUpPoint.y()), event, self.mouseLeftPressed, self.mouseMidPressed, self.mouseRightPressed)
-        
-        # auto rotate if ctrl + alt pressed
-        if(self.mouseLeftPressed) and (event.modifiers() & QtCore.Qt.CTRL) and (event.modifiers() & QtCore.Qt.ALT):
-            for i in range(100):
-                self.setEyeRotation(-dx/10.0, dy/10.0, 0)
-                self.updateGL()
-#                 time.sleep(0.01)
-            
     def mouseMoveEvent(self, event):
         dx = event.x() - self.mouseMovePoint.x()
         dy = event.y() - self.mouseMovePoint.y()
