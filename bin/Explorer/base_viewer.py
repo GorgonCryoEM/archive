@@ -38,10 +38,6 @@ class BaseViewer(QtOpenGL.QGLWidget):
         self.multipleSelection = True
         self.modelColor = QtGui.QColor(180, 180, 180, 150)
         
-    def setModelColor(self, color):
-        self.modelColor = color
-        self.repaintCamera()
-
     def identityMatrix(self):
         return [[1.0, 0.0, 0.0, 0.0],
 				[0.0, 1.0, 0.0, 0.0],
