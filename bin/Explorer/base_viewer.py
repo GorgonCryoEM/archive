@@ -39,12 +39,8 @@ class BaseViewer(QtOpenGL.QGLWidget):
         self.modelColor = QtGui.QColor(180, 180, 180, 150)
         
     def setModelColor(self, color):
-        oldColor = self.getModelColor()
-        self.setModelColor0(color)
-        self.repaintCamera()
-
-    def setModelColor0(self, color):
         self.modelColor = color
+        self.repaintCamera()
 
     def identityMatrix(self):
         return [[1.0, 0.0, 0.0, 0.0],
