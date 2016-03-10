@@ -15,7 +15,6 @@ class VolumeViewer(BaseViewer):
         self.shortTitle = "VOL"
 
         self.renderer = Display()
-        self.loaded = False
         
         self.connect(self, QtCore.SIGNAL("modelLoadedPreDraw()"), self.modelLoadedPreDraw)
 
