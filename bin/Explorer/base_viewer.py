@@ -235,9 +235,6 @@ class BaseViewer(QtOpenGL.QGLWidget):
         
         self.setCursor(QtCore.Qt.ArrowCursor)
         
-    def extraDrawingRoutines(self):
-        pass
-    
     def getDrawColors(self):
         return [self.getModelColor(),  self.getModel2Color(), self.getModel3Color()]
     
@@ -254,8 +251,6 @@ class BaseViewer(QtOpenGL.QGLWidget):
         
         glPushAttrib(GL_LIGHTING_BIT | GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT)
                          
-        self.extraDrawingRoutines()
-        
         if(self.loaded):
             for i in range(3):
                 list = glGenLists(1)
