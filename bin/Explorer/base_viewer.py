@@ -38,9 +38,6 @@ class BaseViewer(QtOpenGL.QGLWidget):
         self.multipleSelection = True
         self.modelColor = QtGui.QColor(180, 180, 180, 150)
         
-    def initVisualizationOptions(self, visualizationForm):
-        self.visualizationOptions = visualizationForm
-    
     def setModelColor(self, color):
         oldColor = self.getModelColor()
         self.setModelColor0(color)
