@@ -8,11 +8,17 @@ from OpenGL.GLUT import *
 
 
 class VolumeViewer(BaseViewer):
+    
+    objID=0
 
     def __init__(self, main):
-        BaseViewer.__init__(self, main)
+        VolumeViewer.objID = VolumeViewer.objID + 1
+        super(VolumeViewer, self).__init__(main)
+#         BaseViewer.__init__(self, main)
         self.title = "Volume"
         self.shortTitle = "VOL"
+        
+        self.modelColor = QtGui.QColor(100+40*VolumeViewer.objID,200-40*VolumeViewer.objID,100,150)
 
         self.renderer = Display()
         
@@ -30,3 +36,7 @@ class VolumeViewer(BaseViewer):
         self.renderer.setSampleInterval(1)
         self.renderer.setSurfaceValue(defaultDensity)
         self.renderer.setDisplayRadius(maxRadius)
+        
+#     def draw(self):
+#         self.setMaterials(QtGui.QColor(40,40,40,150))
+#         super(VolumeViewer, self).draw()
