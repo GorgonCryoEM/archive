@@ -222,7 +222,10 @@ class Camera(QtOpenGL.QGLWidget):
         
     def processMouseWheel(self, direction, event):
         for s in self.scene:
-            s.processMouseWheel(direction, event)
+            try:
+                s.processMouseWheel(direction, event)
+            except:
+                pass
      
     def resizeGL(self, width, height):
         if(height > 0):
