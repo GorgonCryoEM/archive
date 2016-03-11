@@ -268,6 +268,18 @@ class Camera(QtOpenGL.QGLWidget):
             
         self.updateGL()
                      
+    def moveSelectedScene(self, dx, dy):
+        newDx = (self.eye - self.center).length() * abs(tan(pi * self.eyeZoom)) * dx / float(self.width())
+        newDy = (self.eye - self.center).length() * abs(tan(pi * self.eyeZoom)) * dy / float(self.height())
+        moveDirection = self.up*(-newDy) + self.right*newDx
+        dirVec = Vec3(moveDirection)
+        for s in self.scene:
+            try:
+                s.selectionMove(dirVec)
+                s.emitModelChanged()
+            except:
+                pass
+
     def mouseMoveEvent(self, e):
         dx = e.x() - self.mouseMovePoint.x()
         dy = e.y() - self.mouseMovePoint.y()
@@ -284,7 +296,9 @@ class Camera(QtOpenGL.QGLWidget):
                     self.setEyeRotation(-dx, dy, 0)
             
         elif (e.buttons() & QtCore.Qt.RightButton):
+            print "e.modifiers() & QtCore.Qt.RightButton"
             if e.modifiers() & QtCore.Qt.CTRL:                 # Translating the selection
+                print "   e.modifiers() & QtCore.Qt.CTRL"
                 self.moveSelectedScene(dx, dy)
             else:                                                   # Translating the scene
                 newDx = (self.eye - self.center).length() * abs(tan(pi * self.eyeZoom)) * dx / float(self.width())

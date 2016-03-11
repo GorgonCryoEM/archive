@@ -44,6 +44,12 @@ class Sphere(BaseViewer):
         self.draw()
 #         glPopMatrix();
 
+    def selectionMove(self, v):
+        self.loc.Print()
+        self.loc = self.loc + v
+        self.loc.Print()
+        self.draw()
+        
     def draw(self):
 #         glPushMatrix();
 #         glRotatef(angle, axis[0], axis[1], 0.0);
