@@ -250,7 +250,6 @@ class Camera(QtOpenGL.QGLWidget):
     
     def rotateSelectedScene(self, dx, dy):
         print "In: rotateSelectedScene"
-        print "SelectedScene: %d" % self.selectedScene
         newDx = (self.eye - self.center).length() * abs(tan(pi * self.eyeZoom)) * dx / float(self.width())
         newDy = (self.eye - self.center).length() * abs(tan(pi * self.eyeZoom)) * dy / float(self.height())
 
@@ -261,20 +260,13 @@ class Camera(QtOpenGL.QGLWidget):
         rotationAxis3D = Vec3(rotationAxis)
         centerOfMass   = Vec3(0,0,0)
         
-        totalCount = 0
-        for s in self.scene:
-            objectCount = s.renderer.selectionObjectCount()
-            if(objectCount > 0):
-                totalCount = totalCount + objectCount
-                centerOfMass = centerOfMass + (s.objectToWorldCoordinates(s.renderer.selectionCenterOfMass()) * float(objectCount))
-        if(totalCount > 0):
-            centerOfMass = centerOfMass * float(1.0 / totalCount)
-
         for s in self.scene:
             selectionCOM  = s.worldToObjectCoordinates(centerOfMass)
             selectionAxis = s.worldToObjectCoordinates(rotationAxis3D)
-            if(s.renderer.selectionRotate(selectionCOM, selectionAxis, moveLength.length())):
-                s.emitModelChanged()
+            s.selectionRotate(selectionCOM, selectionAxis, moveLength.length())
+            s.emitModelChanged()
+            
+        self.updateGL()
                      
     def mouseMoveEvent(self, e):
         dx = e.x() - self.mouseMovePoint.x()
@@ -286,7 +278,7 @@ class Camera(QtOpenGL.QGLWidget):
             else:
                 if e.modifiers() & QtCore.Qt.CTRL:           # Rotating the selection
                     print "e.modifiers() & QtCore.Qt.CTRL"
-                    self.selectedScene = 3
+#                     self.selectedScene = 3
                     self.rotateSelectedScene(dx, dy)
                 else:                                               # Rotating the scene
                     self.setEyeRotation(-dx, dy, 0)
