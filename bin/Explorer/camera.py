@@ -244,6 +244,34 @@ class Camera(QtOpenGL.QGLWidget):
         for s in self.scene:
             s.mousePressEvent(e)
     
+    def rotateSelectedScene(self, dx, dy):
+        print "In: rotateSelectedScene"
+        print "SelectedScene: %d" % self.selectedScene
+        newDx = (self.eye - self.center).length() * abs(tan(pi * self.eyeZoom)) * dx / float(self.width())
+        newDy = (self.eye - self.center).length() * abs(tan(pi * self.eyeZoom)) * dy / float(self.height())
+
+        moveLength    = self.up*(-newDy) + self.right*newDx
+        moveDirection = moveLength.normalize()
+        rotationAxis  = moveDirection^self.look
+        
+        rotationAxis3D = Vec3(rotationAxis)
+        centerOfMass   = Vec3(0,0,0)
+        
+        totalCount = 0
+        for s in self.scene:
+            objectCount = s.renderer.selectionObjectCount()
+            if(objectCount > 0):
+                totalCount = totalCount + objectCount
+                centerOfMass = centerOfMass + (s.objectToWorldCoordinates(s.renderer.selectionCenterOfMass()) * float(objectCount))
+        if(totalCount > 0):
+            centerOfMass = centerOfMass * float(1.0 / totalCount)
+
+        for s in self.scene:
+            selectionCOM  = s.worldToObjectCoordinates(centerOfMass)
+            selectionAxis = s.worldToObjectCoordinates(rotationAxis3D)
+            if(s.renderer.selectionRotate(selectionCOM, selectionAxis, moveLength.length())):
+                s.emitModelChanged()
+                     
     def mouseMoveEvent(self, e):
         dx = e.x() - self.mouseMovePoint.x()
         dy = e.y() - self.mouseMovePoint.y()
