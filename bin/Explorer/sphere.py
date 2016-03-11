@@ -36,7 +36,6 @@ class Sphere(BaseViewer):
         self.s.drawSphere(self.loc, 10.)
         
     def mousePressEvent(self, e):
-        self.loc = self.loc + Vec3(1., 0., 0.)
         print "Sphere loc:"
         self.loc.Print()
         
