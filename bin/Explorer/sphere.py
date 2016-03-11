@@ -49,7 +49,13 @@ class Sphere(BaseViewer):
         self.loc.Print()
         
         self.app.mainCamera.updateGL()
+    def mouseDoubleClickEvent(self, e):
+        print "Reset center:"
         
+        self.loc = Vec3(0., 0., 0.)
+        
+        self.app.mainCamera.updateGL()
+
     def performElementSelection(self, hitStack):
 #         print self.app.mainCamera.scene
         

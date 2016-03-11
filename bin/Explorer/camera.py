@@ -243,6 +243,10 @@ class Camera(QtOpenGL.QGLWidget):
     def mousePressEvent(self, e):
         for s in self.scene:
             s.mousePressEvent(e)
+
+    def mouseDoubleClickEvent(self, e):
+        for s in self.scene:
+            s.mouseDoubleClickEvent(e)
     
     def rotateSelectedScene(self, dx, dy):
         print "In: rotateSelectedScene"
