@@ -26,6 +26,9 @@ class VolumeViewer(BaseViewer):
         
         self.connect(self, QtCore.SIGNAL("modelLoadedPreDraw()"), self.modelLoadedPreDraw)
 
+    def draw(self):
+        self.draw_base()
+
     def selectionRotate(self, p, axis, angle):
 #         angle = 5.0
 #         axis = [1,1,0]

@@ -155,7 +155,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
     def unInitializeGLDisplayType(self):
         glPopAttrib()
 
-    def draw(self):
+    def draw_base(self):
         glPushMatrix()
         location = [self.renderer.getOriginX(), self.renderer.getOriginY(), self.renderer.getOriginZ()]
         glTranslated(location[0], location[1], location[2])

@@ -41,14 +41,21 @@ class Sphere(BaseViewer):
         glPopMatrix();
 
     def draw(self):
+        glPushMatrix();
+#         glRotatef(angle, axis[0], axis[1], 0.0);
+        glTranslatef(10., 0., 0.)
+
         self.setMaterials(self.color)
         self.s.drawSphere(self.loc, 10.)
+        
+        glPopMatrix();
         
     def mousePressEvent(self, e):
         print "Sphere loc:"
         self.loc.Print()
         
         self.app.mainCamera.updateGL()
+
     def mouseDoubleClickEvent(self, e):
         print "Reset center:"
         
