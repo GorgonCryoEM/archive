@@ -9,8 +9,8 @@ from OpenGL.GLUT import *
 
 class VolumeViewer(BaseViewer):
 
-    def __init__(self, main, parent=None):
-        BaseViewer.__init__(self, main, parent)
+    def __init__(self, main):
+        BaseViewer.__init__(self, main)
         self.title = "Volume"
         self.shortTitle = "VOL"
 

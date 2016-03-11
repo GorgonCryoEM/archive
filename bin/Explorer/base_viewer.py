@@ -12,10 +12,10 @@ from .libs import Vec3
 class BaseViewer(QtOpenGL.QGLWidget):
     DisplayStyleWireframe, DisplayStyleFlat, DisplayStyleSmooth = range(3)
     
-    def __init__(self, main, parent=None):
+    def __init__(self, parent):
         QtOpenGL.QGLWidget.__init__(self, parent)
         
-        self.app = main
+        self.app = parent
         self.sceneIndex = -1;
         
         self.loaded = False

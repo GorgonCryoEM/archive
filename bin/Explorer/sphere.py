@@ -16,17 +16,15 @@ from OpenGL.GLUT import *
 
 class Sphere(BaseViewer):
     
-    def __init__(self, main, parent=None):
-#         super(Sphere, self).__init__(main, parent)
-        BaseViewer.__init__(self, main, parent)
+    def __init__(self, parent):
+#         super(Sphere, self).__init__(parent, parent)
+        BaseViewer.__init__(self, parent)
         self.title = "Sphere"
         
         self.renderer = Display()
         self.s = RendererBase()
 #         self.color = QtGui.QColorDialog().getColor()
         self.color = QtGui.QColor(120, 18, 80, 150)
-        
-        self.main = main
         
         self.loc = Vec3(30., 10., 10.)
         
@@ -38,16 +36,16 @@ class Sphere(BaseViewer):
         self.s.drawSphere(self.loc, 10.)
         
     def performElementSelection(self, hitStack):
-#         print self.main.mainCamera.scene
+#         print self.app.mainCamera.scene
         
-#         self.main.mainCamera.scene = self.main.mainCamera.scene[-2:]
-        self.main.mainCamera.selectedScene = 3
+#         self.app.mainCamera.scene = self.app.mainCamera.scene[-2:]
+        self.app.mainCamera.selectedScene = 3
         
 #         self.setLocation(0, 0, 0)
 #         self.loc = Vec3(0, 0, 0)
         
         
-#         print self.main.mainCamera.scene
+#         print self.app.mainCamera.scene
         
 #         color = QtGui.QColorDialog.getColor(self.color, self, '', QtGui.QColorDialog.ShowAlphaChannel)
 #
