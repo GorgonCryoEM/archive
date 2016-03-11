@@ -237,6 +237,10 @@ class Camera(QtOpenGL.QGLWidget):
         #glOrtho(-200 * self.eyeZoom, 200 * self.eyeZoom, -200 * self.eyeZoom, 200 * self.eyeZoom, self.near, self.far)
         glMatrixMode(GL_MODELVIEW)
     
+    def mousePressEvent(self, e):
+        for s in self.scene:
+            s.mousePressEvent(e)
+    
     def mouseMoveEvent(self, e):
         dx = e.x() - self.mouseMovePoint.x()
         dy = e.y() - self.mouseMovePoint.y()

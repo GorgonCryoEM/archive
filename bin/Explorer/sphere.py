@@ -35,6 +35,13 @@ class Sphere(BaseViewer):
         self.setMaterials(self.color)
         self.s.drawSphere(self.loc, 10.)
         
+    def mousePressEvent(self, e):
+        self.loc = self.loc + Vec3(1., 0., 0.)
+        print "Sphere loc:"
+        self.loc.Print()
+        
+        self.app.mainCamera.updateGL()
+        
     def performElementSelection(self, hitStack):
 #         print self.app.mainCamera.scene
         
