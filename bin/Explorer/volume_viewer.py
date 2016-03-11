@@ -1,6 +1,7 @@
 from PyQt4 import QtGui, QtCore, QtOpenGL
 from base_viewer import BaseViewer
 from libpytoolkit import Display
+from .libs import Vec3
 
 from OpenGL.GL import *
 from OpenGL.GLU import *
@@ -40,10 +41,19 @@ class VolumeViewer(BaseViewer):
 #         glPopMatrix();
 
     def selectionMove(self, v):
-        self.loc.Print()
-        self.loc = self.loc + v
-        self.loc.Print()
-        self.draw()
+        print "   In selectionMove:", self
+        loc = Vec3(self.renderer.getOriginX(),
+                   self.renderer.getOriginY(),
+                   self.renderer.getOriginZ())
+        loc.Print()
+        
+        loc += v
+        
+        loc.Print()
+        
+        self.setLocationV(loc)
+#         self.draw()
+#         self.app.mainCamera.updateGL()
 
     def modelLoadedPreDraw(self):
         maxDensity = self.renderer.getMaxDensity()
