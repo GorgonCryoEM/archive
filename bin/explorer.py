@@ -70,7 +70,7 @@ def main():
     window.resize(800, 600)
 #     window.move(300,50)
     window.show()
-#     window.volumeViewer.load(args.volume)
+    window.volumeViewer.load(args.volume)
 #     window.skeletonViewer.load(args.skeleton)
     window.volumeViewer1.load("vp6-96o.mrc")
     
