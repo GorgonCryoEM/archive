@@ -26,6 +26,16 @@ class VolumeViewer(BaseViewer):
         
         self.connect(self, QtCore.SIGNAL("modelLoadedPreDraw()"), self.modelLoadedPreDraw)
 
+    def selectionRotate(self, p, axis, angle):
+#         angle = 5.0
+#         axis = [1,1,0]
+        print "   In selectionRotate:", self
+        print "   params: ", angle, axis, axis[0], axis[1]
+#         glPushMatrix();
+#         glRotatef(angle, axis[0], axis[1], axis[2]);
+#         self.draw()
+#         glPopMatrix();
+
     def modelLoadedPreDraw(self):
         maxDensity = self.renderer.getMaxDensity()
         minDensity = self.renderer.getMinDensity()

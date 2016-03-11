@@ -31,6 +31,15 @@ class Sphere(BaseViewer):
         self.selectEnabled    = True
         self.mouseMoveEnabled = True
         
+    def selectionRotate(self, p, axis, angle):
+        print "   In selectionRotate:", self
+        print "   params: ", angle, axis, axis[0], axis[1]
+        glPushMatrix();
+#         glRotatef(angle, axis[0], axis[1], 0.0);
+        glTranslatef(1., 0., 0.)
+        self.draw()
+        glPopMatrix();
+
     def draw(self):
         self.setMaterials(self.color)
         self.s.drawSphere(self.loc, 10.)

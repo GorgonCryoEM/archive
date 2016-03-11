@@ -45,6 +45,14 @@ class BaseViewer(QtOpenGL.QGLWidget):
     def setScale(self, x, y, z):
         self.renderer.setSpacing(x, y, z)
         self.app.mainCamera.updateGL()
+        
+    def selectionRotate(self, p, axis, angle):
+#         setRotation()
+        print "In selectionRotate:", self
+#         glPushMatrix();
+#         glRotated(angle, axis[0], axis[1], axis[2]);
+#         self.draw()
+#         glPopMatrix();
 
     def objectToWorldCoordinates(self, objectCoords):
         #Need to apply rotations
