@@ -151,9 +151,6 @@ class Camera(QtOpenGL.QGLWidget):
         return QtCore.QSize(400, 400)
        
     def initializeGL(self):
-        self.initializeScene()
-
-    def initializeScene(self):
         if((sys.platform != 'darwin') and (sys.platform != 'win32')):
             glutInit(sys.argv)      #This must be here to get it to work with Freeglut.
             #otherwise you get: "freeglut  ERROR:  Function <glutWireCube> called without first calling 'glutInit'."
