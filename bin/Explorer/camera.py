@@ -274,6 +274,8 @@ class Camera(QtOpenGL.QGLWidget):
         moveDirection = self.up*(-newDy) + self.right*newDx
         dirVec = Vec3(moveDirection)
         for s in self.scene:
+#             s.selectionMove(dirVec)
+#             s.emitModelChanged()
             try:
                 s.selectionMove(dirVec)
                 s.emitModelChanged()
