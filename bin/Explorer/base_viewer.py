@@ -87,6 +87,13 @@ class BaseViewer(QtOpenGL.QGLWidget):
         scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
         return Vec3([worldCoords[i] / scale[i] for i in range(3)])
         
+    def setLocationV(self, v):
+        self.setLocation(v[0], v[1], v[2])
+
+    def setLocation(self, x, y, z):
+        self.renderer.setOrigin(x, y, z)
+        self.app.mainCamera.updateGL()
+        
     def setMaterials(self, color):
         glColor4f(color.redF(), color.greenF(), color.blueF(), color.alphaF())
         diffuseMaterial = [color.redF(), color.greenF(), color.blueF(), color.alphaF()]
