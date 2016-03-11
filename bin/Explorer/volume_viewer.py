@@ -39,6 +39,12 @@ class VolumeViewer(BaseViewer):
 #         self.draw()
 #         glPopMatrix();
 
+    def selectionMove(self, v):
+        self.loc.Print()
+        self.loc = self.loc + v
+        self.loc.Print()
+        self.draw()
+
     def modelLoadedPreDraw(self):
         maxDensity = self.renderer.getMaxDensity()
         minDensity = self.renderer.getMinDensity()
