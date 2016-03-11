@@ -33,22 +33,26 @@ class Sphere(BaseViewer):
         
     def selectionRotate(self, p, axis, angle):
         print "   In selectionRotate:", self
-        print "   params: ", angle, axis, axis[0], axis[1]
-        glPushMatrix();
+        print "   params 1: ", angle, axis[0], axis[1], axis[2]
+        self.loc.Print()
+#         glPushMatrix();
 #         glRotatef(angle, axis[0], axis[1], 0.0);
-        glTranslatef(1., 0., 0.)
+#         glTranslatef(1., 0., 0.)
+        self.loc = self.loc.rotate(axis, angle*0.1)
+        print "   params 2: ", angle, axis[0], axis[1], axis[2]
+        self.loc.Print()
         self.draw()
-        glPopMatrix();
+#         glPopMatrix();
 
     def draw(self):
-        glPushMatrix();
+#         glPushMatrix();
 #         glRotatef(angle, axis[0], axis[1], 0.0);
-        glTranslatef(10., 0., 0.)
+#         glTranslatef(10., 0., 0.)
 
         self.setMaterials(self.color)
         self.s.drawSphere(self.loc, 10.)
         
-        glPopMatrix();
+#         glPopMatrix();
         
     def mousePressEvent(self, e):
         print "Sphere loc:"
