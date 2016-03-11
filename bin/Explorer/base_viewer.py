@@ -45,6 +45,17 @@ class BaseViewer(QtOpenGL.QGLWidget):
     def setScale(self, x, y, z):
         self.renderer.setSpacing(x, y, z)
         self.app.mainCamera.updateGL()
+    
+    def setRotation(self, axis, angle):
+        glMatrixMode(GL_MODELVIEW)
+        glPushMatrix()
+        glLoadIdentity()
+        glRotatef(angle, axis[0], axis[1], axis[2])
+        
+        glMultMatrixf(self.rotation)
+        
+        self.rotation = glGetFloatv(GL_MODELVIEW_MATRIX)
+        glPopMatrix()
         
     def selectionRotate(self, p, axis, angle):
 #         setRotation()
