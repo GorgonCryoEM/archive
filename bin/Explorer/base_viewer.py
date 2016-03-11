@@ -82,7 +82,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
         glMaterialfv(GL_FRONT, GL_SPECULAR,  specularMaterial)
         glMaterialf (GL_FRONT, GL_SHININESS, 0.1)
 
-    def getBoundingBox(self):
+    def getMinMax(self):
         scale    = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
         location = [self.renderer.getOriginX(), self.renderer.getOriginY(), self.renderer.getOriginZ()]
         minPos = Vec3([(self.renderer.getMin(i)*scale[i] + location[i]) for i in range(3)])
@@ -90,12 +90,9 @@ class BaseViewer(QtOpenGL.QGLWidget):
         return (minPos, maxPos)
         
     def getCenterAndDistance(self):
-        scale    = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
-        location = [self.renderer.getOriginX(), self.renderer.getOriginY(), self.renderer.getOriginZ()]
-        minPos = Vec3([(self.renderer.getMin(i)*scale[i] + location[i]) for i in range(3)])
-        maxPos = Vec3([(self.renderer.getMax(i)*scale[i] + location[i]) for i in range(3)])
+        minPos, maxPos = self.getMinMax()
+        
         distance = (minPos - maxPos).length()
-
         center = (minPos + maxPos)*0.5
 
         return (center, distance)
