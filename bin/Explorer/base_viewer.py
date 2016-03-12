@@ -99,6 +99,10 @@ class BaseViewer(QtOpenGL.QGLWidget):
         glMaterialfv(GL_FRONT, GL_SPECULAR,  specularMaterial)
         glMaterialf (GL_FRONT, GL_SHININESS, 0.1)
 
+    def processMouseWheel(self, amount, event):
+        #Override this method to enable mouse wheel functionality
+        pass
+                                
     def getBoundingBox(self):
         scale    = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
         location = [self.renderer.getOriginX(), self.renderer.getOriginY(), self.renderer.getOriginZ()]
