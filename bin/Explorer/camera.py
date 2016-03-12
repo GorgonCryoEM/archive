@@ -345,9 +345,14 @@ class Camera(QtOpenGL.QGLWidget):
         newDy = (self.eye - self.center).length() * abs(tan(pi * self.eyeZoom)) * dy / float(self.height())
         moveDirection = self.up*(-newDy) + self.right*newDx
         dirVec = Vec3(moveDirection)
-        for s in self.scene:
-            if(s.renderer.selectionMove(dirVec)):
-                s.emitModelChanged()
+        
+        s = self.scene[self.selectedScene]
+        s.selectionMove(dirVec)
+        s.emitModelChanged()
+#         for s in self.scene:
+# #             print "  scene: ", s
+#             s.selectionMove(dirVec)
+#             s.emitModelChanged()
 
     def rotateSelectedScene(self, dx, dy):
         print "In: rotateSelectedScene"
@@ -399,15 +404,11 @@ class Camera(QtOpenGL.QGLWidget):
         dy = event.y() - self.mouseMovePoint.y()
                         
         if (event.buttons() & QtCore.Qt.LeftButton):
-            if (event.buttons() & QtCore.Qt.RightButton):           # Rolling the scene
-                self.setEyeRotation(0, 0, dx)
-            else:
-                if event.modifiers() & QtCore.Qt.CTRL:           # Rotating the selection
-                    print "event.modifiers() & QtCore.Qt.CTRL"
-                    self.selectedScene = 3
-                    self.rotateSelectedScene(dx, dy)
-                else:                                               # Rotating the scene
-                    self.setEyeRotation(-dx, dy, 0)
+            if event.modifiers() & QtCore.Qt.CTRL:           # Rotating the selection
+                print "event.modifiers() & QtCore.Qt.CTRL"
+                self.rotateSelectedScene(dx, dy)
+            else:                                               # Rotating the scene
+                self.setEyeRotation(-dx, dy, 0)
             
         elif (event.buttons() & QtCore.Qt.RightButton):
             print "event.buttons() & QtCore.Qt.RightButton"
