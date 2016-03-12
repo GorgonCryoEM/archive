@@ -37,11 +37,16 @@ class Sphere(BaseViewer):
         self.setMaterials(self.color)
         self.s.drawSphere(self.loc, 10.)
         
-    def performElementSelection(self, hitStack):
+    def selectionMove(self, v):
+        print "     In: selectionMove", self
+        self.loc += v
+        self.draw()
+        
+#     def performElementSelection(self, hitStack):
 #         print self.main.mainCamera.scene
         
 #         self.main.mainCamera.scene = self.main.mainCamera.scene[-2:]
-        self.main.mainCamera.selectedScene = 3
+#         self.main.mainCamera.selectedScene = 3
         
 #         self.setLocation(0, 0, 0)
 #         self.loc = Vec3(0, 0, 0)
