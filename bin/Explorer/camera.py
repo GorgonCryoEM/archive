@@ -412,7 +412,9 @@ class Camera(QtOpenGL.QGLWidget):
                     self.setEyeRotation(-dx, dy, 0)
             
         elif (self.mouseRightPressed):
+            print "event.buttons() & QtCore.Qt.RightButton"
             if event.modifiers() & QtCore.Qt.CTRL:                 # Translating the selection
+                print "event.modifiers() & QtCore.Qt.CTRL"
                 self.moveSelectedScene(dx, dy)
             else:                                                   # Translating the scene
                 translation = self.mouseVec(-dx, -dy)
