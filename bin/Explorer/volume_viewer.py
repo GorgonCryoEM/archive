@@ -30,30 +30,30 @@ class VolumeViewer(BaseViewer):
     def draw(self):
         self.draw_base()
 
-    def selectionRotate(self, p, axis, angle):
-#         angle = 5.0
-#         axis = [1,1,0]
-        print "   In selectionRotate:", self
-        print "   params: ", angle, axis, axis[0], axis[1]
-#         glPushMatrix();
-#         glRotatef(angle, axis[0], axis[1], axis[2]);
-#         self.draw()
-#         glPopMatrix();
-
-    def selectionMove(self, v):
-        print "   In selectionMove:", self
-        loc = Vec3(self.renderer.getOriginX(),
-                   self.renderer.getOriginY(),
-                   self.renderer.getOriginZ())
-        loc.Print()
-        
-        loc += v
-        
-        loc.Print()
-        
-        self.setLocationV(loc)
-#         self.draw()
-#         self.app.mainCamera.updateGL()
+#     def selectionRotate(self, p, axis, angle):
+# #         angle = 5.0
+# #         axis = [1,1,0]
+#         print "   In selectionRotate:", self
+#         print "   params: ", angle, axis, axis[0], axis[1]
+# #         glPushMatrix();
+# #         glRotatef(angle, axis[0], axis[1], axis[2]);
+# #         self.draw()
+# #         glPopMatrix();
+#
+#     def selectionMove(self, v):
+#         print "   In selectionMove:", self
+#         loc = Vec3(self.renderer.getOriginX(),
+#                    self.renderer.getOriginY(),
+#                    self.renderer.getOriginZ())
+#         loc.Print()
+#
+#         loc += v
+#
+#         loc.Print()
+#
+#         self.setLocationV(loc)
+# #         self.draw()
+# #         self.app.mainCamera.updateGL()
 
     def modelLoadedPreDraw(self):
         maxDensity = self.renderer.getMaxDensity()

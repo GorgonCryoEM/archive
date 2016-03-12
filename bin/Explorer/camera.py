@@ -241,9 +241,37 @@ class Camera(QtOpenGL.QGLWidget):
         glMatrixMode(GL_MODELVIEW)
     
     def mousePressEvent(self, e):
-        for s in self.scene:
-            s.mousePressEvent(e)
+#         x = self.mouseMovePoint.x
+#         y = self.mouseMovePoint.y
+        
+        x = e.x()
+        y = e.y()
+        
+        self.hits = self.pickObject(x, y)
+#         print [k for i,j,k in self.hits]
+        print [s[2] for s in self.hits]
+        
+#         self.mouseMovePoint.x = x
+#         self.mouseMovePoint.y = y
+#         for s in self.scene:
+#             s.mousePressEvent(e)
 
+    def mouseReleaseEvent(self, event):
+        self.mouseUpPoint = QtCore.QPoint(event.pos())
+        #Enter selection mode only if we didnt move the mouse much.. (If the mouse was moved, then we assume a camera motion instead of a selection
+        dx = self.mouseUpPoint.x() - self.mouseDownPoint.x()
+        dy = self.mouseUpPoint.y() - self.mouseDownPoint.y()
+             
+        if (pow(self.mouseDownPoint.x() - self.mouseUpPoint.x(), 2) + pow(self.mouseDownPoint.y() - self.mouseUpPoint.y(), 2) <= 2):
+            self.processMouseClick(self.pickObject(self.mouseUpPoint.x(), self.mouseUpPoint.y()), event, self.mouseLeftPressed, self.mouseMidPressed, self.mouseRightPressed)
+        
+        # auto rotate if ctrl + alt pressed
+        if(self.mouseLeftPressed) and (event.modifiers() & QtCore.Qt.CTRL) and (event.modifiers() & QtCore.Qt.ALT):
+            for i in range(100):
+                self.setEyeRotation(-dx/10.0, dy/10.0, 0)
+                self.updateGL()
+#                 time.sleep(0.01)
+            
     def mouseDoubleClickEvent(self, e):
         for s in self.scene:
             s.mouseDoubleClickEvent(e)
@@ -273,6 +301,9 @@ class Camera(QtOpenGL.QGLWidget):
         newDy = (self.eye - self.center).length() * abs(tan(pi * self.eyeZoom)) * dy / float(self.height())
         moveDirection = self.up*(-newDy) + self.right*newDx
         dirVec = Vec3(moveDirection)
+        
+#         print self.hits[0][3]
+        
         for s in self.scene:
 #             s.selectionMove(dirVec)
 #             s.emitModelChanged()
@@ -281,6 +312,26 @@ class Camera(QtOpenGL.QGLWidget):
                 s.emitModelChanged()
             except:
                 pass
+
+    def pickObject(self, x, y):
+        viewport = list(glGetIntegerv(GL_VIEWPORT))
+        glSelectBuffer(10000)
+        glRenderMode(GL_SELECT)
+
+        glInitNames()
+        glMatrixMode(GL_PROJECTION)
+        glPushMatrix()
+        glLoadIdentity()
+        gluPickMatrix(x, viewport[3]-y, 5, 5, viewport)
+        gluPerspective(180 * self.eyeZoom, self.aspectRatio, self.near, self.far)
+        for s in self.scene:
+            s.draw()
+        glMatrixMode(GL_PROJECTION)
+        glPopMatrix()
+        glFlush()
+
+        mouseHits = glRenderMode(GL_RENDER)
+        return mouseHits
 
     def mouseMoveEvent(self, e):
         dx = e.x() - self.mouseMovePoint.x()
