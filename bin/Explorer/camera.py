@@ -20,11 +20,15 @@ class Camera(QtOpenGL.QGLWidget):
 
         self.line = Line(self.app, Vec3(100,100,100))
         self.line.color = QtGui.QColor(40, 70, 50, 150)
+        self.line1 = Line(self.app, Vec3(100,100,100))
+        self.line1.color = QtGui.QColor(80, 40, 50, 150)
         
         self.near = 0
         self.cuttingPlane = 0.0
         self.scene = scene
         self.scene.append(self.line)
+        self.scene.append(self.line1)
+        
         self.mouseTrackingEnabled    = False
         self.mouseTrackingEnabledRay = False
         self.aspectRatio   = 1.0
@@ -372,6 +376,8 @@ class Camera(QtOpenGL.QGLWidget):
 #         selectionAxis = rotationAxis3D
         self.line.redraw(Vec3(0,0,0), centerOfMass)
 #         self.line.redraw(centerOfMass)
+        axisDraw = selectionAxis
+        self.line1.redraw(axisDraw*(-1.), axisDraw)
         s.renderer.selectionRotate(centerOfMass, selectionAxis, moveLength.length())
         s.emitModelChanged()
                      
