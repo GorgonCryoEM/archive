@@ -365,8 +365,8 @@ class Camera(QtOpenGL.QGLWidget):
         selectionAxis = s.worldToObjectCoordinates(rotationAxis3D)
 #         selectionCOM  = centerOfMass
 #         selectionAxis = rotationAxis3D
-        if(s.renderer.selectionRotate(selectionCOM, selectionAxis, moveLength.length())):
-            s.emitModelChanged()
+        s.renderer.selectionRotate(selectionCOM, selectionAxis, moveLength.length())
+        s.emitModelChanged()
                      
 #         for s in self.scene:
 #             centerOfMass   = s.renderer.selectionCenterOfMass()
