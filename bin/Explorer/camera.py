@@ -362,9 +362,7 @@ class Camera(QtOpenGL.QGLWidget):
 
         moveLength    = self.up*(-newDy) + self.right*newDx
         moveDirection = moveLength.normalize()
-        rotationAxis  = moveDirection^self.look
-        
-        rotationAxis3D = Vec3(rotationAxis)
+        rotationAxis3D  = moveDirection^self.look
         
         s = self.scene[self.selectedScene]
         centerOfMass   = s.getCOM()
