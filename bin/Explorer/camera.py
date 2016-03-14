@@ -7,6 +7,7 @@ from OpenGL.GLUT import *
 from libpytoolkit import *
 from cmath import *
 from .libs import Vec3
+from line import Line
 
 
 class Camera(QtOpenGL.QGLWidget):
@@ -17,9 +18,13 @@ class Camera(QtOpenGL.QGLWidget):
         self.app = main
         self.sceneID = -1
 
+        self.line = Line(self.app, Vec3(100,100,100))
+        self.line.color = QtGui.QColor(40, 70, 50, 150)
+        
         self.near = 0
         self.cuttingPlane = 0.0
         self.scene = scene
+        self.scene.append(self.line)
         self.mouseTrackingEnabled    = False
         self.mouseTrackingEnabledRay = False
         self.aspectRatio   = 1.0
@@ -365,6 +370,8 @@ class Camera(QtOpenGL.QGLWidget):
         selectionAxis = s.worldToObjectCoordinates(rotationAxis3D)
 #         selectionCOM  = centerOfMass
 #         selectionAxis = rotationAxis3D
+        self.line.redraw(Vec3(0,0,0), centerOfMass)
+#         self.line.redraw(centerOfMass)
         s.renderer.selectionRotate(selectionCOM, selectionAxis, moveLength.length())
         s.emitModelChanged()
                      
