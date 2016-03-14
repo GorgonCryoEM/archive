@@ -42,6 +42,9 @@ class Sphere(BaseViewer):
         self.loc += v
         self.draw()
         
+    def getCOM(self):
+        return self.loc
+        
 #     def performElementSelection(self, hitStack):
 #         print self.main.mainCamera.scene
         

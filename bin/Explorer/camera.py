@@ -357,22 +357,25 @@ class Camera(QtOpenGL.QGLWidget):
 
         rotationAxis3D  = dirVec^self.look
         
-        centerOfMass   = Vec3(0,0,0)
         
-        totalCount = 0
-        for s in self.scene:
-            objectCount = s.renderer.selectionObjectCount()
-            if(objectCount > 0):
-                totalCount = totalCount + objectCount
-                centerOfMass = centerOfMass + (s.objectToWorldCoordinates(s.renderer.selectionCenterOfMass()) * float(objectCount))
-        if(totalCount > 0):
-            centerOfMass = centerOfMass * float(1.0 / totalCount)
-
-        for s in self.scene:
-            selectionCOM  = s.worldToObjectCoordinates(centerOfMass)
-            selectionAxis = s.worldToObjectCoordinates(rotationAxis3D)
-            if(s.renderer.selectionRotate(selectionCOM, selectionAxis, moveLength.length())):
-                s.emitModelChanged()
+        s = self.scene[self.selectedScene]
+        centerOfMass   = s.getCOM()
+        print "  COM: ", s, centerOfMass
+        centerOfMass.Print()
+        selectionCOM  = s.worldToObjectCoordinates(centerOfMass)
+        selectionAxis = s.worldToObjectCoordinates(rotationAxis3D)
+#         selectionCOM  = centerOfMass
+#         selectionAxis = rotationAxis3D
+        if(s.renderer.selectionRotate(selectionCOM, selectionAxis, moveLength.length())):
+            s.emitModelChanged()
+                     
+#         for s in self.scene:
+#             centerOfMass   = s.renderer.selectionCenterOfMass()
+#             print "  COM: ", s, centerOfMass
+#             selectionCOM  = s.worldToObjectCoordinates(centerOfMass)
+#             selectionAxis = s.worldToObjectCoordinates(rotationAxis3D)
+#             if(s.renderer.selectionRotate(selectionCOM, selectionAxis, moveLength.length())):
+#                 s.emitModelChanged()
                      
     def mousePressEvent(self, event):
         self.mouseDownPoint    = QtCore.QPoint(event.pos())

@@ -55,6 +55,33 @@ int Volume::id3=0;
         setOrigin(newMove[0], newMove[1], newMove[2]);
     }
 
+    Vec3F Volume::getCenterOfMass()
+    {
+        int nx = getSizeX();
+        int ny = getSizeY();
+        int nz = getSizeZ();
+
+        float mass = 0;
+        float xmoment = 0;
+        float ymoment = 0;
+        float zmoment = 0;
+        float val;
+
+        for (int i=0; i<nx; i++)
+            for (int j=0; j<ny; j++)
+                for (int k=0; k<nz; k++)
+                {
+                    val = (*this)(i,j,k);
+                    mass += val;
+                    xmoment += i*val;
+                    ymoment += j*val;
+                    zmoment += k*val;
+                }
+
+        Vec3F centerOfMass( xmoment/mass, ymoment/mass, zmoment/mass );
+        return centerOfMass;
+    }
+
     void Volume::setVolume(Volume *vol) {
         *this = *vol;
     }
