@@ -93,6 +93,7 @@ namespace SkeletonMaker {
         void selectionRotate(Vec3F centerOfMass,
                              Vec3F rotationAxis,
                              float angle);
+        Vec3F getCenterOfMass();
         Volume * markCellFace();
         int getNumNeighbor6  (int ox, int oy, int oz);
         int isInternal2      (int ox, int oy, int oz);

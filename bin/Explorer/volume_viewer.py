@@ -28,6 +28,9 @@ class VolumeViewer(BaseViewer):
         loc += v
         self.setLocationV(loc)
         
+    def getCOM(self):
+        return self.renderer.getCenterOfMass()
+        
     def modelLoadedPreDraw(self):
         self.renderer.enableDraw(False)
         maxDensity = self.renderer.getMaxDensity()
