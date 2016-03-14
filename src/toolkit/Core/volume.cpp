@@ -3,6 +3,7 @@
 #include <Core/GlobalDefinitions.h>
 #include <SkeletonMaker/Skeletonizer.h>
 #include <Readers/reader.h>
+#include "MathTools/VectorMath.h"
 
 #include <fstream>
 #include <iomanip>
@@ -10,6 +11,7 @@
 //using namespace SkeletonMaker;
 using namespace Foundation;
 using namespace GraySkeletonCPP;
+using namespace GraphMatch;
 
 namespace SkeletonMaker {
 
@@ -39,6 +41,18 @@ int Volume::id3=0;
 //    ---------------------
     Volume * Volume::getVolume() {
         return dynamic_cast<Volume *>(this);
+    }
+
+    void Volume::selectionRotate(Vec3F centerOfMass, Vec3F rotationAxis,
+                                 float angle)
+    {
+        Vec3D centerOfMassD(centerOfMass[0], centerOfMass[1], centerOfMass[2]);
+        Vec3D orig(getOriginX(), getOriginY(), getOriginZ());
+        Vec3D move = centerOfMassD - orig;
+        Vec3D newMove = Matrix4::rotation(rotationAxis, angle) * move;
+        newMove = centerOfMassD - newMove;
+
+        setOrigin(newMove[0], newMove[1], newMove[2]);
     }
 
     void Volume::setVolume(Volume *vol) {

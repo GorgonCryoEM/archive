@@ -635,6 +635,9 @@ namespace GraphMatch {
 
         }
 
+        static Matrix4 rotation(const Vector3<float>& axis, float angle) {
+            return Matrix4::rotation(Vec3D(axis[0], axis[1], axis[2]), (double)angle);
+        }
         static Matrix4 xrotation(double angle) {
             const double c = cos(angle);
             const double s = sin(angle);
