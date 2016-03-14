@@ -79,7 +79,7 @@ int Volume::id3=0;
                 }
 
         Vec3F centerOfMass( xmoment/mass, ymoment/mass, zmoment/mass );
-        return centerOfMass;
+        return centerOfMass + Vec3F(getOriginX(), getOriginY(), getOriginZ());
     }
 
     void Volume::setVolume(Volume *vol) {
