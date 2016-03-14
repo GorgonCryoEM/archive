@@ -12,7 +12,7 @@ from OpenGL.GLUT import *
 
 class Line(BaseViewer):
     
-    def __init__(self, main, parent=None):
+    def __init__(self, main, p1, parent=None):
 #         super(Sphere, self).__init__(main, parent)
         BaseViewer.__init__(self, main, parent)
         self.title = "Line"
@@ -24,7 +24,8 @@ class Line(BaseViewer):
         
         self.main = main
         
-        self.p1 = Vec3(30., 10., 10.)
+        self.p1 = p1
+#         self.p1 = Vec3(30., 10., 10.)
         self.p2 = Vec3( 0.,  0.,  0.)
         
         self.selectEnabled    = True
