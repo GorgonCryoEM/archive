@@ -357,7 +357,6 @@ class Camera(QtOpenGL.QGLWidget):
 
         rotationAxis3D  = dirVec^self.look
         
-        
         s = self.scene[self.selectedScene]
         centerOfMass   = s.getCOM()
         print "  COM: ", s, centerOfMass
