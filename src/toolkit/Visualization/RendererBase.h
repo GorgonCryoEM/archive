@@ -41,7 +41,7 @@ namespace Visualization {
             void drawSphere(Vec3F center, float radius);
             void static drawCylinder(Vec3F pt1, Vec3F pt2,
                                      float radius, int slices = 10, int stacks = 10);
-            void static drawLine(Vec3F pt1, Vec3F pt2);
+            void drawLine(Vec3F pt1, Vec3F pt2);
             virtual void setObjectSpecificColoring(bool objectSpecific);
             virtual void updateBoundingBox();
 
