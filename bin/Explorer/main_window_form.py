@@ -3,6 +3,7 @@ from camera import Camera
 from volume_viewer import VolumeViewer
 from sphere import Sphere
 from line import Line
+from .libs import Vec3
 
 import sys, os
 
@@ -16,7 +17,7 @@ class MainWindowForm(QtGui.QMainWindow):
 #         self.skeletonViewer = SkeletonViewer(self)
         self.volumeViewer1 = VolumeViewer(self)
         self.sphere = Sphere(self)
-        self.line  = Line(self)
+        self.line  = Line(self, Vec3(30., 10., 10.))
         
 #         self.scenes = [self.volumeViewer, self.skeletonViewer, self.volumeViewer1, self.sphere]
         self.scenes = [self.volumeViewer1, self.sphere, self.line]
