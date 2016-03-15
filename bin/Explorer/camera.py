@@ -343,13 +343,16 @@ class Camera(QtOpenGL.QGLWidget):
         self.setMouseTracking(self.mouseTrackingEnabled or self.mouseTrackingEnabledRay)
         self.updateGL()
      
+    def moveConstant(self):
+        return (self.eye - self.center).length() #* abs(tan(pi * self.eyeZoom))
+
     def moveSelectedScene(self, dx, dy):
         print "In: moveSelectedScene"
         print "SelectedScene: %d" % self.selectedScene
-        newDx = (self.eye - self.center).length() * abs(tan(pi * self.eyeZoom)) * dx / float(self.width())
-        newDy = (self.eye - self.center).length() * abs(tan(pi * self.eyeZoom)) * dy / float(self.height())
-        moveDirection = self.up*(-newDy) + self.right*newDx
-        dirVec = Vec3(moveDirection)
+        
+        newDx = self.moveConstant() * dx / float(self.width())
+        newDy = self.moveConstant() * dy / float(self.height())
+        dirVec = self.up*(-newDy) + self.right*newDx
         
         s = self.scene[self.selectedScene]
         s.selectionMove(dirVec)
@@ -362,12 +365,13 @@ class Camera(QtOpenGL.QGLWidget):
     def rotateSelectedScene(self, dx, dy):
         print "In: rotateSelectedScene"
         print "SelectedScene: %d" % self.selectedScene
-        newDx = (self.eye - self.center).length() * abs(tan(pi * self.eyeZoom)) * dx / float(self.width())
-        newDy = (self.eye - self.center).length() * abs(tan(pi * self.eyeZoom)) * dy / float(self.height())
+
+        newDx = self.moveConstant() * dx / float(self.width())
+        newDy = self.moveConstant() * dy / float(self.height())
 
         moveLength    = self.up*(-newDy) + self.right*newDx
-        moveDirection = moveLength.normalize()
-        rotationAxis3D  = moveDirection^self.look
+        dirVec = moveLength.normalize()
+        rotationAxis3D  = dirVec^self.look
         
         s = self.scene[self.selectedScene]
         centerOfMass   = s.getCOM()
@@ -427,8 +431,8 @@ class Camera(QtOpenGL.QGLWidget):
                 print "event.modifiers() & QtCore.Qt.CTRL"
                 self.moveSelectedScene(dx, dy)
             else:                                                   # Translating the scene
-                newDx = (self.eye - self.center).length() * abs(tan(pi * self.eyeZoom)) * dx / float(self.width())
-                newDy = (self.eye - self.center).length() * abs(tan(pi * self.eyeZoom)) * dy / float(self.height())
+                newDx = self.moveConstant() * dx / float(self.width())
+                newDy = self.moveConstant() * dy / float(self.height())
                 translation = self.up*newDy + self.right*(-newDx);
                 newEye = self.eye + translation;
                 newCenter = self.center + translation;
