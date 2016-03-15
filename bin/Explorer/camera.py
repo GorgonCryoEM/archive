@@ -368,7 +368,7 @@ class Camera(QtOpenGL.QGLWidget):
 #         selectionAxis = rotationAxis3D
         self.line.redraw(Vec3(0,0,0), centerOfMass)
 #         self.line.redraw(centerOfMass)
-        axisDraw = selectionAxis
+        axisDraw = selectionAxis*1000.
         self.line1.redraw(axisDraw*(-1.), axisDraw)
         s.renderer.selectionRotate(centerOfMass, selectionAxis, moveLength.length())
         s.emitModelChanged()
