@@ -437,18 +437,17 @@ class Camera(QtOpenGL.QGLWidget):
         centerOfMass   = s.getCOM()
         print "  COM: ", s, centerOfMass
         centerOfMass.Print()
-        selectionCOM  = s.worldToObjectCoordinates(centerOfMass)
-        selectionAxis = s.worldToObjectCoordinates(rotationAxis3D)
-#         selectionCOM  = centerOfMass
-#         selectionAxis = rotationAxis3D
+#         selectionCOM  = s.worldToObjectCoordinates(centerOfMass)
+#         selectionAxis = s.worldToObjectCoordinates(rotationAxis3D)
+        selectionCOM  = centerOfMass
+        selectionAxis = rotationAxis3D
         self.line.redraw(Vec3(0,0,0), centerOfMass)
 #         self.line.redraw(centerOfMass)
         axisDraw = selectionAxis*1000.
         self.line1.redraw(selectionCOM, axisDraw)
         self.dotcom.loc = selectionCOM
         self.dotaxis.loc = selectionAxis
-        s.renderer.selectionRotate(selectionCOM, selectionAxis, 0.05)
-        s.emitModelChanged()
+#         s.renderer.selectionRotate(selectionCOM, selectionAxis, 0.05)
                      
 #         for s in self.scene:
 #             centerOfMass   = s.renderer.selectionCenterOfMass()
