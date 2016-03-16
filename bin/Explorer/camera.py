@@ -8,6 +8,7 @@ from libpytoolkit import *
 from cmath import *
 from .libs import Vec3
 from line import Line
+from dot import Dot
 
 
 class Camera(QtOpenGL.QGLWidget):
@@ -18,17 +19,26 @@ class Camera(QtOpenGL.QGLWidget):
         self.app = main
         self.sceneID = -1
 
+        self.center = Vec3(0.0,  0.0, 0.0)
         self.line = Line(self.app, Vec3(100,100,100))
         self.line.color = QtGui.QColor(40, 70, 50, 150)
         self.line1 = Line(self.app, Vec3(100,100,100))
         self.line1.color = QtGui.QColor(80, 40, 50, 150)
         self.line1.depthEnabled = True
+        self.dot1 = Dot(self.app)
+        self.dotcom = Dot(self.app)
+        self.dotcom.color = QtGui.QColor(0, 130, 0, 150)
+        self.dotaxis = Dot(self.app)
+        self.dotaxis.color = QtGui.QColor(0, 0, 120, 150)
         
         self.near = 0
         self.cuttingPlane = 0.0
         self.scene = scene
         self.scene.append(self.line)
         self.scene.append(self.line1)
+        self.scene.append(self.dot1)
+        self.scene.append(self.dotcom)
+        self.scene.append(self.dotaxis)
         
         self.mouseTrackingEnabled    = False
         self.mouseTrackingEnabledRay = False
@@ -371,6 +381,8 @@ class Camera(QtOpenGL.QGLWidget):
 #         self.line.redraw(centerOfMass)
         axisDraw = selectionAxis*1000.
         self.line1.redraw(selectionCOM, axisDraw)
+        self.dotcom.loc = selectionCOM
+        self.dotaxis.loc = selectionAxis
         s.renderer.selectionRotate(selectionCOM, selectionAxis, 0.05)
         s.emitModelChanged()
                      
