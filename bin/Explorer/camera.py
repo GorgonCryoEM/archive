@@ -269,8 +269,72 @@ class Camera(QtOpenGL.QGLWidget):
             glPushName(i)
             self.scene[i].draw()
             glPopName()
+        self.additionalDraw()
         glPopMatrix()
         
+    def additionalDraw(self):
+#         glMatrixMode(GL_MODELVIEW)
+#         w=40
+#         h=40
+        w=self.width()/4
+        h=self.height()/4
+        
+        glViewport(0,0,w,h)
+        
+        glMatrixMode(GL_PROJECTION)
+        glPushMatrix()
+        glLoadIdentity()
+        glMatrixMode(GL_MODELVIEW)
+        glPushMatrix()
+        glLoadIdentity()
+        
+        glColor(.5,.2,.8, .5)
+        
+        glBegin(GL_LINE_LOOP)
+        glVertex(-1,-1,0)
+        glVertex(-1,1,0)
+        glVertex(1,1,0)
+        glVertex(1,-1,0)
+        glEnd()
+        
+        glMatrixMode(GL_PROJECTION)
+        glPopMatrix()
+        glMatrixMode(GL_MODELVIEW)
+        glPopMatrix()
+        
+        sc=.8
+        sh=0
+        L=sc*w/2
+        L=L-sh
+        
+        glPushMatrix()
+        
+#         glTranslate(-w*0.9/2,h*0.9/2,self.eye[2])
+#         glTranslate(-w*0.9/2,0,0)
+#         glRotate(90,0,1,0)
+        
+        glBegin(GL_LINES)
+        glColor(1,0,0)
+        glVertex(0,0,0)
+        glVertex(L,0,0)
+        glEnd()
+        
+        glBegin(GL_LINES)
+        glColor(0,1,0)
+        glVertex(0,0,0)
+        glVertex(0,L,0)
+        glEnd()
+
+        glBegin(GL_LINES)
+        glColor(0,0,1)
+        glVertex(0,0,0)
+        glVertex(0,0,L)
+        glEnd()
+        
+        glPopMatrix()
+
+        glViewport(0,0,self.width(),self.height())
+
     def processMouseWheel(self, direction, event):
         for s in self.scene:
             s.processMouseWheel(direction, event)
