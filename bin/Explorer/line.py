@@ -30,13 +30,16 @@ class Line(BaseViewer):
         
         self.selectEnabled    = True
         self.mouseMoveEnabled = True
+        self.depthEnabled = False
         
     def draw(self):
         self.setMaterials(self.color)
         glLineWidth(5.)
-        glClear(GL_DEPTH_BUFFER_BIT)
+#         if not self.depthEnabled:
+#             glDisable(GL_DEPTH_TEST)
+#             glClear(GL_DEPTH_BUFFER_BIT)
         self.s.drawLine(self.p1, self.p2)
-        glEnable(GL_DEPTH_TEST)
+#         glEnable(GL_DEPTH_TEST)
 
     def selectionMove(self, v):
         print "     In: selectionMove", self

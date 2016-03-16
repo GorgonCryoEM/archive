@@ -22,6 +22,7 @@ class Camera(QtOpenGL.QGLWidget):
         self.line.color = QtGui.QColor(40, 70, 50, 150)
         self.line1 = Line(self.app, Vec3(100,100,100))
         self.line1.color = QtGui.QColor(80, 40, 50, 150)
+        self.line1.depthEnabled = True
         
         self.near = 0
         self.cuttingPlane = 0.0
