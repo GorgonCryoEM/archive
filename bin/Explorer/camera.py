@@ -272,7 +272,7 @@ class Camera(QtOpenGL.QGLWidget):
         self.additionalDraw()
         glPopMatrix()
         
-    def additionalDraw(self):
+    def legend(self):
 #         glMatrixMode(GL_MODELVIEW)
 #         w=40
 #         h=40
@@ -281,12 +281,12 @@ class Camera(QtOpenGL.QGLWidget):
         
         glViewport(0,0,w,h)
         
-        glMatrixMode(GL_PROJECTION)
-        glPushMatrix()
-        glLoadIdentity()
-        glMatrixMode(GL_MODELVIEW)
-        glPushMatrix()
-        glLoadIdentity()
+#         glMatrixMode(GL_PROJECTION)
+#         glPushMatrix()
+#         glLoadIdentity()
+#         glMatrixMode(GL_MODELVIEW)
+#         glPushMatrix()
+#         glLoadIdentity()
         
         glColor(.5,.2,.8, .5)
         
@@ -297,10 +297,13 @@ class Camera(QtOpenGL.QGLWidget):
         glVertex(1,-1,0)
         glEnd()
         
-        glMatrixMode(GL_PROJECTION)
-        glPopMatrix()
-        glMatrixMode(GL_MODELVIEW)
-        glPopMatrix()
+#         glMatrixMode(GL_PROJECTION)
+#         glPopMatrix()
+#         glMatrixMode(GL_MODELVIEW)
+#         glPopMatrix()
+
+    def axes(self):
+        w = self.width()/4
         
         sc=.8
         sh=0
@@ -334,6 +337,10 @@ class Camera(QtOpenGL.QGLWidget):
         glPopMatrix()
 
         glViewport(0,0,self.width(),self.height())
+
+    def additionalDraw(self):
+        self.legend()
+        self.axes()
 
     def processMouseWheel(self, direction, event):
         for s in self.scene:
