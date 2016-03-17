@@ -36,15 +36,6 @@ class Sphere(BaseViewer):
     def draw(self):
         self.setMaterials(self.color)
         self.s.drawSphere(self.loc, 10.)
-        
-    def selectionMove(self, v):
-        print "     In: selectionMove", self
-        self.loc += v
-        self.draw()
-        
-    def getCOM(self):
-        return self.loc
-        
 #     def performElementSelection(self, hitStack):
 #         print self.main.mainCamera.scene
         
