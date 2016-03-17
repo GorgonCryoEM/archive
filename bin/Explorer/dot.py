@@ -32,11 +32,3 @@ class Dot(BaseViewer):
     def draw(self):
         self.setMaterials(self.color)
         self.s.drawSphere(self.loc, 1.)
-        
-    def selectionMove(self, v):
-        print "     In: selectionMove", self
-        self.loc += v
-        self.draw()
-        
-    def getCOM(self):
-        return self.loc
