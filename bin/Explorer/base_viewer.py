@@ -25,6 +25,11 @@ class BaseViewer(QtOpenGL.QGLWidget):
         self.isClosedMesh = True
 #         self.displayStyle = self.DisplayStyleSmooth
         self.displayStyle = self.DisplayStyleWireframe
+        
+        self.rotation = self.identityMatrix()
+        self.angle = 0.0
+        self.axis = Vec3(1,1,1)
+        
         self.rotation = self.identityMatrix()
         self.connect(self, QtCore.SIGNAL("modelLoaded()"), self.modelChanged)
 
