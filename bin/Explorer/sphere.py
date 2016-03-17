@@ -36,19 +36,3 @@ class Sphere(BaseViewer):
     def draw(self):
         self.setMaterials(self.color)
         self.s.drawSphere(self.loc, 10.)
-#     def performElementSelection(self, hitStack):
-#         print self.main.mainCamera.scene
-        
-#         self.main.mainCamera.scene = self.main.mainCamera.scene[-2:]
-#         self.main.mainCamera.selectedScene = 3
-        
-#         self.setLocation(0, 0, 0)
-#         self.loc = Vec3(0, 0, 0)
-        
-        
-#         print self.main.mainCamera.scene
-        
-#         color = QtGui.QColorDialog.getColor(self.color, self, '', QtGui.QColorDialog.ShowAlphaChannel)
-#
-#         if color.isValid():
-#             self.color = color
