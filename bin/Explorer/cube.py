@@ -36,6 +36,12 @@ class Cube(BaseViewer):
         self.setMaterials(self.color)
         glLineWidth(5.)
         
+        ax = self.axis
+        
+        glPushMatrix()
+        glTranslate(self.loc[0],self.loc[1],self.loc[2])
+        glRotatef(self.angle, ax[0], ax[1], ax[2])
+        
         L = self.L
         glBegin(GL_QUADS)
         glVertex(self.loc[0]+0,self.loc[1]+L,self.loc[2]+L)
@@ -51,3 +57,4 @@ class Cube(BaseViewer):
 
         glEnd()
         
+        glPopMatrix()
