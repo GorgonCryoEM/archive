@@ -28,6 +28,8 @@ class Line(BaseViewer):
 #         self.p1 = Vec3(30., 10., 10.)
         self.p2 = Vec3( 0.,  0.,  0.)
         
+        self.loc = self.getCOM()
+        
         self.selectEnabled    = True
         self.mouseMoveEnabled = True
         self.depthEnabled = False
@@ -44,6 +46,7 @@ class Line(BaseViewer):
     def selectionMove(self, v):
         print "     In: selectionMove", self
         self.p1 += v
+        self.p2 += v
         self.draw()
         
     def getCOM(self):
@@ -52,7 +55,6 @@ class Line(BaseViewer):
     def redraw(self, p1, p2):
         self.p1 = p1
         self.p2 = p2
-        self.draw()
 
 #     def redraw(self, p):
 #         self.p1 = self.p2
