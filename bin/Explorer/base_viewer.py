@@ -168,9 +168,11 @@ class BaseViewer(QtOpenGL.QGLWidget):
 
     def draw(self):
         glPushMatrix()
+        ax = self.axis
+        glRotatef(self.angle, ax[0], ax[1], ax[2])
         loc = [self.renderer.getOriginX(), self.renderer.getOriginY(), self.renderer.getOriginZ()]
         glTranslated(loc[0], loc[1], loc[2])
-        glMultMatrixf(self.rotation)
+#         glMultMatrixf(self.rotation)
         scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
         glScaled(scale[0], scale[1], scale[2])
         
@@ -205,23 +207,25 @@ class BaseViewer(QtOpenGL.QGLWidget):
         return self.loc
 
     def selectionRotate(self, com, axis, angle):
-        x = axis[0]
-        y = axis[1]
-        z = axis[2]
-
-        self.setRotation(axis, angle)
+        print "  In selectionRotate: ", self
+        print angle
+        axis.Print()
         
-    def setRotation(self, axis, angle):
-        glMatrixMode(GL_MODELVIEW)
-        glPushMatrix()
-        glLoadIdentity()
-        glRotatef(angle, axis[0], axis[1], axis[2])
+        self.angle = self.angle + angle
+        self.axis  = axis
         
-        glMultMatrixf(self.rotation)
+        self.draw()
+#         x = axis[0]
+#         y = axis[1]
+#         z = axis[2]
+#
+# #         glMatrixMode(GL_MODELVIEW)
+#         glPushMatrix()
+#         glLoadIdentity()
+#         glRotatef(angle, axis[0], axis[1], axis[2])
+#         glPopMatrix()
+#         self.draw()
         
-        self.rotation = glGetFloatv(GL_MODELVIEW_MATRIX)
-        glPopMatrix()
-                        
     def load(self, fileName):
         try:
             self.renderer.loadFile(str(fileName))
