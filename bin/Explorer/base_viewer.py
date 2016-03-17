@@ -168,6 +168,8 @@ class BaseViewer(QtOpenGL.QGLWidget):
         glMultMatrixf(self.rotation)
         scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
         glScaled(scale[0], scale[1], scale[2])
+        
+        glLineWidth(1.)
                 
         glPushAttrib(GL_DEPTH_BUFFER_BIT | GL_LIGHTING_BIT | GL_ENABLE_BIT | GL_COLOR_BUFFER_BIT)
         glEnable(GL_DEPTH_TEST);
@@ -189,21 +191,24 @@ class BaseViewer(QtOpenGL.QGLWidget):
         glPopAttrib()
         glPopMatrix()
 
-    def selectionRotate(self, com, axis, a):
-#         a,
+    def selectionRotate(self, com, axis, angle):
         x = axis[0]
         y = axis[1]
         z = axis[2]
+
+        self.setRotation(axis, angle)
+        
+    def setRotation(self, axis, angle):
         glMatrixMode(GL_MODELVIEW)
         glPushMatrix()
-        cc = self.getCOM()
-        cc = com
-        glTranslatef(-cc[0], -cc[1], -cc[2])
-        glRotatef( a, x, y, z)
-        glTranslatef(cc[0], cc[1], cc[2])
-        self.draw()
-        glPopMatrix()
+        glLoadIdentity()
+        glRotatef(angle, axis[0], axis[1], axis[2])
         
+        glMultMatrixf(self.rotation)
+        
+        self.rotation = glGetFloatv(GL_MODELVIEW_MATRIX)
+        glPopMatrix()
+                        
     def load(self, fileName):
         try:
             self.renderer.loadFile(str(fileName))
