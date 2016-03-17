@@ -31,16 +31,21 @@ class VolumeViewer(BaseViewer):
     def getCOM(self):
         return self.renderer.getCenterOfMass()
     
-    def selectionRotate(self, a, x, y, z):
-        glMatrixMode(GL_MODELVIEW)
-        glPushMatrix()
-        cc = self.getCOM()
-        glTranslatef(cc[0], cc[1], cc[2])
-        glRotatef( a, x, y, z)
-        glTranslatef(-cc[0], -cc[1], -cc[2])
-        self.draw()
-        glPopMatrix()
-        
+#     def selectionRotate(self, com, axis, a):
+# #         a,
+#         x = axis[0]
+#         y = axis[1]
+#         z = axis[2]
+#         glMatrixMode(GL_MODELVIEW)
+#         glPushMatrix()
+#         cc = self.getCOM()
+#         cc = com
+#         glTranslatef(-cc[0], -cc[1], -cc[2])
+#         glRotatef( a, x, y, z)
+#         glTranslatef(cc[0], cc[1], cc[2])
+#         self.draw()
+#         glPopMatrix()
+#
     def modelLoadedPreDraw(self):
         self.renderer.enableDraw(False)
         maxDensity = self.renderer.getMaxDensity()
