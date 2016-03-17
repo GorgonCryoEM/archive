@@ -9,6 +9,7 @@ from cmath import *
 from .libs import Vec3
 from line import Line
 from dot import Dot
+from cube import Cube
 
 
 class Camera(QtOpenGL.QGLWidget):
@@ -30,6 +31,7 @@ class Camera(QtOpenGL.QGLWidget):
         self.dotcom.color = QtGui.QColor(0, 130, 0, 150)
         self.dotaxis = Dot(self.app)
         self.dotaxis.color = QtGui.QColor(0, 0, 120, 150)
+        self.cube = Cube(self.app)
         
         self.near = 0
         self.cuttingPlane = 0.0
@@ -39,6 +41,7 @@ class Camera(QtOpenGL.QGLWidget):
         self.scene.append(self.dot1)
         self.scene.append(self.dotcom)
         self.scene.append(self.dotaxis)
+        self.scene.append(self.cube)
         
         self.mouseTrackingEnabled    = False
         self.mouseTrackingEnabledRay = False
