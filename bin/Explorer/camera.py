@@ -498,16 +498,16 @@ class Camera(QtOpenGL.QGLWidget):
         dx = event.x() - self.mouseMovePoint.x()
         dy = event.y() - self.mouseMovePoint.y()
                         
-        if (event.buttons() & QtCore.Qt.LeftButton):
-            print "event.buttons() & QtCore.Qt.LeftButton"
+        if (self.mouseLeftPressed):
+            print "mouseLeftPressed"
             if event.modifiers() & QtCore.Qt.CTRL:           # Rotating the selection
                 print "event.modifiers() & QtCore.Qt.CTRL"
                 self.rotateSelectedScene(dx, dy)
             else:                                               # Rotating the scene
                 self.setEyeRotation(-dx, dy, 0)
             
-        elif (event.buttons() & QtCore.Qt.RightButton):
-            print "event.buttons() & QtCore.Qt.RightButton"
+        elif (self.mouseRightPressed):
+            print "mouseRightPressed"
             if event.modifiers() & QtCore.Qt.CTRL:                 # Translating the selection
                 print "event.modifiers() & QtCore.Qt.CTRL"
                 self.moveSelectedScene(dx, dy)
