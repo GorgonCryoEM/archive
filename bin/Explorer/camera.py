@@ -430,9 +430,7 @@ class Camera(QtOpenGL.QGLWidget):
         print "In: moveSelectedScene"
         print "SelectedScene: %d" % self.selectedScene
         
-        newDx = self.moveConstant() * dx / float(self.width())
-        newDy = self.moveConstant() * dy / float(self.height())
-        dirVec = self.up*(-newDy) + self.right*newDx
+        dirVec = self.mouseVec(dx, dy)
         
         s = self.scene[self.selectedScene]
         s.selectionMove(dirVec)
@@ -446,10 +444,7 @@ class Camera(QtOpenGL.QGLWidget):
         print "In: rotateSelectedScene"
         print "SelectedScene: %d" % self.selectedScene
 
-        newDx = self.moveConstant() * dx / float(self.width())
-        newDy = self.moveConstant() * dy / float(self.height())
-
-        moveLength    = self.up*(-newDy) + self.right*newDx
+        moveLength    = self.mouseVec(dx, dy)
         dirVec = moveLength.normalize()
         rotationAxis3D  = dirVec^self.look
         
@@ -485,6 +480,11 @@ class Camera(QtOpenGL.QGLWidget):
         self.mouseRightPressed = (event.buttons() & QtCore.Qt.RightButton)
         self.processMouseDown(self.pickObject(self.mouseDownPoint.x(), self.mouseDownPoint.y()), event)
         
+    def mouseVec(self, dx, dy):
+        newDx = self.moveConstant() * dx / float(self.width())
+        newDy = self.moveConstant() * dy / float(self.height())
+        return self.up*(-newDy) + self.right*newDx;
+
     def mouseMoveEvent(self, event):
         if(self.mouseTrackingEnabledRay):
             ray = self.getMouseRay(event.x(), event.y())
@@ -512,9 +512,7 @@ class Camera(QtOpenGL.QGLWidget):
                 print "event.modifiers() & QtCore.Qt.CTRL"
                 self.moveSelectedScene(dx, dy)
             else:                                                   # Translating the scene
-                newDx = self.moveConstant() * dx / float(self.width())
-                newDy = self.moveConstant() * dy / float(self.height())
-                translation = self.up*newDy + self.right*(-newDx);
+                translation = self.mouseVec(-dx, -dy)
                 newEye = self.eye + translation;
                 newCenter = self.center + translation;
                 self.setEye(newEye)
