@@ -44,16 +44,38 @@ class Cube(BaseViewer):
         
         L = self.L
         glBegin(GL_QUADS)
-        glVertex(self.loc[0]+0,self.loc[1]+L,self.loc[2]+L)
-        glVertex(self.loc[0]+0,self.loc[1]+L,self.loc[2]-L)
-        glVertex(self.loc[0]+0,self.loc[1]-L,self.loc[2]-L)
-        glVertex(self.loc[0]+0,self.loc[1]-L,self.loc[2]+L)
+#         glVertex(self.loc[0]+0,self.loc[1]+L,self.loc[2]+L)
+#         glVertex(self.loc[0]+0,self.loc[1]+L,self.loc[2]-L)
+#         glVertex(self.loc[0]+0,self.loc[1]-L,self.loc[2]-L)
+#         glVertex(self.loc[0]+0,self.loc[1]-L,self.loc[2]+L)
         
         glColor(.4, .4, .6, 150)
-        glVertex(0,+L,+L)
-        glVertex(0,+L,-L)
-        glVertex(0,-L,-L)
-        glVertex(0,-L,+L)
+        glVertex(-L,+L,+L)
+        glVertex(-L,+L,-L)
+        glVertex(-L,-L,-L)
+        glVertex(-L,-L,+L)
+        
+        glVertex(L,+L,+L)
+        glVertex(L,+L,-L)
+        glVertex(L,-L,-L)
+        glVertex(L,-L,+L)
+
+        glEnd()
+        
+        glBegin(GL_LINES)
+        
+        glColor(.8, .8, .6, 150)
+        glVertex(-L,+L,+L)
+        glVertex(L,+L,+L)
+        
+        glVertex(-L,+L,-L)
+        glVertex(L,+L,-L)
+        
+        glVertex(-L,-L,-L)
+        glVertex(L,-L,-L)
+        
+        glVertex(-L,-L,+L)
+        glVertex(L,-L,+L)
 
         glEnd()
         
