@@ -12,8 +12,8 @@ from .libs import Vec3
 class BaseViewer(QtOpenGL.QGLWidget):
     DisplayStyleWireframe, DisplayStyleFlat, DisplayStyleSmooth = range(3)
     
-    def __init__(self, main, parent=None):
-        super(BaseViewer, self).__init__(parent)
+    def __init__(self, main):
+        super(BaseViewer, self).__init__(main)
         
         self.app = main
         self.title = "Untitled"

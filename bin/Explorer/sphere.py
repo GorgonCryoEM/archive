@@ -16,8 +16,8 @@ from OpenGL.GLUT import *
 
 class Sphere(BaseViewer):
     
-    def __init__(self, main, parent=None):
-        super(Sphere, self).__init__(main, parent)
+    def __init__(self, main):
+        super(Sphere, self).__init__(main)
         
         self.title = "Sphere"
         
