@@ -14,8 +14,8 @@ from cube import Cube
 
 class Camera(QtOpenGL.QGLWidget):
 
-    def __init__(self, scene, main, parent=None):
-        super(Camera, self).__init__(parent)
+    def __init__(self, scene, main):
+        super(Camera, self).__init__()
         
         self.app = main
         self.sceneID = -1

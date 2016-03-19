@@ -12,8 +12,8 @@ from OpenGL.GLUT import *
 
 class Dot(BaseViewer):
     
-    def __init__(self, main, parent=None):
-        super(Dot, self).__init__(main, parent)
+    def __init__(self, main):
+        super(Dot, self).__init__(main)
         
         self.title = "Dot"
         

@@ -12,8 +12,8 @@ from OpenGL.GLUT import *
 
 class Line(BaseViewer):
     
-    def __init__(self, main, p1, parent=None):
-        super(Line, self).__init__(main, parent)
+    def __init__(self, main, p1):
+        super(Line, self).__init__(main)
         
         self.title = "Line"
         

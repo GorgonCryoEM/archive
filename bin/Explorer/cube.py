@@ -12,8 +12,8 @@ from OpenGL.GLUT import *
 
 class Cube(BaseViewer):
     
-    def __init__(self, main, parent=None):
-        super(Cube, self).__init__(main, parent)
+    def __init__(self, main):
+        super(Cube, self).__init__(main)
         
         self.title = "Cube"
         
