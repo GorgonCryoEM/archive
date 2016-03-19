@@ -89,42 +89,39 @@ class Camera(QtOpenGL.QGLWidget):
             self.connect(s, QtCore.SIGNAL("mouseTrackingChanged()"), self.refreshMouseTracking)
     
     def setEye(self, v):
-        if(self.eye != v):
-            self.eye = v
-            try:
-                self.look  = (self.center - self.eye).normalize()
-                self.right = (self.look^self.up).normalize()            #print("Eye: right :", self.right)
-                self.up    = (self.right^self.look).normalize()
-            except:
-                self.look  = Vec3(0,1,0)
-                self.right = Vec3(1,0,0)
-                self.up    = Vec3(0,0,1)
-            self.setRendererCuttingPlanes()
-            self.emitCameraChanged()
+        self.eye = v
+        try:
+            self.look  = (self.center - self.eye).normalize()
+            self.right = (self.look^self.up).normalize()            #print("Eye: right :", self.right)
+            self.up    = (self.right^self.look).normalize()
+        except:
+            self.look  = Vec3(0,1,0)
+            self.right = Vec3(1,0,0)
+            self.up    = Vec3(0,0,1)
+        self.setRendererCuttingPlanes()
+        self.emitCameraChanged()
     
     def setCenter(self, v):
-        if(self.center != v):
-            self.center = v
-            try:
-                self.look  = (self.center - self.eye).normalize()
-                self.right = (self.look^self.up).normalize()
-            except:
-                self.look  = Vec3(0,1,0)
-                self.right = Vec3(1,0,0)
-            self.setRendererCuttingPlanes()
-            self.setRendererCenter()
-            self.emitCameraChanged()
+        self.center = v
+        try:
+            self.look  = (self.center - self.eye).normalize()
+            self.right = (self.look^self.up).normalize()
+        except:
+            self.look  = Vec3(0,1,0)
+            self.right = Vec3(1,0,0)
+        self.setRendererCuttingPlanes()
+        self.setRendererCenter()
+        self.emitCameraChanged()
         
     def setUp(self, v):
-        if(self.up != v.normalize()):
-            self.up = v.normalize()
-            try:
-                self.right = (self.look^self.up   ).normalize()
-                self.up    = (self.right^self.look).normalize()
-            except:
-                self.right = Vec3(1,0,0)
-            self.setRendererCuttingPlanes()
-            self.emitCameraChanged()
+        self.up = v.normalize()
+        try:
+            self.right = (self.look^self.up   ).normalize()
+            self.up    = (self.right^self.look).normalize()
+        except:
+            self.right = Vec3(1,0,0)
+        self.setRendererCuttingPlanes()
+        self.emitCameraChanged()
         
     def setEyeRotation(self, yaw, pitch, roll):
         newLook = (self.eye + self.up*pitch + self.right*yaw - self.center).normalize()
@@ -137,21 +134,19 @@ class Camera(QtOpenGL.QGLWidget):
         self.setUp(newUp)
             
     def setNearFarZoom(self, near, far, zoom):
-        if((self.eyeZoom != zoom) or (self.near != near) or (self.far != far)):
-            self.eyeZoom = min(max(zoom, 0.0001), 0.9999);
-            nearChanged = (self.near != near)
-            self.near = max(min(near, far), 0.1)
-            self.far = max(self.near + 1.0, far)
-            glFogf(GL_FOG_START, self.near)
-            glFogf(GL_FOG_END, self.far)
-            self.setGlProjection()
-            self.emitCameraChanged()
+        self.eyeZoom = min(max(zoom, 0.0001), 0.9999);
+        nearChanged = (self.near != near)
+        self.near = max(min(near, far), 0.1)
+        self.far = max(self.near + 1.0, far)
+        glFogf(GL_FOG_START, self.near)
+        glFogf(GL_FOG_END, self.far)
+        self.setGlProjection()
+        self.emitCameraChanged()
     
     def setCuttingPlane(self, cuttingPlane):
         newCuttingPlane = min(max(cuttingPlane, -1.0), 1.0)
-        if(self.cuttingPlane != newCuttingPlane):
-            self.cuttingPlane = newCuttingPlane
-            self.setRendererCuttingPlanes()
+        self.cuttingPlane = newCuttingPlane
+        self.setRendererCuttingPlanes()
     
     def setRendererCuttingPlanes(self):
         for s in self.scene:
