@@ -13,8 +13,8 @@ from OpenGL.GLUT import *
 class Line(BaseViewer):
     
     def __init__(self, main, p1, parent=None):
-#         super(Sphere, self).__init__(main, parent)
-        BaseViewer.__init__(self, main, parent)
+        super(Line, self).__init__(main, parent)
+        
         self.title = "Line"
         
         self.renderer = Display()
