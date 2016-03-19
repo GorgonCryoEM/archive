@@ -13,8 +13,8 @@ from OpenGL.GLUT import *
 class Cube(BaseViewer):
     
     def __init__(self, main, parent=None):
-#         super(Sphere, self).__init__(main, parent)
-        BaseViewer.__init__(self, main, parent)
+        super(Cube, self).__init__(main, parent)
+        
         self.title = "Cube"
         
         self.renderer = Display()
