@@ -7,6 +7,8 @@ from .libs import Vec3
 
 import sys, os
 
+from cube import Cube
+
 
 class MainWindowForm(QtGui.QMainWindow):
 
@@ -17,7 +19,7 @@ class MainWindowForm(QtGui.QMainWindow):
 #         self.skeletonViewer = SkeletonViewer(self)
         self.volumeViewer1 = VolumeViewer(self)
         self.sphere = Sphere(self)
-        self.line  = Line(self, Vec3(30., 10., 10.))
+        self.cube = Cube(self)
         
 #         self.shapes = [self.volumeViewer, self.skeletonViewer, self.volumeViewer1, self.sphere]
         self.shapes = [self.volumeViewer1, self.sphere, self.cube]
