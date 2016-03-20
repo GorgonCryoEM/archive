@@ -19,11 +19,10 @@ class MainWindowForm(QtGui.QMainWindow):
         self.sphere = Sphere(self)
         self.line  = Line(self, Vec3(30., 10., 10.))
         
-#         self.scenes = [self.volumeViewer, self.skeletonViewer, self.volumeViewer1, self.sphere]
-        self.scenes = [self.volumeViewer1, self.sphere, self.line]
-#         self.scenes = [self.sphere]
+#         self.shapes = [self.volumeViewer, self.skeletonViewer, self.volumeViewer1, self.sphere]
+        self.shapes = [self.volumeViewer1, self.sphere, self.cube]
 
-        self.mainCamera = Camera(self.scenes, self)
+        self.mainCamera = Camera(self.shapes, self)
         self.setCentralWidget(self.mainCamera)
         
         self.statusBar().showMessage(self.tr("Gorgon: Protein Visualization Suite"))
