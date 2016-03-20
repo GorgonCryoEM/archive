@@ -20,26 +20,20 @@ class Camera(QtOpenGL.QGLWidget):
         self.app = main
         self.sceneID = -1
 
-        self.center = Vec3(0.0,  0.0, 0.0)
-
-        self.line = Line(self.app, Vec3(100,100,100))
-        self.line.color = QtGui.QColor(40, 70, 50, 150)
-        self.line1 = Line(self.app, Vec3(100,100,100))
-        self.line1.color = QtGui.QColor(80, 40, 50, 150)
-        self.line1.depthEnabled = True
-        self.dot1 = Dot(self.app)
+        self.linecom = Line(self.app, Vec3(100,100,100))
+        self.linecom.color = QtGui.QColor(40, 70, 50, 150)
+        self.lineaxis = Line(self.app, Vec3(100,100,100))
+        self.lineaxis.color = QtGui.QColor(80, 40, 50, 150)
+        self.lineaxis.depthEnabled = True
+        self.dotcenter = Dot(self.app)
         self.dotcom = Dot(self.app)
         self.dotcom.color = QtGui.QColor(0, 130, 0, 150)
-        self.dotaxis = Dot(self.app)
-        self.dotaxis.color = QtGui.QColor(0, 0, 120, 150)
+        self.shapes.append(self.lineaxis)
+        self.shapes.append(self.dotcenter)
+        self.shapes.append(self.dotcom)
         
         self.near = 0
         self.cuttingPlane = 0.0
-        self.shapes.append(self.line)
-        self.shapes.append(self.line1)
-        self.shapes.append(self.dot1)
-        self.shapes.append(self.dotcom)
-        self.shapes.append(self.dotaxis)
         
         self.mouseTrackingEnabled    = False
         self.mouseTrackingEnabledRay = False
@@ -443,12 +437,9 @@ class Camera(QtOpenGL.QGLWidget):
 #         selectionAxis = s.worldToObjectCoordinates(rotationAxis3D)
         selectionCOM  = centerOfMass
         selectionAxis = rotationAxis3D
-        self.line.redraw(Vec3(0,0,0), centerOfMass)
-#         self.line.redraw(centerOfMass)
         axisDraw = selectionAxis*1000.
-        self.line1.redraw(selectionCOM, axisDraw)
+        self.lineaxis.redraw(selectionCOM, axisDraw)
         self.dotcom.loc = selectionCOM
-        self.dotaxis.loc = selectionAxis
         s.selectionRotate(selectionCOM, selectionAxis, 5.)
                      
 #         for s in self.shapes:
