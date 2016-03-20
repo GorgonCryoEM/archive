@@ -14,9 +14,10 @@ from cube import Cube
 
 class Camera(QtOpenGL.QGLWidget):
 
-    def __init__(self, scene, main):
+    def __init__(self, shapes, main):
         super(Camera, self).__init__()
         
+        self.shapes = shapes
         self.app = main
         self.sceneID = -1
 
@@ -35,13 +36,12 @@ class Camera(QtOpenGL.QGLWidget):
         
         self.near = 0
         self.cuttingPlane = 0.0
-        self.scenes = scene
-        self.scenes.append(self.line)
-        self.scenes.append(self.line1)
-        self.scenes.append(self.dot1)
-        self.scenes.append(self.dotcom)
-        self.scenes.append(self.dotaxis)
-        self.scenes.append(self.cube)
+        self.shapes.append(self.line)
+        self.shapes.append(self.line1)
+        self.shapes.append(self.dot1)
+        self.shapes.append(self.dotcom)
+        self.shapes.append(self.dotaxis)
+        self.shapes.append(self.cube)
         
         self.mouseTrackingEnabled    = False
         self.mouseTrackingEnabledRay = False
@@ -76,10 +76,10 @@ class Camera(QtOpenGL.QGLWidget):
         self.setUp         (self.up)
         self.lastPos = QtCore.QPoint()
         
-        for i in range(len(self.scenes)):
-            self.scenes[i].sceneIndex = i;
+        for i in range(len(self.shapes)):
+            self.shapes[i].sceneIndex = i;
 
-        for s in self.scenes:
+        for s in self.shapes:
             self.connect(s, QtCore.SIGNAL("viewerSetCenterLocal(float, float, float, float)"), self.sceneSetCenterLocal)
             self.connect(s, QtCore.SIGNAL("viewerSetCenter(float, float, float, float)"), self.sceneSetCenter)
             self.connect(s, QtCore.SIGNAL("modelChanged()"), self.modelChanged)
@@ -149,19 +149,19 @@ class Camera(QtOpenGL.QGLWidget):
         self.setRendererCuttingPlanes()
     
     def setRendererCuttingPlanes(self):
-        for s in self.scenes:
+        for s in self.shapes:
             if(s.renderer.setCuttingPlane(self.cuttingPlane, self.look[0], self.look[1], self.look[2])):
                 s.emitModelChanged()
                 
     def setRendererCenter(self):
-        for s in self.scenes:
+        for s in self.shapes:
             if(s.setCenter(self.center)):
                 s.emitModelChanged()
                  
     def sceneSetCenter(self, cX, cY, cZ, d):
         sceneMin = [cX, cY, cZ]
         sceneMax = [cX, cY, cZ]
-        for s in self.scenes:
+        for s in self.shapes:
             if s.loaded:
                 (minPos, maxPos) = s.getMinMax()
                 for i in range(3):
@@ -257,9 +257,9 @@ class Camera(QtOpenGL.QGLWidget):
         glPushMatrix()
         self.setGluLookAt()
         self.setLights()
-        for i in range(len(self.scenes)):
+        for i in range(len(self.shapes)):
             glPushName(i)
-            self.scenes[i].draw()
+            self.shapes[i].draw()
             glPopName()
         self.additionalDraw()
         glPopMatrix()
@@ -335,7 +335,7 @@ class Camera(QtOpenGL.QGLWidget):
         self.axes()
 
     def processMouseWheel(self, direction, event):
-        for s in self.scenes:
+        for s in self.shapes:
             s.processMouseWheel(direction, event)
      
     def processMouseDown(self, mouseHits, event):
@@ -406,7 +406,7 @@ class Camera(QtOpenGL.QGLWidget):
     def refreshMouseTracking(self):
         self.mouseTrackingEnabled    = False
         self.mouseTrackingEnabledRay = False
-        for s in self.scenes:
+        for s in self.shapes:
             self.mouseTrackingEnabled    = self.mouseTrackingEnabled    or s.mouseMoveEnabled
             self.mouseTrackingEnabledRay = self.mouseTrackingEnabledRay or s.mouseMoveEnabledRay
         self.setMouseTracking(self.mouseTrackingEnabled or self.mouseTrackingEnabledRay)
@@ -418,11 +418,11 @@ class Camera(QtOpenGL.QGLWidget):
     def moveSelectedScene(self, dx, dy):
         dirVec = self.mouseVec(dx, dy)
         
-        s = self.scenes[self.selectedScene]
+        s = self.shapes[self.selectedScene]
         s.selectionMove(dirVec)
         s.emitModelChanged()
-#         for s in self.scenes:
-# #             print "  scenes: ", s
+#         for s in self.shapes:
+# #             print "  shapes: ", s
 #             s.selectionMove(dirVec)
 #             s.emitModelChanged()
 
@@ -432,7 +432,7 @@ class Camera(QtOpenGL.QGLWidget):
 
         rotationAxis3D  = dirVec^self.look
         
-        s = self.scenes[self.selectedScene]
+        s = self.shapes[self.selectedScene]
         centerOfMass   = s.getCOM()
         print "  COM: ", s, centerOfMass
         centerOfMass.Print()
@@ -448,7 +448,7 @@ class Camera(QtOpenGL.QGLWidget):
         self.dotaxis.loc = selectionAxis
         s.selectionRotate(selectionCOM, selectionAxis, 5.)
                      
-#         for s in self.scenes:
+#         for s in self.shapes:
 #             centerOfMass   = s.renderer.selectionCenterOfMass()
 #             print "  COM: ", s, centerOfMass
 #             selectionCOM  = s.worldToObjectCoordinates(centerOfMass)
@@ -472,7 +472,7 @@ class Camera(QtOpenGL.QGLWidget):
     def mouseMoveEvent(self, event):
         if(self.mouseTrackingEnabledRay):
             ray = self.getMouseRay(event.x(), event.y())
-            for s in self.scenes:
+            for s in self.shapes:
                 if(s.mouseMoveEnabledRay):
                     s.processMouseMoveRay(ray, 0.1, self.eye, event)
                        
@@ -487,7 +487,7 @@ class Camera(QtOpenGL.QGLWidget):
             if event.modifiers() & QtCore.Qt.CTRL:           # Rotating the selection
                 print "event.modifiers() & QtCore.Qt.CTRL"
                 self.rotateSelectedScene(dx, dy)
-            else:                                               # Rotating the scenes
+            else:                                               # Rotating the shapes
                 self.setEyeRotation(-dx, dy, 0)
             
         elif (self.mouseRightPressed):
@@ -495,7 +495,7 @@ class Camera(QtOpenGL.QGLWidget):
             if event.modifiers() & QtCore.Qt.CTRL:                 # Translating the selection
                 print "event.modifiers() & QtCore.Qt.CTRL"
                 self.moveSelectedScene(dx, dy)
-            else:                                                   # Translating the scenes
+            else:                                                   # Translating the shapes
                 translation = self.mouseVec(-dx, -dy)
                 newEye = self.eye + translation;
                 newCenter = self.center + translation;
@@ -520,7 +520,7 @@ class Camera(QtOpenGL.QGLWidget):
         minDist = 1000000000000.0
         maxDist = 0.0
         eyeDist = (self.eye - self.center).length()
-        for s in self.scenes:
+        for s in self.shapes:
             if(s.loaded):
                 (center, dist) = s.getCenterAndDistance()
                 modelDist = (self.center - center).length()
