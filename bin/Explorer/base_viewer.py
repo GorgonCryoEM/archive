@@ -147,8 +147,6 @@ class BaseViewer(QtOpenGL.QGLWidget):
             self.setMaterials(self.getBoundingBoxColor())
             self.renderer.drawBoundingBox()
         
-        self.emitDrawingModel()
-        
         for i in range(len(self.glLists)):
             if(self.loaded):
                 self.setMaterials(self.modelColor)
@@ -205,9 +203,6 @@ class BaseViewer(QtOpenGL.QGLWidget):
     def emitModelLoaded(self):
         self.emit(QtCore.SIGNAL("modelLoaded()"))
         
-    def emitDrawingModel(self):
-        self.emit(QtCore.SIGNAL("modelDrawing()"))
-
     def emitViewerSetCenter(self):
         (center, distance) = self.getCenterAndDistance()
         self.emit(QtCore.SIGNAL("viewerSetCenter(float, float, float, float)"), center[0], center[1], center[2], distance)
