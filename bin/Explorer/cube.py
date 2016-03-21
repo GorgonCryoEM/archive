@@ -17,7 +17,6 @@ class Cube(Shape):
         
         self.title = "Cube"
         
-        self.renderer = Display()
         self.s = RendererBase()
 #         self.color = QtGui.QColorDialog().getColor()
         self.color = QtGui.QColor(80, 18, 130, 150)
