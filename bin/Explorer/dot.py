@@ -1,7 +1,7 @@
-from shape import Shape
+from sphere import Sphere
 
 
-class Dot(Shape):
+class Dot(Sphere):
     
     def __init__(self, main):
         super(Dot, self).__init__(main)
@@ -11,7 +11,3 @@ class Dot(Shape):
         self.setColor(120, 0, 0, 150)
         
         self.setLoc(0., 0., 0.)
-        
-    def draw(self):
-        self.setMaterials(self.color)
-        self.s.drawSphere(self.loc, 1.)
