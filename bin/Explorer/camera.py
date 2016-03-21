@@ -95,8 +95,7 @@ class Camera(QtOpenGL.QGLWidget):
             self.look  = Vec3(0,1,0)
             self.right = Vec3(1,0,0)
         self.setRendererCuttingPlanes()
-        self.setRendererCenter()
-        
+
     def setUp(self, v):
         self.up = v.normalize()
         try:
@@ -134,10 +133,6 @@ class Camera(QtOpenGL.QGLWidget):
         for s in self.shapes:
             s.renderer.setCuttingPlane(self.cuttingPlane, self.look[0], self.look[1], self.look[2])
                 
-    def setRendererCenter(self):
-        for s in self.shapes:
-            s.setCenter(self.center)
-                 
     def sceneSetCenter(self, cX, cY, cZ, d):
         sceneMin = [cX, cY, cZ]
         sceneMax = [cX, cY, cZ]

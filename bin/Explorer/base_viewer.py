@@ -199,9 +199,6 @@ class BaseViewer(QtOpenGL.QGLWidget):
                                     
         glPopAttrib()
 
-    def setCenter(self, center):
-        return False
-    
     def emitModelLoadedPreDraw(self):
         self.emit(QtCore.SIGNAL("modelLoadedPreDraw()"))
         
