@@ -16,9 +16,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
         super(BaseViewer, self).__init__(main)
         
         self.app = main
-        self.title = "Untitled"
-        self.shortTitle = "UNT"
-        self.fileName = "";
+
         self.sceneIndex = -1;
         self.loaded = False
         self.selectEnabled = True
@@ -31,7 +29,6 @@ class BaseViewer(QtOpenGL.QGLWidget):
         self.angle = 0.0
         self.axis = Vec3(1,1,1)
         
-        self.rotation = self.identityMatrix()
         self.connect(self, QtCore.SIGNAL("modelLoaded()"), self.modelChanged)
 
         self.glLists = []
