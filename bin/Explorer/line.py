@@ -27,11 +27,7 @@ class Line(Shape):
     def draw(self):
         self.setMaterials(self.color)
         glLineWidth(5.)
-#         if not self.depthEnabled:
-#             glDisable(GL_DEPTH_TEST)
-#             glClear(GL_DEPTH_BUFFER_BIT)
         self.s.drawLine(self.p1, self.p2)
-#         glEnable(GL_DEPTH_TEST)
 
     def selectionMove(self, v):
         print "     In: selectionMove", self
@@ -45,8 +41,3 @@ class Line(Shape):
     def redraw(self, p1, p2):
         self.p1 = p1
         self.p2 = p2
-
-#     def redraw(self, p):
-#         self.p1 = self.p2
-#         self.p2 = p
-#         self.draw()
