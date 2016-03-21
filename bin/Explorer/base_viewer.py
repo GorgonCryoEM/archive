@@ -74,10 +74,6 @@ class BaseViewer(QtOpenGL.QGLWidget):
         scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
         return Vec3([worldCoords[i] / scale[i] for i in range(3)])
         
-    def repaintCamera(self):
-        if(hasattr(self.app, "mainCamera")):
-            self.app.mainCamera.updateGL()
-        
     def setDisplayStyle(self, style):
         self.displayStyle = style
         self.emitModelVisualizationChanged()
