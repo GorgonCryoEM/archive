@@ -36,3 +36,21 @@ class Shape(BaseViewer):
                    self.renderer.getOriginZ())
         loc += v
         self.setLocationV(loc)
+
+    def selectionMove(self, v):
+        print "     In: selectionMove", self
+        self.loc += v
+        self.updateGL()
+
+    def getCOM(self):
+        return self.loc
+
+    def selectionRotate(self, com, axis, angle):
+        print "  In selectionRotate: ", self
+        print angle
+        axis.Print()
+        
+        self.angle = self.angle + angle
+        self.axis  = axis
+        
+        self.updateGL()
