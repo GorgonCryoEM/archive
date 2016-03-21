@@ -29,8 +29,6 @@ class BaseViewer(QtOpenGL.QGLWidget):
         self.angle = 0.0
         self.axis = Vec3(1,1,1)
         
-        self.connect(self, QtCore.SIGNAL("modelLoaded()"), self.modelChanged)
-
         self.glLists = []
         self.showBox = False
         self.twoWayLighting = False
@@ -163,7 +161,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
             self.loaded = True
             self.dirty = False
             self.modelLoadedPreDraw()
-            self.emitModelLoaded()
+            self.modelChanged()
             self.emitViewerSetCenter()
         except:
             QtGui.QMessageBox.critical(self, "Unable to load data file", "The file might be corrupt, or the format may not be supported.", "Ok")
@@ -195,9 +193,6 @@ class BaseViewer(QtOpenGL.QGLWidget):
                                     
         glPopAttrib()
 
-    def emitModelLoaded(self):
-        self.emit(QtCore.SIGNAL("modelLoaded()"))
-        
     def emitViewerSetCenter(self):
         (center, distance) = self.getCenterAndDistance()
         self.emit(QtCore.SIGNAL("viewerSetCenter(float, float, float, float)"), center[0], center[1], center[2], distance)
