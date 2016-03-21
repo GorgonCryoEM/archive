@@ -130,7 +130,7 @@ class Camera(QtOpenGL.QGLWidget):
         for s in self.shapes:
             s.renderer.setCuttingPlane(self.cuttingPlane, self.look[0], self.look[1], self.look[2])
                 
-    def sceneSetCenter(self, cX, cY, cZ, d):
+    def sceneSetCenter(self, cX, cY, cZ):
         sceneMin = [cX, cY, cZ]
         sceneMax = [cX, cY, cZ]
         for s in self.shapes:
@@ -477,7 +477,8 @@ class Camera(QtOpenGL.QGLWidget):
         eyeDist = (self.eye - self.center).length()
         for s in self.shapes:
             if(s.loaded):
-                (center, dist) = s.getCenterAndDistance()
+                center = s.getCenter()
+                dist   = s.getDistance()
                 modelDist = (self.center - center).length()
                 minDist = min(minDist, eyeDist - modelDist - dist/2.0)
                 maxDist = max(maxDist, eyeDist + modelDist + dist/2.0)

@@ -73,13 +73,15 @@ class BaseViewer(QtOpenGL.QGLWidget):
         
         return minPos, maxPos
         
-    def getCenterAndDistance(self):
+    def getCenter(self):
         min, max = self.getMinMax()
-        dist = (min - max).length()
 
-        center = (min + max)*0.5
+        return (min + max)*0.5
 
-        return center, dist
+    def getDistance(self):
+        min, max = self.getMinMax()
+
+        return (min - max).length()
 
     def initializeGLDisplayType(self):
         glPushAttrib(GL_LIGHTING_BIT | GL_ENABLE_BIT)
@@ -160,8 +162,8 @@ class BaseViewer(QtOpenGL.QGLWidget):
             self.preDraw()
             self.modelChanged()
 
-            (center, distance) = self.getCenterAndDistance()
-            self.app.mainCamera.sceneSetCenter(center[0], center[1], center[2], distance)
+            center = self.getCenter()
+            self.app.mainCamera.sceneSetCenter(center[0], center[1], center[2])
         except:
             QtGui.QMessageBox.critical(self, "Unable to load data file", "The file might be corrupt, or the format may not be supported.", "Ok")
 
