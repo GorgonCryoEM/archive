@@ -72,14 +72,8 @@ class Camera(QtOpenGL.QGLWidget):
             self.shapes[i].sceneIndex = i;
 
         for s in self.shapes:
-            self.connect(s, QtCore.SIGNAL("viewerSetCenterLocal(float, float, float, float)"), self.sceneSetCenterLocal)
             self.connect(s, QtCore.SIGNAL("viewerSetCenter(float, float, float, float)"), self.sceneSetCenter)
-            self.connect(s, QtCore.SIGNAL("modelChanged()"), self.modelChanged)
-            self.connect(s, QtCore.SIGNAL("modelLoaded()"), self.modelChanged)
-            self.connect(s, QtCore.SIGNAL("modelUnloaded()"), self.modelChanged)
-            self.connect(s, QtCore.SIGNAL("modelVisualizationChanged()"), self.modelChanged)
-            self.connect(s, QtCore.SIGNAL("mouseTrackingChanged()"), self.refreshMouseTracking)
-    
+
     def setEye(self, v):
         self.eye = v
         try:
