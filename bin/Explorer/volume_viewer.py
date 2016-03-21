@@ -1,11 +1,5 @@
 from PyQt4 import QtGui, QtCore, QtOpenGL
 from shape import Shape
-from libpytoolkit import Display
-from .libs import Vec3
-
-from OpenGL.GL import *
-from OpenGL.GLU import *
-from OpenGL.GLUT import *
 
 
 class VolumeViewer(Shape):
