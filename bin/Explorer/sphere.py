@@ -17,7 +17,6 @@ class Sphere(Shape):
         
         self.title = "Sphere"
         
-        self.s = RendererBase()
 #         self.color = QtGui.QColorDialog().getColor()
         self.color = QtGui.QColor(120, 18, 80, 150)
         
