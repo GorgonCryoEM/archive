@@ -27,8 +27,6 @@ class Line(Shape):
         
         self.loc = self.getCOM()
         
-        self.selectEnabled    = True
-        self.mouseMoveEnabled = True
         self.depthEnabled = False
         
     def draw(self):

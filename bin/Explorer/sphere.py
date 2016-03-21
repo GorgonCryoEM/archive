@@ -23,9 +23,6 @@ class Sphere(Shape):
         
         self.loc = Vec3(30., 10., 10.)
         
-        self.selectEnabled    = True
-        self.mouseMoveEnabled = True
-        
     def draw(self):
         self.setMaterials(self.color)
         self.s.drawSphere(self.loc, 10.)
