@@ -355,28 +355,30 @@ class Camera(QtOpenGL.QGLWidget):
         return (self.eye - self.center).length() #* abs(tan(pi * self.eyeZoom))
 
     def moveSelectedShape(self, dx, dy):
-        dirVec = self.mouseVec(dx, dy)
-        
-        s = self.shapes[self.selectedShape]
-        s.selectionMove(dirVec)
+        if self.selectedShape > -1:
+            dirVec = self.mouseVec(dx, dy)
+            
+            s = self.shapes[self.selectedShape]
+            s.selectionMove(dirVec)
 
     def rotateSelectedShape(self, dx, dy):
-        moveLength    = self.mouseVec(dx, dy)
-        dirVec = moveLength.normalize()
+        if self.selectedShape > -1:
+            moveLength    = self.mouseVec(dx, dy)
+            dirVec = moveLength.normalize()
 
-        rotationAxis3D  = dirVec^self.look
-        
-        s = self.shapes[self.selectedShape]
-        centerOfMass   = s.getCOM()
-        print "  COM: ", s, centerOfMass
-        centerOfMass.Print()
-        
-        selectionCOM  = centerOfMass
-        selectionAxis = rotationAxis3D
-        axisDraw = selectionAxis*1000.
-        self.lineaxis.redraw(selectionCOM, axisDraw)
-        self.dotcom.loc = selectionCOM
-        s.selectionRotate(selectionCOM, selectionAxis, 5.)
+            rotationAxis3D  = dirVec^self.look
+            
+            s = self.shapes[self.selectedShape]
+            centerOfMass   = s.getCOM()
+            print "  COM: ", s, centerOfMass
+            centerOfMass.Print()
+            
+            selectionCOM  = centerOfMass
+            selectionAxis = rotationAxis3D
+            axisDraw = selectionAxis*1000.
+            self.lineaxis.redraw(selectionCOM, axisDraw)
+            self.dotcom.loc = selectionCOM
+            s.selectionRotate(selectionCOM, selectionAxis, 5.)
 
     def mousePressEvent(self, event):
         self.mouseDownPoint    = QtCore.QPoint(event.pos())
