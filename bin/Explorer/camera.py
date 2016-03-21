@@ -134,7 +134,7 @@ class Camera(QtOpenGL.QGLWidget):
         minmax=[Range(), Range(), Range()]
         for s in self.shapes:
             if s.loaded:
-                (minPos, maxPos) = s.getMinMax()
+                minPos, maxPos = s.getMinMax()
                 for i in range(3):
                     minmax[i].setMin(minPos[i])
                     minmax[i].setMax(maxPos[i])
@@ -148,7 +148,6 @@ class Camera(QtOpenGL.QGLWidget):
         self.sceneSetCenterLocal(center, distance)
     
     def sceneSetCenterLocal(self, center, distance):
-        
         self.setCenter(center)
         self.setEye(Vec3(self.center[0], self.center[1], self.center[2] - distance))
         self.setUp(Vec3(0, -1, 0))
