@@ -52,13 +52,6 @@ class BaseViewer(QtOpenGL.QGLWidget):
     def setScaleNoEmit(self, x, y, z):
         self.renderer.setSpacing(x, y, z)
         
-    def setLocationV(self, v):
-        self.setLocation(v[0], v[1], v[2])
-
-    def setLocation(self, x, y, z):
-        self.renderer.setOrigin(x, y, z)
-        self.app.mainCamera.updateGL()
-                        
     def objectToWorldCoordinates(self, objectCoords):
         #Need to apply rotations
         origin = [self.renderer.getOriginX(), self.renderer.getOriginY(), self.renderer.getOriginZ()]
