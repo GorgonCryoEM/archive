@@ -104,8 +104,8 @@ class Camera(QtOpenGL.QGLWidget):
             
     def setNearFarZoom(self, near, far, zoom):
         self.eyeZoom = min(max(zoom, 0.0001), 0.9999);
-        self.near = max(min(near, far), 0.1)
-        self.far = max(self.near + 1.0, far)
+        self.near    = max(min(near, far), 0.1)
+        self.far     = max(self.near + 1.0, far)
         self.setGlProjection()
     
     def sceneSetCenter(self):
