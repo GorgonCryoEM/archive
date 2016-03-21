@@ -18,7 +18,7 @@ class Cube(Shape):
         
         self.L = 10
         
-    def draw(self):
+    def paintGL(self):
         self.setMaterials(self.color)
         glLineWidth(5.)
         
