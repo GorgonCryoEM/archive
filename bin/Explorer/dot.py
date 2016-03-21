@@ -22,8 +22,6 @@ class Dot(BaseViewer):
 #         self.color = QtGui.QColorDialog().getColor()
         self.color = QtGui.QColor(120, 0, 0, 150)
         
-        self.main = main
-        
         self.loc = Vec3(0., 0., 0.)
         
         self.selectEnabled    = True

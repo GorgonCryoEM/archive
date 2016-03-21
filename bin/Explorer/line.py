@@ -22,8 +22,6 @@ class Line(BaseViewer):
 #         self.color = QtGui.QColorDialog().getColor()
         self.color = QtGui.QColor(40, 70, 100, 150)
         
-        self.main = main
-        
         self.p1 = p1
 #         self.p1 = Vec3(30., 10., 10.)
         self.p2 = Vec3( 0.,  0.,  0.)
