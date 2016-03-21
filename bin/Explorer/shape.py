@@ -29,3 +29,10 @@ class Shape(BaseViewer):
     def setLocation(self, x, y, z):
         self.renderer.setOrigin(x, y, z)
         self.app.mainCamera.updateGL()
+
+    def move(self, v):
+        loc = Vec3(self.renderer.getOriginX(),
+                   self.renderer.getOriginY(),
+                   self.renderer.getOriginZ())
+        loc += v
+        self.setLocationV(loc)
