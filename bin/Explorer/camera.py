@@ -50,9 +50,6 @@ class Camera(QtOpenGL.QGLWidget):
         self.mouseMidPressed   = False
         self.mouseRightPressed = False
         
-        self.fogDensity = 0.01
-        self.fogEnabled = False
-        
         self.center = Vec3(0.0,  0.0, 0.0)
         self.eye    = Vec3(0.0, -4.1, 0.0)
         self.look   = Vec3(0.0, 1.1, 0.0)
@@ -113,8 +110,6 @@ class Camera(QtOpenGL.QGLWidget):
         self.eyeZoom = min(max(zoom, 0.0001), 0.9999);
         self.near = max(min(near, far), 0.1)
         self.far = max(self.near + 1.0, far)
-        glFogf(GL_FOG_START, self.near)
-        glFogf(GL_FOG_END, self.far)
         self.setGlProjection()
     
     def setCuttingPlane(self, cuttingPlane):
@@ -166,18 +161,6 @@ class Camera(QtOpenGL.QGLWidget):
         
         self.setLights()
         self.setNearFarZoom(0.1, 1000, 0.25)
-
-        if(self.fogEnabled):
-            fogColor = QtGui.QColor(0, 0, 0, 255)
-            glFogi(GL_FOG_MODE, GL_LINEAR)
-            glFogfv(GL_FOG_COLOR, [fogColor.redF(), fogColor.greenF(), fogColor.blueF(), fogColor.alphaF()])
-            glFogf(GL_FOG_DENSITY, self.fogDensity)
-            glHint(GL_FOG_HINT, GL_DONT_CARE)
-            glFogf(GL_FOG_START, self.near)
-            glFogf(GL_FOG_END, self.far)
-            glEnable(GL_FOG)
-        else:
-            glDisable(GL_FOG)
 
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
@@ -475,6 +458,5 @@ class Camera(QtOpenGL.QGLWidget):
         self.updateGL()
 
     def mouseDoubleClickEvent(self, event):
-        self.fogEnabled = not self.fogEnabled
         self.initializeGL()
         self.updateGL()
