@@ -8,6 +8,7 @@ from .libs import Vec3
 import sys, os
 
 from cube import Cube
+from primitive import Triangle
 
 
 class MainWindowForm(QtGui.QMainWindow):
@@ -20,9 +21,11 @@ class MainWindowForm(QtGui.QMainWindow):
         self.volumeViewer1 = VolumeViewer(self)
         self.sphere = Sphere(self, 10.)
         self.cube = Cube(self)
+        self.triangle = Triangle(self, [0,0,0], [1,1,0], [-1,1,0])
         
 #         self.shapes = [self.volumeViewer, self.skeletonViewer, self.volumeViewer1, self.sphere]
         self.shapes = [self.volumeViewer1, self.sphere, self.cube]
+        self.shapes.append(self.triangle)
 
         self.mainCamera = Camera(self.shapes, self)
         self.setCentralWidget(self.mainCamera)
