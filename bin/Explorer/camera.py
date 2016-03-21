@@ -114,7 +114,6 @@ class Camera(QtOpenGL.QGLWidget):
             
     def setNearFarZoom(self, near, far, zoom):
         self.eyeZoom = min(max(zoom, 0.0001), 0.9999);
-        nearChanged = (self.near != near)
         self.near = max(min(near, far), 0.1)
         self.far = max(self.near + 1.0, far)
         glFogf(GL_FOG_START, self.near)
@@ -122,8 +121,7 @@ class Camera(QtOpenGL.QGLWidget):
         self.setGlProjection()
     
     def setCuttingPlane(self, cuttingPlane):
-        newCuttingPlane = min(max(cuttingPlane, -1.0), 1.0)
-        self.cuttingPlane = newCuttingPlane
+        self.cuttingPlane = min(max(cuttingPlane, -1.0), 1.0)
         self.setRendererCuttingPlanes()
     
     def setRendererCuttingPlanes(self):
