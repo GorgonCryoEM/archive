@@ -81,7 +81,6 @@ class Camera(QtOpenGL.QGLWidget):
             self.look  = Vec3(0,1,0)
             self.right = Vec3(1,0,0)
             self.up    = Vec3(0,0,1)
-        self.setRendererCuttingPlanes()
     
     def setCenter(self, v):
         self.center = v
@@ -91,7 +90,6 @@ class Camera(QtOpenGL.QGLWidget):
         except:
             self.look  = Vec3(0,1,0)
             self.right = Vec3(1,0,0)
-        self.setRendererCuttingPlanes()
 
     def setUp(self, v):
         self.up = v.normalize()
@@ -100,7 +98,6 @@ class Camera(QtOpenGL.QGLWidget):
             self.up    = (self.right^self.look).normalize()
         except:
             self.right = Vec3(1,0,0)
-        self.setRendererCuttingPlanes()
         
     def setEyeRotation(self, yaw, pitch, roll):
         newLook = (self.eye + self.up*pitch + self.right*yaw - self.center).normalize()
@@ -122,9 +119,7 @@ class Camera(QtOpenGL.QGLWidget):
     
     def setCuttingPlane(self, cuttingPlane):
         self.cuttingPlane = min(max(cuttingPlane, -1.0), 1.0)
-        self.setRendererCuttingPlanes()
-    
-    def setRendererCuttingPlanes(self):
+        
         for s in self.shapes:
             s.renderer.setCuttingPlane(self.cuttingPlane, self.look[0], self.look[1], self.look[2])
                 
