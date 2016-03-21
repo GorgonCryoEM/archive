@@ -231,7 +231,7 @@ class Camera(QtOpenGL.QGLWidget):
         self.setLights()
         for i in range(len(self.shapes)):
             glPushName(i)
-            self.shapes[i].paintGL()
+            self.shapes[i].draw()
             glPopName()
         self.additionalDraw()
         glPopMatrix()
