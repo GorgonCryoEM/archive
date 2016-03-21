@@ -17,9 +17,9 @@ class Cube(Shape):
         
         self.title = "Cube"
         
-        self.color = QtGui.QColor(80, 18, 130, 150)
+        self.setColor(80, 18, 130, 150)
         
-        self.loc = Vec3(-30., 10., 10.)
+        self.setLoc(-30., 10., 10.)
         
         self.L = 10
         

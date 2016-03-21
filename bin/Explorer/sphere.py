@@ -17,9 +17,9 @@ class Sphere(Shape):
         
         self.title = "Sphere"
         
-        self.color = QtGui.QColor(120, 18, 80, 150)
+        self.setColor(120, 18, 80, 150)
         
-        self.loc = Vec3(30., 10., 10.)
+        self.setLoc(30., 10., 10.)
         
     def draw(self):
         self.setMaterials(self.color)
