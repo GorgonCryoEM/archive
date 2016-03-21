@@ -473,3 +473,8 @@ class Camera(QtOpenGL.QGLWidget):
                 maxDist = max(maxDist, eyeDist + modelDist + dist/2.0)
         self.setNearFarZoom(minDist, maxDist, self.eyeZoom)
         self.updateGL()
+
+    def mouseDoubleClickEvent(self, event):
+        self.fogEnabled = not self.fogEnabled
+        self.initializeGL()
+        self.updateGL()
