@@ -85,7 +85,6 @@ class Camera(QtOpenGL.QGLWidget):
             self.right = Vec3(1,0,0)
             self.up    = Vec3(0,0,1)
         self.setRendererCuttingPlanes()
-        self.emitCameraChanged()
     
     def setCenter(self, v):
         self.center = v
@@ -97,7 +96,6 @@ class Camera(QtOpenGL.QGLWidget):
             self.right = Vec3(1,0,0)
         self.setRendererCuttingPlanes()
         self.setRendererCenter()
-        self.emitCameraChanged()
         
     def setUp(self, v):
         self.up = v.normalize()
@@ -107,7 +105,6 @@ class Camera(QtOpenGL.QGLWidget):
         except:
             self.right = Vec3(1,0,0)
         self.setRendererCuttingPlanes()
-        self.emitCameraChanged()
         
     def setEyeRotation(self, yaw, pitch, roll):
         newLook = (self.eye + self.up*pitch + self.right*yaw - self.center).normalize()
@@ -127,7 +124,6 @@ class Camera(QtOpenGL.QGLWidget):
         glFogf(GL_FOG_START, self.near)
         glFogf(GL_FOG_END, self.far)
         self.setGlProjection()
-        self.emitCameraChanged()
     
     def setCuttingPlane(self, cuttingPlane):
         newCuttingPlane = min(max(cuttingPlane, -1.0), 1.0)
@@ -500,9 +496,6 @@ class Camera(QtOpenGL.QGLWidget):
         self.setNearFarZoom(minDist, maxDist, self.eyeZoom)
         self.updateGL()
         
-    def emitCameraChanged(self):
-        self.emit(QtCore.SIGNAL("cameraChanged()"))
-            
     def emitMouseMovedRaw(self, mouseHits, event):
         self.emit(QtCore.SIGNAL("mouseMovedRAW(PyQt_PyObject, QMouseEvent)"), mouseHits, event)
 
