@@ -12,6 +12,6 @@ class Dot(Shape):
         
         self.setLoc(0., 0., 0.)
         
-    def paintGL(self):
+    def draw(self):
         self.setMaterials(self.color)
         self.s.drawSphere(self.loc, 1.)

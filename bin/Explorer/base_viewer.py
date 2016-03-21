@@ -120,7 +120,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
     def unInitializeGLDisplayType(self):
         glPopAttrib()
 
-    def paintGL(self):
+    def draw(self):
         glPushMatrix()
         ax = self.axis
         glRotatef(self.angle, ax[0], ax[1], ax[2])

@@ -12,6 +12,6 @@ class Sphere(Shape):
         
         self.setLoc(30., 10., 10.)
         
-    def paintGL(self):
+    def draw(self):
         self.setMaterials(self.color)
         self.s.drawSphere(self.loc, 10.)

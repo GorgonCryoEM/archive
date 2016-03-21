@@ -20,7 +20,7 @@ class Line(Shape):
         
         self.loc = self.getCOM()
         
-    def paintGL(self):
+    def draw(self):
         self.setMaterials(self.color)
         glLineWidth(5.)
         self.s.drawLine(self.p1, self.p2)
