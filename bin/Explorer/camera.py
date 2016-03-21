@@ -269,6 +269,7 @@ class Camera(QtOpenGL.QGLWidget):
 
     def processMouseDown(self, mouseHits, event):
         shapeId = -1
+        names = []
         for hit_record in mouseHits:
             minDepth, maxDepth, names = hit_record
             
