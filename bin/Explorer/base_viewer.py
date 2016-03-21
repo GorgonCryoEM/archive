@@ -22,8 +22,8 @@ class BaseViewer(QtOpenGL.QGLWidget):
         self.selectEnabled = True
         self.mouseMoveEnabled = True
         self.isClosedMesh = True
-#         self.displayStyle = self.DisplayStyleSmooth
-        self.displayStyle = self.DisplayStyleWireframe
+#         self.setDisplayStyle(self.DisplayStyleSmooth)
+        self.setDisplayStyle(self.DisplayStyleWireframe)
         
         self.rotation = self.identityMatrix()
         self.angle = 0.0
@@ -49,7 +49,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
 
     def setDisplayStyle(self, style):
         self.displayStyle = style
-        self.emitModelVisualizationChanged()
+        self.updateGL()
 
     def setMaterials(self, color):
         glColor4f(color.redF(), color.greenF(), color.blueF(), color.alphaF())
