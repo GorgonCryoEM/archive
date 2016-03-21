@@ -1,10 +1,6 @@
 from line import Line
 from .libs import Vec3
 
-from OpenGL.GL import *
-from OpenGL.GLU import *
-from OpenGL.GLUT import *
-
 
 class Line0(Line):
     

@@ -1,5 +1,4 @@
 from shape import Shape
-from .libs import Vec3
 
 from OpenGL.GL import *
 from OpenGL.GLU import *
