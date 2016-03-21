@@ -413,10 +413,6 @@ class Camera(QtOpenGL.QGLWidget):
         s = self.shapes[self.selectedScene]
         s.selectionMove(dirVec)
         s.emitModelChanged()
-#         for s in self.shapes:
-# #             print "  shapes: ", s
-#             s.selectionMove(dirVec)
-#             s.emitModelChanged()
 
     def rotateSelectedShape(self, dx, dy):
         moveLength    = self.mouseVec(dx, dy)
@@ -436,15 +432,7 @@ class Camera(QtOpenGL.QGLWidget):
         self.lineaxis.redraw(selectionCOM, axisDraw)
         self.dotcom.loc = selectionCOM
         s.selectionRotate(selectionCOM, selectionAxis, 5.)
-                     
-#         for s in self.shapes:
-#             centerOfMass   = s.renderer.selectionCenterOfMass()
-#             print "  COM: ", s, centerOfMass
-#             selectionCOM  = s.worldToObjectCoordinates(centerOfMass)
-#             selectionAxis = s.worldToObjectCoordinates(rotationAxis3D)
-#             if(s.renderer.selectionRotate(selectionCOM, selectionAxis, moveLength.length())):
-#                 s.emitModelChanged()
-                     
+
     def mousePressEvent(self, event):
         self.mouseDownPoint    = QtCore.QPoint(event.pos())
         self.mouseMovePoint    = QtCore.QPoint(event.pos())
