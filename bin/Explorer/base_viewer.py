@@ -189,34 +189,6 @@ class BaseViewer(QtOpenGL.QGLWidget):
         glPopAttrib()
         glPopMatrix()
 
-    def selectionMove(self, v):
-        print "     In: selectionMove", self
-        self.loc += v
-        self.draw()
-
-    def getCOM(self):
-        return self.loc
-
-    def selectionRotate(self, com, axis, angle):
-        print "  In selectionRotate: ", self
-        print angle
-        axis.Print()
-        
-        self.angle = self.angle + angle
-        self.axis  = axis
-        
-        self.draw()
-#         x = axis[0]
-#         y = axis[1]
-#         z = axis[2]
-#
-# #         glMatrixMode(GL_MODELVIEW)
-#         glPushMatrix()
-#         glLoadIdentity()
-#         glRotatef(angle, axis[0], axis[1], axis[2])
-#         glPopMatrix()
-#         self.draw()
-        
     def load(self, fileName):
         try:
             self.renderer.loadFile(str(fileName))
