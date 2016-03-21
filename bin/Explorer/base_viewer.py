@@ -52,28 +52,6 @@ class BaseViewer(QtOpenGL.QGLWidget):
     def setScaleNoEmit(self, x, y, z):
         self.renderer.setSpacing(x, y, z)
         
-    def objectToWorldCoordinates(self, objectCoords):
-        #Need to apply rotations
-        origin = [self.renderer.getOriginX(), self.renderer.getOriginY(), self.renderer.getOriginZ()]
-        scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
-
-        return Vec3([objectCoords[i] * scale[i] + origin[i] for i in range(3)])
-    
-    def worldToObjectCoordinates(self, worldCoords):
-        origin = [self.renderer.getOriginX(), self.renderer.getOriginY(), self.renderer.getOriginZ()]
-        scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
-        
-        return Vec3([(worldCoords[i] - origin[i]) / scale[i] for i in range(3)])
-
-    def objectVectorToWorldCoordinates(self, objectCoords):
-        #Need to apply rotations
-        scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
-        return Vec3([objectCoords[i] * scale[i] for i in range(3)])
-    
-    def worldVectorToObjectCoordinates(self, worldCoords):
-        scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
-        return Vec3([worldCoords[i] / scale[i] for i in range(3)])
-        
     def setDisplayStyle(self, style):
         self.displayStyle = style
         self.emitModelVisualizationChanged()
