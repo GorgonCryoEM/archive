@@ -1,4 +1,4 @@
-from shape import Shape
+from line import Line
 from .libs import Vec3
 
 from OpenGL.GL import *
@@ -6,33 +6,11 @@ from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
 
-class Line0(Shape):
+class Line0(Line):
     
     def __init__(self, main, p1):
-        super(Line0, self).__init__(main)
+        super(Line0, self).__init__(main, p1, Vec3( 0, 0, 0))
         
         self.title = "Line0"
         
         self.setColor(40, 70, 100, 150)
-        
-        self.p1 = p1
-        self.p2 = Vec3( 0.,  0.,  0.)
-        
-        self.loc = self.getCOM()
-        
-    def draw(self):
-        self.setMaterials(self.color)
-        glLineWidth(5.)
-        self.s.drawLine(self.p1, self.p2)
-
-    def selectionMove(self, v):
-        print "     In: selectionMove", self
-        self.p1 += v
-        self.p2 += v
-        
-    def getCOM(self):
-        return (self.p1+self.p2)/2.
-
-    def redraw(self, p1, p2):
-        self.p1 = p1
-        self.p2 = p2
