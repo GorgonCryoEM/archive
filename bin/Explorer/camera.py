@@ -453,5 +453,5 @@ class Camera(QtOpenGL.QGLWidget):
         self.updateGL()
 
     def mouseDoubleClickEvent(self, event):
-        self.initializeGL()
-        self.updateGL()
+        pass
+#         self.updateGL()
