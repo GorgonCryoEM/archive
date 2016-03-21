@@ -267,18 +267,13 @@ class Camera(QtOpenGL.QGLWidget):
         self.axes()
 
     def processMouseDown(self, mouseHits, event):
-        globalMinDepth = self.far + 1
-        minNames = list()
         shapeId = -1
         for hit_record in mouseHits:
             minDepth, maxDepth, names = hit_record
-            names = list(names)
-            if(globalMinDepth > minDepth):
-                globalMinDepth = minDepth
-                minNames = names
-        if(minNames != list()):
-            shapeId = minNames[0];
-            minNames.pop(0)
+            
+        if(len(names)>0):
+            shapeId = names[0];
+            names.pop(0)
         self.selectedShape = shapeId;
             
     def setGluPerspective(self):
