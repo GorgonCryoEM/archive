@@ -145,11 +145,11 @@ class Camera(QtOpenGL.QGLWidget):
         distance = (sceneMin - sceneMax).length()
         center   = (sceneMin + sceneMax)*0.5
         
-        self.sceneSetCenterLocal(center.x(), center.y(), center.z(), distance)
+        self.sceneSetCenterLocal(center, distance)
     
-    def sceneSetCenterLocal(self, centerX, centerY, centerZ, distance):
+    def sceneSetCenterLocal(self, center, distance):
         
-        self.setCenter(Vec3(centerX, centerY, centerZ))
+        self.setCenter(center)
         self.setEye(Vec3(self.center[0], self.center[1], self.center[2] - distance))
         self.setUp(Vec3(0, -1, 0))
         self.setCuttingPlane(0.0)
