@@ -8,7 +8,7 @@ from OpenGL.GLUT import *
 
 class Line(Shape):
     
-    def __init__(self, main, p1):
+    def __init__(self, main, p1, p2):
         super(Line, self).__init__(main)
         
         self.title = "Line"
@@ -16,7 +16,7 @@ class Line(Shape):
         self.setColor(40, 70, 100, 150)
         
         self.p1 = p1
-        self.p2 = Vec3( 0.,  0.,  0.)
+        self.p2 = p2
         
         self.loc = self.getCOM()
         
