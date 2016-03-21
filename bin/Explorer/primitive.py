@@ -14,8 +14,8 @@ class Primitive(Shape):
         self.points = [Vec3(0,0,0) for i in range(n)]
         
     def draw(self):
-        self.setMaterials(self.color)
 #         super(Primitive, self).draw()
+        self.setMaterials(self.color)
         
         glBegin(GL_LINES)
         
