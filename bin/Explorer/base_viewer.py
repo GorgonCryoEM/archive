@@ -162,8 +162,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
             self.preDraw()
             self.modelChanged()
 
-            center = self.getCenter()
-            self.app.mainCamera.sceneSetCenter(center[0], center[1], center[2])
+            self.app.mainCamera.sceneSetCenter()
         except:
             QtGui.QMessageBox.critical(self, "Unable to load data file", "The file might be corrupt, or the format may not be supported.", "Ok")
 
