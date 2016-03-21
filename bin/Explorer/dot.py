@@ -17,7 +17,6 @@ class Dot(Shape):
         
         self.title = "Dot"
         
-#         self.color = QtGui.QColorDialog().getColor()
         self.color = QtGui.QColor(120, 0, 0, 150)
         
         self.loc = Vec3(0., 0., 0.)
