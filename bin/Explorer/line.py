@@ -29,7 +29,6 @@ class Line(Shape):
         print "     In: selectionMove", self
         self.p1 += v
         self.p2 += v
-        self.draw()
         
     def getCOM(self):
         return (self.p1+self.p2)/2.
