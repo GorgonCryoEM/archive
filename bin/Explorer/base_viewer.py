@@ -162,7 +162,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
             self.setScaleNoEmit(self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ())
             self.loaded = True
             self.dirty = False
-            self.emitModelLoadedPreDraw()
+            self.modelLoadedPreDraw()
             self.emitModelLoaded()
             self.emitViewerSetCenter()
         except:
@@ -195,9 +195,6 @@ class BaseViewer(QtOpenGL.QGLWidget):
                                     
         glPopAttrib()
 
-    def emitModelLoadedPreDraw(self):
-        self.emit(QtCore.SIGNAL("modelLoadedPreDraw()"))
-        
     def emitModelLoaded(self):
         self.emit(QtCore.SIGNAL("modelLoaded()"))
         
