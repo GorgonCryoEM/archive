@@ -44,12 +44,9 @@ class BaseViewer(QtOpenGL.QGLWidget):
 				]
     
     def setScale(self, x, y, z):
-        self.setScaleNoEmit(x, y, z)
+        self.renderer.setSpacing(x, y, z)
         self.app.mainCamera.updateGL()
 
-    def setScaleNoEmit(self, x, y, z):
-        self.renderer.setSpacing(x, y, z)
-        
     def setDisplayStyle(self, style):
         self.displayStyle = style
         self.emitModelVisualizationChanged()
@@ -157,7 +154,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
         try:
             self.renderer.loadFile(str(fileName))
             print self.renderer.getSize()
-            self.setScaleNoEmit(self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ())
+            self.setScale(self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ())
             self.loaded = True
             self.dirty = False
             self.preDraw()
