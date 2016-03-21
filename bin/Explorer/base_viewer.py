@@ -160,7 +160,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
             self.setScaleNoEmit(self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ())
             self.loaded = True
             self.dirty = False
-            self.modelLoadedPreDraw()
+            self.preDraw()
             self.modelChanged()
             self.emitViewerSetCenter()
         except:
