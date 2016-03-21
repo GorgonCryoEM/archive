@@ -38,7 +38,7 @@ class Camera(QtOpenGL.QGLWidget):
         self.mouseTrackingEnabled    = False
         self.mouseTrackingEnabledRay = False
         self.aspectRatio   = 1.0
-        self.selectedScene = -1
+        self.selectedShape = -1
         self.lightsEnabled = [True, False]
         self.lightsPosition = [Vec3(1000,1000,1000),
 							   Vec3(-1000,-1000,-1000)
@@ -319,7 +319,7 @@ class Camera(QtOpenGL.QGLWidget):
         if(minNames != list()):
             sceneId = minNames[0];
             minNames.pop(0)
-        self.selectedScene = sceneId;
+        self.selectedShape = sceneId;
             
     def setGluPerspective(self):
         gluPerspective(180 * self.eyeZoom, self.aspectRatio, self.near, self.far)
@@ -385,22 +385,22 @@ class Camera(QtOpenGL.QGLWidget):
 
     def moveSelectedShape(self, dx, dy):
         print "In: moveSelectedShape"
-        print "SelectedScene: %d" % self.selectedScene
+        print "selectedShape: %d" % self.selectedShape
         
         dirVec = self.mouseVec(dx, dy)
         
-        s = self.shapes[self.selectedScene]
+        s = self.shapes[self.selectedShape]
         s.selectionMove(dirVec)
 
     def rotateSelectedShape(self, dx, dy):
         print "In: rotateSelectedShape"
-        print "SelectedScene: %d" % self.selectedScene
+        print "selectedShape: %d" % self.selectedShape
 
         moveLength    = self.mouseVec(dx, dy)
         dirVec = moveLength.normalize()
         rotationAxis3D  = dirVec^self.look
         
-        s = self.shapes[self.selectedScene]
+        s = self.shapes[self.selectedShape]
         centerOfMass   = s.getCOM()
         print "  COM: ", s, centerOfMass
         centerOfMass.Print()
