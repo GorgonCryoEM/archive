@@ -33,7 +33,6 @@ class Camera(QtOpenGL.QGLWidget):
         self.shapes.append(self.dotcom)
         
         self.near = 0
-        self.cuttingPlane = 0.0
         
         self.mouseTrackingEnabled    = False
         self.mouseTrackingEnabledRay = False
@@ -112,12 +111,6 @@ class Camera(QtOpenGL.QGLWidget):
         self.far = max(self.near + 1.0, far)
         self.setGlProjection()
     
-    def setCuttingPlane(self, cuttingPlane):
-        self.cuttingPlane = min(max(cuttingPlane, -1.0), 1.0)
-        
-        for s in self.shapes:
-            s.renderer.setCuttingPlane(self.cuttingPlane, self.look[0], self.look[1], self.look[2])
-                
     def sceneSetCenter(self):
         minmax=[Range(), Range(), Range()]
         for s in self.shapes:
@@ -139,7 +132,6 @@ class Camera(QtOpenGL.QGLWidget):
         self.setCenter(center)
         self.setEye(Vec3(self.center[0], self.center[1], self.center[2] - distance))
         self.setUp(Vec3(0, -1, 0))
-        self.setCuttingPlane(0.0)
         self.modelChanged()
          
         self.updateGL()
@@ -429,9 +421,7 @@ class Camera(QtOpenGL.QGLWidget):
     def wheelEvent(self, event):
         direction = event.delta()/abs(event.delta())
         
-        if(event.modifiers() & QtCore.Qt.ALT):                 # Setting the cutting plane
-            self.setCuttingPlane(self.cuttingPlane + direction * 0.01)
-        elif (not (event.modifiers() & QtCore.Qt.ALT) and not (event.modifiers() & QtCore.Qt.CTRL)):     # Zoom in / out
+        if(not (event.modifiers() & QtCore.Qt.ALT) and not (event.modifiers() & QtCore.Qt.CTRL)):     # Zoom in / out
             self.setNearFarZoom(self.near, self.far, self.eyeZoom + direction * 10.0/360.0)
         self.updateGL()
         
