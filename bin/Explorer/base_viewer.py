@@ -208,9 +208,6 @@ class BaseViewer(QtOpenGL.QGLWidget):
     def emitModelLoaded(self):
         self.emit(QtCore.SIGNAL("modelLoaded()"))
         
-    def emitModelChanged(self):
-        self.emit(QtCore.SIGNAL("modelChanged()"))
-        
     def emitDrawingModel(self):
         self.emit(QtCore.SIGNAL("modelDrawing()"))
 

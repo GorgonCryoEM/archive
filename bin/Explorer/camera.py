@@ -132,13 +132,11 @@ class Camera(QtOpenGL.QGLWidget):
     
     def setRendererCuttingPlanes(self):
         for s in self.shapes:
-            if(s.renderer.setCuttingPlane(self.cuttingPlane, self.look[0], self.look[1], self.look[2])):
-                s.emitModelChanged()
+            s.renderer.setCuttingPlane(self.cuttingPlane, self.look[0], self.look[1], self.look[2])
                 
     def setRendererCenter(self):
         for s in self.shapes:
-            if(s.setCenter(self.center)):
-                s.emitModelChanged()
+            s.setCenter(self.center)
                  
     def sceneSetCenter(self, cX, cY, cZ, d):
         sceneMin = [cX, cY, cZ]
@@ -401,7 +399,6 @@ class Camera(QtOpenGL.QGLWidget):
         
         s = self.shapes[self.selectedScene]
         s.selectionMove(dirVec)
-        s.emitModelChanged()
 
     def rotateSelectedShape(self, dx, dy):
         print "In: rotateSelectedShape"
