@@ -22,8 +22,6 @@ class Cube(BaseViewer):
 #         self.color = QtGui.QColorDialog().getColor()
         self.color = QtGui.QColor(80, 18, 130, 150)
         
-        self.main = main
-        
         self.loc = Vec3(-30., 10., 10.)
         
         self.L = self.width()/4
