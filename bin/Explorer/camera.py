@@ -71,9 +71,6 @@ class Camera(QtOpenGL.QGLWidget):
         for i in range(len(self.shapes)):
             self.shapes[i].sceneIndex = i;
 
-        for s in self.shapes:
-            self.connect(s, QtCore.SIGNAL("viewerSetCenter(float, float, float, float)"), self.sceneSetCenter)
-
     def setEye(self, v):
         self.eye = v
         try:
