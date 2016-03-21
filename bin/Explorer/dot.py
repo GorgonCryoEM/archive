@@ -23,9 +23,6 @@ class Dot(Shape):
         
         self.loc = Vec3(0., 0., 0.)
         
-        self.selectEnabled    = True
-        self.mouseMoveEnabled = True
-        
     def draw(self):
         self.setMaterials(self.color)
         self.s.drawSphere(self.loc, 1.)

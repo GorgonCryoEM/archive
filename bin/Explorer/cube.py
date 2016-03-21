@@ -26,9 +26,6 @@ class Cube(Shape):
         self.L = self.width()/4
         self.L = 10
         
-        self.selectEnabled    = True
-        self.mouseMoveEnabled = True
-        
     def draw(self):
         self.setMaterials(self.color)
         glLineWidth(5.)
