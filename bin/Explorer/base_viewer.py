@@ -162,7 +162,9 @@ class BaseViewer(QtOpenGL.QGLWidget):
             self.dirty = False
             self.preDraw()
             self.modelChanged()
-            self.emitViewerSetCenter()
+
+            (center, distance) = self.getCenterAndDistance()
+            self.app.mainCamera.sceneSetCenter(center[0], center[1], center[2], distance)
         except:
             QtGui.QMessageBox.critical(self, "Unable to load data file", "The file might be corrupt, or the format may not be supported.", "Ok")
 
@@ -192,7 +194,3 @@ class BaseViewer(QtOpenGL.QGLWidget):
             glEndList()
                                     
         glPopAttrib()
-
-    def emitViewerSetCenter(self):
-        (center, distance) = self.getCenterAndDistance()
-        self.emit(QtCore.SIGNAL("viewerSetCenter(float, float, float, float)"), center[0], center[1], center[2], distance)
