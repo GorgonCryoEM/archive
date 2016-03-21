@@ -18,7 +18,7 @@ class Camera(QtOpenGL.QGLWidget):
         
         self.shapes = shapes
         self.app = main
-        self.sceneID = -1
+        self.shapeID = -1
 
         self.linecom = Line(self.app, Vec3(100,100,100))
         self.linecom.color = QtGui.QColor(40, 70, 50, 150)
@@ -69,7 +69,7 @@ class Camera(QtOpenGL.QGLWidget):
         self.lastPos = QtCore.QPoint()
         
         for i in range(len(self.shapes)):
-            self.shapes[i].sceneIndex = i;
+            self.shapes[i].shapeIndex = i;
 
     def setEye(self, v):
         self.eye = v
@@ -309,7 +309,7 @@ class Camera(QtOpenGL.QGLWidget):
     def processMouseDown(self, mouseHits, event):
         globalMinDepth = self.far + 1
         minNames = list()
-        sceneId = -1
+        shapeId = -1
         for hit_record in mouseHits:
             minDepth, maxDepth, names = hit_record
             names = list(names)
@@ -317,9 +317,9 @@ class Camera(QtOpenGL.QGLWidget):
                 globalMinDepth = minDepth
                 minNames = names
         if(minNames != list()):
-            sceneId = minNames[0];
+            shapeId = minNames[0];
             minNames.pop(0)
-        self.selectedShape = sceneId;
+        self.selectedShape = shapeId;
             
     def setGluPerspective(self):
         gluPerspective(180 * self.eyeZoom, self.aspectRatio, self.near, self.far)
