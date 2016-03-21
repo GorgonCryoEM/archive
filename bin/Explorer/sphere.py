@@ -17,7 +17,6 @@ class Sphere(Shape):
         
         self.title = "Sphere"
         
-#         self.color = QtGui.QColorDialog().getColor()
         self.color = QtGui.QColor(120, 18, 80, 150)
         
         self.loc = Vec3(30., 10., 10.)

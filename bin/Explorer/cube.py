@@ -17,12 +17,10 @@ class Cube(Shape):
         
         self.title = "Cube"
         
-#         self.color = QtGui.QColorDialog().getColor()
         self.color = QtGui.QColor(80, 18, 130, 150)
         
         self.loc = Vec3(-30., 10., 10.)
         
-        self.L = self.width()/4
         self.L = 10
         
     def draw(self):
