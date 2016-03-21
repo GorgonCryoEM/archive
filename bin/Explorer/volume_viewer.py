@@ -1,5 +1,5 @@
 from PyQt4 import QtGui, QtCore, QtOpenGL
-from base_viewer import BaseViewer
+from shape import Shape
 from libpytoolkit import Display
 from .libs import Vec3
 
@@ -8,7 +8,7 @@ from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
 
-class VolumeViewer(BaseViewer):
+class VolumeViewer(Shape):
 
     def __init__(self, main):
         super(VolumeViewer, self).__init__(main)
