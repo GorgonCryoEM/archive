@@ -12,8 +12,6 @@ class VolumeViewer(Shape):
 
         self.loaded = False
         
-        self.connect(self, QtCore.SIGNAL("modelLoadedPreDraw()"), self.modelLoadedPreDraw)
-
     def selectionMove(self, v):
         print "     In: selectionMove", self
         self.move(v)
