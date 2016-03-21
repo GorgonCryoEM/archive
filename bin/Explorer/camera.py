@@ -407,8 +407,8 @@ class Camera(QtOpenGL.QGLWidget):
     def moveConstant(self):
         return (self.eye - self.center).length() #* abs(tan(pi * self.eyeZoom))
 
-    def moveSelectedScene(self, dx, dy):
-        print "In: moveSelectedScene"
+    def moveSelectedShape(self, dx, dy):
+        print "In: moveSelectedShape"
         print "SelectedScene: %d" % self.selectedScene
         
         dirVec = self.mouseVec(dx, dy)
@@ -421,8 +421,8 @@ class Camera(QtOpenGL.QGLWidget):
 #             s.selectionMove(dirVec)
 #             s.emitModelChanged()
 
-    def rotateSelectedScene(self, dx, dy):
-        print "In: rotateSelectedScene"
+    def rotateSelectedShape(self, dx, dy):
+        print "In: rotateSelectedShape"
         print "SelectedScene: %d" % self.selectedScene
 
         moveLength    = self.mouseVec(dx, dy)
@@ -480,7 +480,7 @@ class Camera(QtOpenGL.QGLWidget):
             print "mouseLeftPressed"
             if event.modifiers() & QtCore.Qt.CTRL:           # Rotating the selection
                 print "event.modifiers() & QtCore.Qt.CTRL"
-                self.rotateSelectedScene(dx, dy)
+                self.rotateSelectedShape(dx, dy)
             else:                                               # Rotating the shapes
                 self.setEyeRotation(-dx, dy, 0)
             
@@ -488,7 +488,7 @@ class Camera(QtOpenGL.QGLWidget):
             print "mouseRightPressed"
             if event.modifiers() & QtCore.Qt.CTRL:                 # Translating the selection
                 print "event.modifiers() & QtCore.Qt.CTRL"
-                self.moveSelectedScene(dx, dy)
+                self.moveSelectedShape(dx, dy)
             else:                                                   # Translating the shapes
                 translation = self.mouseVec(-dx, -dy)
                 newEye = self.eye + translation;
