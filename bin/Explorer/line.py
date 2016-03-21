@@ -17,7 +17,6 @@ class Line(Shape):
         
         self.title = "Line"
         
-        self.renderer = Display()
         self.s = RendererBase()
 #         self.color = QtGui.QColorDialog().getColor()
         self.color = QtGui.QColor(40, 70, 100, 150)
