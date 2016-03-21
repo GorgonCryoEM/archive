@@ -19,7 +19,7 @@ class VolumeViewer(Shape):
     def getCOM(self):
         return self.renderer.getCenterOfMass()
     
-    def modelLoadedPreDraw(self):
+    def preDraw(self):
         self.renderer.enableDraw(False)
         maxDensity = self.renderer.getMaxDensity()
         minDensity = self.renderer.getMinDensity()
