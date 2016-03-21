@@ -130,7 +130,7 @@ class Camera(QtOpenGL.QGLWidget):
         for s in self.shapes:
             s.renderer.setCuttingPlane(self.cuttingPlane, self.look[0], self.look[1], self.look[2])
                 
-    def sceneSetCenter(self, cX, cY, cZ):
+    def sceneSetCenter(self):
         minmax=[Range(), Range(), Range()]
         for s in self.shapes:
             if s.loaded:
