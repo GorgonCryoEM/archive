@@ -316,10 +316,6 @@ class Camera(QtOpenGL.QGLWidget):
         self.legend()
         self.axes()
 
-    def processMouseWheel(self, direction, event):
-        for s in self.shapes:
-            s.processMouseWheel(direction, event)
-     
     def processMouseDown(self, mouseHits, event):
         globalMinDepth = self.far + 1
         minNames = list()
@@ -475,7 +471,7 @@ class Camera(QtOpenGL.QGLWidget):
     def wheelEvent(self, event):
         if(event.delta() != 0):
             direction = event.delta()/abs(event.delta())
-            self.processMouseWheel(direction, event)
+            
             if(event.modifiers() & QtCore.Qt.ALT):                 # Setting the cutting plane
                 self.setCuttingPlane(self.cuttingPlane + direction * 0.01)
             elif (not (event.modifiers() & QtCore.Qt.ALT) and not (event.modifiers() & QtCore.Qt.CTRL)):     # Zoom in / out
