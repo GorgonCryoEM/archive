@@ -1,5 +1,5 @@
 from PyQt4 import QtGui, QtCore, QtOpenGL
-from base_viewer import BaseViewer
+from shape import Shape
 from libpytoolkit import Display
 from libpytoolkit import RendererBase
 from libpytoolkit import Vec3F
@@ -10,7 +10,7 @@ from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
 
-class Sphere(BaseViewer):
+class Sphere(Shape):
     
     def __init__(self, main):
         super(Sphere, self).__init__(main)
