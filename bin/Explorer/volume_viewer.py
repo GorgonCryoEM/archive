@@ -16,11 +16,7 @@ class VolumeViewer(Shape):
 
     def selectionMove(self, v):
         print "     In: selectionMove", self
-        loc = Vec3(self.renderer.getOriginX(),
-                   self.renderer.getOriginY(),
-                   self.renderer.getOriginZ())
-        loc += v
-        self.setLocationV(loc)
+        self.move(v)
         
     def getCOM(self):
         return self.renderer.getCenterOfMass()
