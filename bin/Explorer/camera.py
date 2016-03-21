@@ -363,8 +363,7 @@ class Camera(QtOpenGL.QGLWidget):
 
     def rotateSelectedShape(self, dx, dy):
         if self.selectedShape > -1:
-            moveLength    = self.mouseVec(dx, dy)
-            dirVec = moveLength.normalize()
+            dirVec = self.mouseVec(dx, dy).normalize()
 
             rotationAxis3D  = dirVec^self.look
             
