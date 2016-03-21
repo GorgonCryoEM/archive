@@ -378,12 +378,9 @@ class Camera(QtOpenGL.QGLWidget):
             print "  COM: ", s, centerOfMass
             centerOfMass.Print()
             
-            selectionCOM  = centerOfMass
-            selectionAxis = rotationAxis3D
-            axisDraw = selectionAxis*1000.
-            self.lineaxis.redraw(selectionCOM, axisDraw)
-            self.dotcom.loc = selectionCOM
-            s.selectionRotate(selectionCOM, selectionAxis, 5.)
+            self.lineaxis.redraw(centerOfMass, rotationAxis3D*1000.)
+            self.dotcom.loc = centerOfMass
+            s.selectionRotate(centerOfMass, rotationAxis3D, 5.)
 
     def mousePressEvent(self, event):
         self.mouseDownPoint    = QtCore.QPoint(event.pos())
