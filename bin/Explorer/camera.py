@@ -495,9 +495,3 @@ class Camera(QtOpenGL.QGLWidget):
                 maxDist = max(maxDist, eyeDist + modelDist + dist/2.0)
         self.setNearFarZoom(minDist, maxDist, self.eyeZoom)
         self.updateGL()
-        
-    def emitMouseMovedRaw(self, mouseHits, event):
-        self.emit(QtCore.SIGNAL("mouseMovedRAW(PyQt_PyObject, QMouseEvent)"), mouseHits, event)
-
-    def emitMouseClickedRaw(self, mouseHits, event):
-        self.emit(QtCore.SIGNAL("mouseClickedRAW(PyQt_PyObject, QMouseEvent)"), mouseHits, event)

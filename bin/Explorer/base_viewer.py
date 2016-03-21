@@ -235,16 +235,9 @@ class BaseViewer(QtOpenGL.QGLWidget):
     def emitModelChanged(self):
         self.emit(QtCore.SIGNAL("modelChanged()"))
         
-    def emitModelVisualizationChanged(self):
-        self.emit(QtCore.SIGNAL("modelVisualizationChanged()"))
-    
     def emitDrawingModel(self):
         self.emit(QtCore.SIGNAL("modelDrawing()"))
 
-    def emitViewerSetCenterLocal(self):
-        (center, distance) = self.getCenterAndDistance()
-        self.emit(QtCore.SIGNAL("viewerSetCenterLocal(float, float, float, float)"), center[0], center[1], center[2], distance)
-    
     def emitViewerSetCenter(self):
         (center, distance) = self.getCenterAndDistance()
         self.emit(QtCore.SIGNAL("viewerSetCenter(float, float, float, float)"), center[0], center[1], center[2], distance)
