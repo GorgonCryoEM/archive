@@ -64,9 +64,6 @@ class Camera(QtOpenGL.QGLWidget):
         self.setUp         (self.up)
         self.lastPos = QtCore.QPoint()
         
-        for i in range(len(self.shapes)):
-            self.shapes[i].shapeIndex = i;
-
     def setEye(self, v):
         self.eye = v
         try:
