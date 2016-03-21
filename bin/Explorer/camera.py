@@ -147,9 +147,8 @@ class Camera(QtOpenGL.QGLWidget):
         
         distance = (sceneMin - sceneMax).length()
         center   = (sceneMin + sceneMax)*0.5
-        [centerX, centerY, centerZ] = [center.x(), center.y(), center.z()]
         
-        self.sceneSetCenterLocal(centerX, centerY, centerZ, distance)
+        self.sceneSetCenterLocal(center.x(), center.y(), center.z(), distance)
     
     def sceneSetCenterLocal(self, centerX, centerY, centerZ, distance):
         
