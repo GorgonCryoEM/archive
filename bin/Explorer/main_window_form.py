@@ -3,6 +3,7 @@ from camera import Camera
 from volume_viewer import VolumeViewer
 from sphere import Sphere
 from line import Line
+from dot import Dot
 from .libs import Vec3
 
 import sys, os
@@ -22,10 +23,15 @@ class MainWindowForm(QtGui.QMainWindow):
         self.sphere = Sphere(self, 10.)
         self.cube = Cube(self)
         self.triangle = Triangle(self, [0,0,0], [1,1,0], [-1,1,0])
+        p = [[0,10,0], [10,0,0], [-10,0,0], [0,-10,0]]
         
 #         self.shapes = [self.volumeViewer, self.skeletonViewer, self.volumeViewer1, self.sphere]
         self.shapes = [self.volumeViewer1, self.sphere, self.cube]
         self.shapes.append(self.triangle)
+        for pp in p:
+            dot = Dot(self)
+            dot.setLoc(pp[0], pp[1], pp[2])
+            self.shapes.append(dot)
 
         self.mainCamera = Camera(self.shapes, self)
         self.setCentralWidget(self.mainCamera)
