@@ -40,7 +40,6 @@ class Shape(BaseViewer):
     def selectionMove(self, v):
         print "     In: selectionMove", self
         self.loc += v
-        self.updateGL()
 
     def getCOM(self):
         return self.loc
@@ -53,4 +52,3 @@ class Shape(BaseViewer):
         self.angle = self.angle + angle
         self.axis  = axis
         
-        self.updateGL()
