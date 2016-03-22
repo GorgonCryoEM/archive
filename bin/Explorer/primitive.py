@@ -27,7 +27,7 @@ class Primitive(Shape):
 
         for p in self.points:
             glVertex(p[0], p[1], p[2])
-            p.Print()
+#             p.Print()
 
         glEnd()
         
@@ -43,10 +43,10 @@ class Primitive(Shape):
 
         for p in self.points:
             com += p
-            p.Print()
+#             p.Print()
 
         com = com/float(len(self.points))
-        com.Print()
+#         com.Print()
 
         return com
 
