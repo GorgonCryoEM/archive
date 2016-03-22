@@ -9,4 +9,4 @@ class Line0(Line):
         
         self.title = "Line0"
         
-        self.setColor(40, 70, 100, 150)
+#         self.setColor(40, 100, 10, 150)

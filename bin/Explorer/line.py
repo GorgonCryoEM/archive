@@ -12,7 +12,7 @@ class Line(Shape):
         
         self.title = "Line"
         
-        self.setColor(40, 70, 100, 150)
+#         self.setColor(40, 70, 100, 150)
         
         self.p1 = p1
         self.p2 = p2
