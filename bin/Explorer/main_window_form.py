@@ -22,8 +22,9 @@ class MainWindowForm(QtGui.QMainWindow):
         self.volumeViewer1 = VolumeViewer(self)
         self.sphere = Sphere(self, 10.)
         self.cube = Cube(self)
-        self.triangle = Triangle(self, [0,0,0], [1,1,0], [-1,1,0])
+        
         p = [[0,10,0], [10,0,0], [-10,0,0], [0,-10,0]]
+        self.triangle = Triangle(self, p[0], p[1], p[2])
         
 #         self.shapes = [self.volumeViewer, self.skeletonViewer, self.volumeViewer1, self.sphere]
         self.shapes = [self.volumeViewer1, self.sphere, self.cube]
