@@ -33,6 +33,53 @@ class Primitive(Shape):
         
         glPopMatrix()
 
+#     def selectionMove(self, v):
+#         for p in self.points:
+#             p += v
+# #         self.updateGL()
+        
+    def getCOM(self):
+        com = Vec3(0,0,0)
+
+        for p in self.points:
+            com += p
+            p.Print()
+
+        com = com/float(len(self.points))
+        com.Print()
+
+        return com
+
+#     def selectionMove(self, v):
+#         print "     In: selectionMove", self
+#         v.Print()
+#         self.loc += v
+#
+#         self.loc += self.getCOM()
+#         v = self.loc
+#         glPushMatrix()
+# #         glLoadIdentity()
+#         glTranslate(v[0],v[1],v[2])
+#         self.draw()
+#         glPopMatrix()
+
+#     def selectionRotate(self, com, axis, angle):
+#         print "  In selectionRotate: ", self
+#         print angle
+#         axis.Print()
+#         self.loc.Print()
+#
+#         self.angle = self.angle + angle
+#         self.axis  = axis
+#
+#         glPushMatrix()
+#         glTranslate(-self.loc[0],-self.loc[1],-self.loc[2])
+#         ax = self.axis
+#         glRotatef(self.angle, ax[0], ax[1], ax[2])
+#         glTranslate(self.loc[0],self.loc[1],self.loc[2])
+#         self.draw()
+#         glPopMatrix()
+
 
 class Triangle(Primitive):
 
