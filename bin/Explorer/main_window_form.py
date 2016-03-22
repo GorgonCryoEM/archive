@@ -28,6 +28,7 @@ class MainWindowForm(QtGui.QMainWindow):
         
 #         self.shapes = [self.volumeViewer, self.skeletonViewer, self.volumeViewer1, self.sphere]
         self.shapes = [self.volumeViewer1, self.sphere, self.cube]
+#         self.shapes = [self.sphere, self.cube]
         self.shapes.append(self.triangle)
         for pp in p:
             dot = Dot(self)
