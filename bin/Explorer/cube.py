@@ -14,7 +14,8 @@ class Cube(Shape):
         
         self.setColor(80, 18, 130, 150)
         
-        self.setLoc(-30., 10., 10.)
+#         self.setLoc(-30., 10., 10.)
+        self.setLoc(0, 0, 0)
         
         self.L = 10
         
