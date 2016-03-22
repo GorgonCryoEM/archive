@@ -16,14 +16,23 @@ class Primitive(Shape):
         
     def draw(self):
         self.setMaterials(self.color)
+
+        ax = self.axis
         
+        glPushMatrix()
+        glTranslate(self.loc[0],self.loc[1],self.loc[2])
+        glRotatef(self.angle, ax[0], ax[1], ax[2])
+
         glBegin(self.glmode)
 
         for p in self.points:
             glVertex(p[0], p[1], p[2])
-        
+            p.Print()
+
         glEnd()
         
+        glPopMatrix()
+
 
 class Triangle(Primitive):
 
