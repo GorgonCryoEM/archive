@@ -10,6 +10,7 @@ import sys, os
 
 from cube import Cube
 from primitive import Triangle
+from primitive import Plane
 
 
 class MainWindowForm(QtGui.QMainWindow):
@@ -25,11 +26,13 @@ class MainWindowForm(QtGui.QMainWindow):
         
         p = [[0,10,0], [10,0,0], [-10,0,0], [0,-10,0]]
         self.triangle = Triangle(self, p[0], p[1], p[2])
+        self.rectangle = Plane(self, p[0], p[1], p[3], p[2])
         
 #         self.shapes = [self.volumeViewer, self.skeletonViewer, self.volumeViewer1, self.sphere]
         self.shapes = [self.volumeViewer1, self.sphere, self.cube]
 #         self.shapes = [self.sphere, self.cube]
         self.shapes.append(self.triangle)
+        self.shapes.append(self.rectangle)
         for pp in p:
             dot = Dot(self)
             dot.setLoc(pp[0], pp[1], pp[2])
