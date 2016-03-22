@@ -92,3 +92,14 @@ class Triangle(Primitive):
         
 #         loc = self.setCOM()
 #         self.setLoc(loc[0], loc[1], loc[2])
+
+
+class Plane(Primitive):
+
+    def __init__(self, main, p1, p2, p3, p4):
+        super(Plane, self).__init__(main)
+        
+        self.points = [Vec3(p1), Vec3(p2), Vec3(p3), Vec3(p4)]
+        
+        self.setColor(150, 50, 100, 150)
+        self.glmode = GL_LINE_LOOP
