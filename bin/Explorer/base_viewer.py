@@ -49,7 +49,25 @@ class BaseViewer(QtOpenGL.QGLWidget):
 
     def setDisplayStyle(self, style):
         self.displayStyle = style
-        self.updateGL()
+#         self.updateGL()
+        
+        if self.displayStyle == self.DisplayStyleWireframe:
+            glPolygonMode(GL_FRONT, GL_LINE)
+            glPolygonMode(GL_BACK, GL_LINE)
+            
+        elif self.displayStyle == self.DisplayStyleFlat:
+            glPolygonMode(GL_FRONT, GL_FILL)
+            glPolygonMode(GL_BACK, GL_FILL)
+            glShadeModel(GL_FLAT)
+            
+        elif self.displayStyle == self.DisplayStyleSmooth:
+            glPolygonMode(GL_FRONT, GL_FILL)
+            glPolygonMode(GL_BACK, GL_FILL)
+            glShadeModel(GL_SMOOTH)
+            
+        else:
+            self.setDisplayStyle(self.DisplayStyleSmooth)
+#             self.setDisplayType()
 
     def setMaterials(self, color):
         glColor4f(color.redF(), color.greenF(), color.blueF(), color.alphaF())
@@ -101,24 +119,8 @@ class BaseViewer(QtOpenGL.QGLWidget):
         glEnable (GL_BLEND);
         glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         
-        if self.displayStyle == self.DisplayStyleWireframe:
-            glPolygonMode(GL_FRONT, GL_LINE)
-            glPolygonMode(GL_BACK, GL_LINE)
-            
-        elif self.displayStyle == self.DisplayStyleFlat:
-            glPolygonMode(GL_FRONT, GL_FILL)
-            glPolygonMode(GL_BACK, GL_FILL)
-            glShadeModel(GL_FLAT)
-            
-        elif self.displayStyle == self.DisplayStyleSmooth:
-            glPolygonMode(GL_FRONT, GL_FILL)
-            glPolygonMode(GL_BACK, GL_FILL)
-            glShadeModel(GL_SMOOTH)
-            
-        else:
-            self.displayStyle = self.DisplayStyleSmooth;
-            self.setDisplayType()
-    
+        self.setDisplayStyle(None)
+        
     def unInitializeGLDisplayType(self):
         glPopAttrib()
 
