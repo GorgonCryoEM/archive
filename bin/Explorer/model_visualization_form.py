@@ -46,8 +46,6 @@ class ModelVisualizationForm(BaseDockWidget):
         self.connect(self.ui.checkBoxModel3Visible, QtCore.SIGNAL("toggled (bool)"), self.viewer.setModel3Visibility)
         self.connect(self.ui.pushButtonBoundingBoxColor, QtCore.SIGNAL("colorChanged ()"), self.setBoundingBoxColor)
         self.connect(self.ui.pushButtonModelColor, QtCore.SIGNAL("colorChanged ()"), self.setModelColor)
-        self.connect(self.ui.pushButtonModel2Color, QtCore.SIGNAL("colorChanged ()"), self.setModel2Color)
-        self.connect(self.ui.pushButtonModel3Color, QtCore.SIGNAL("colorChanged ()"), self.setModel3Color)
         self.connect(self.ui.pushButtonCenter, QtCore.SIGNAL("pressed ()"), self.viewer.emitViewerSetCenterLocal)
         self.connect(self.ui.pushButtonClose, QtCore.SIGNAL("pressed ()"), self.viewer.unload)
         self.connect(self.ui.doubleSpinBoxSizeX, QtCore.SIGNAL("editingFinished ()"), self.scaleChanged)
@@ -109,12 +107,6 @@ class ModelVisualizationForm(BaseDockWidget):
         
     def setModelColor(self):
         self.viewer.setModelColor(self.ui.pushButtonModelColor.color())
-
-    def setModel2Color(self):
-        self.viewer.setModel2Color(self.ui.pushButtonModel2Color.color())
-    
-    def setModel3Color(self):
-        self.viewer.setModel3Color(self.ui.pushButtonModel3Color.color())
     
     def setDisplayStyle(self, dummy):
         if(self.ui.radioButtonWireframe.isChecked()):
