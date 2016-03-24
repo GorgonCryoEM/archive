@@ -22,7 +22,6 @@ class VolumeSurfaceEditorForm(BaseDockWidget):
         self.viewer = volumeViewer
         self.connect(self.viewer, QtCore.SIGNAL("modelLoadedPreDraw()"), self.modelLoadedPreDraw)
         self.createUI()
-        self.createActions()
 
     def createUI(self):
         self.ui = Ui_DialogVolumeSurfaceEditor()
@@ -38,12 +37,5 @@ class VolumeSurfaceEditorForm(BaseDockWidget):
         self.viewer.renderer.setSampleInterval(1)
         self.viewer.renderer.setSurfaceValue(defaultDensity)
         self.viewer.renderer.setDisplayRadius(maxRadius)
-        self.displayAct.setChecked(True)
-        self.displayAct.setEnabled(True)
         self.showWidget(True)
         self.viewer.renderer.enableDraw(True)
-        
-    def createActions(self):
-        self.displayAct.setEnabled(False)
-    
-        
