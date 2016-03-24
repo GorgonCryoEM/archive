@@ -22,7 +22,6 @@ class ModelVisualizationForm(BaseDockWidget):
 
         self.connect(self.viewer, QtCore.SIGNAL("modelLoaded()"), self.modelLoaded)
         self.connect(self.viewer, QtCore.SIGNAL("modelChanged()"), self.modelChanged)
-        self.connect(self.viewer, QtCore.SIGNAL("modelUnloaded()"), self.modelUnloaded)
         self.setWindowTitle(self.title)
         
         self.createUI()
@@ -44,7 +43,6 @@ class ModelVisualizationForm(BaseDockWidget):
         self.connect(self.ui.checkBoxModelVisible, QtCore.SIGNAL("toggled (bool)"), self.viewer.setModelVisibility)
         self.connect(self.ui.checkBoxModel2Visible, QtCore.SIGNAL("toggled (bool)"), self.viewer.setModel2Visibility)
         self.connect(self.ui.checkBoxModel3Visible, QtCore.SIGNAL("toggled (bool)"), self.viewer.setModel3Visibility)
-        self.connect(self.ui.pushButtonBoundingBoxColor, QtCore.SIGNAL("colorChanged ()"), self.setBoundingBoxColor)
         self.connect(self.ui.pushButtonModelColor, QtCore.SIGNAL("colorChanged ()"), self.setModelColor)
         self.connect(self.ui.pushButtonCenter, QtCore.SIGNAL("pressed ()"), self.viewer.emitViewerSetCenterLocal)
         self.connect(self.ui.pushButtonClose, QtCore.SIGNAL("pressed ()"), self.viewer.unload)
@@ -54,7 +52,6 @@ class ModelVisualizationForm(BaseDockWidget):
         self.connect(self.ui.doubleSpinBoxLocationX, QtCore.SIGNAL("editingFinished ()"), self.locationChanged)
         self.connect(self.ui.doubleSpinBoxLocationY, QtCore.SIGNAL("editingFinished ()"), self.locationChanged)
         self.connect(self.ui.doubleSpinBoxLocationZ, QtCore.SIGNAL("editingFinished ()"), self.locationChanged)
-        self.connect(self.ui.spinBoxThickness, QtCore.SIGNAL("editingFinished ()"), self.thicknessChanged)
                                                  
     def updateFromViewer(self):
         self.ui.pushButtonModelColor.setColor(self.viewer.getModelColor())
@@ -99,12 +96,6 @@ class ModelVisualizationForm(BaseDockWidget):
     def modelChanged(self):
         self.updateFromViewer()
     
-    def modelUnloaded(self):
-        self.showWidget(False)
-
-    def setBoundingBoxColor(self):
-        self.viewer.setBoundingBoxColor(self.ui.pushButtonBoundingBoxColor.color())
-        
     def setModelColor(self):
         self.viewer.setModelColor(self.ui.pushButtonModelColor.color())
     
@@ -122,6 +113,3 @@ class ModelVisualizationForm(BaseDockWidget):
     
     def locationChanged(self):
         self.viewer.setLocation(self.ui.doubleSpinBoxLocationX.value(), self.ui.doubleSpinBoxLocationY.value(), self.ui.doubleSpinBoxLocationZ.value())
-    
-    def thicknessChanged(self):
-        self.viewer.setThickness(self.ui.spinBoxThickness.value())
