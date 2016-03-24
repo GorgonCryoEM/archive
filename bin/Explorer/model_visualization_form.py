@@ -93,7 +93,7 @@ class ModelVisualizationForm(BaseDockWidget):
         self.viewer.setDisplayStyle(displayStyle)
                                                   
     def scaleChanged(self):
-        self.viewer.setScale(self.ui.doubleSpinBoxSizeX.value(), self.ui.doubleSpinBoxSizeY.value(), self.ui.doubleSpinBoxSizeZ.value())
+        self.viewer.setScale(1, 1, 1)
     
     def locationChanged(self):
-        self.viewer.setLocation(self.ui.doubleSpinBoxLocationX.value(), self.ui.doubleSpinBoxLocationY.value(), self.ui.doubleSpinBoxLocationZ.value())
+        self.viewer.setLocation(0, 0, 0)
