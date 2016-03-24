@@ -23,7 +23,7 @@ class VolumeViewer(BaseViewer):
         self.initVisualizationOptions(ModelVisualizationForm(self.app, self))
                       
     def createUI(self):
-        self.surfaceEditor = VolumeSurfaceEditorForm(self.app, self, self)
+        self.surfaceEditor = VolumeSurfaceEditorForm(self.app, self)
     
     def processMouseWheel(self, amount, event):
         if(event.modifiers() & QtCore.Qt.CTRL):
