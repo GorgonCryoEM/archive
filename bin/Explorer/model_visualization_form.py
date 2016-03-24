@@ -29,12 +29,6 @@ class ModelVisualizationForm(BaseDockWidget):
     def createUI(self):
         self.ui = Ui_DialogModelVisualization()
         self.ui.setupUi(self)
-        self.ui.checkBoxModel2Visible.setVisible(False)
-        self.ui.pushButtonModel2Color.setVisible(False)
-        self.ui.checkBoxModel3Visible.setVisible(False)
-        self.ui.pushButtonModel3Color.setVisible(False)
-        self.ui.spinBoxThickness.setVisible(False)
-        self.ui.labelThickness.setVisible(False)
         self.connect(self.ui.radioButtonWireframe, QtCore.SIGNAL("toggled (bool)"), self.setDisplayStyle)
         self.connect(self.ui.radioButtonFlat, QtCore.SIGNAL("toggled (bool)"), self.setDisplayStyle)
         self.connect(self.ui.radioButtonSmooth, QtCore.SIGNAL("toggled (bool)"), self.setDisplayStyle)
@@ -52,13 +46,9 @@ class ModelVisualizationForm(BaseDockWidget):
                                                  
     def updateFromViewer(self):
         self.ui.pushButtonModelColor.setColor(self.viewer.getModelColor())
-        self.ui.pushButtonModel2Color.setColor(self.viewer.getModel2Color())
-        self.ui.pushButtonModel3Color.setColor(self.viewer.getModel3Color())
         self.ui.pushButtonBoundingBoxColor.setColor(self.viewer.getBoundingBoxColor())
         self.ui.checkBoxBoundingBox.setChecked(self.viewer.showBox)
         self.ui.checkBoxModelVisible.setChecked(self.viewer.modelVisible)
-        self.ui.checkBoxModel2Visible.setChecked(self.viewer.model2Visible)
-        self.ui.checkBoxModel3Visible.setChecked(self.viewer.model3Visible)
          
         if(self.viewer.displayStyle == self.viewer.DisplayStyleWireframe):
             self.ui.radioButtonWireframe.setChecked(True)
