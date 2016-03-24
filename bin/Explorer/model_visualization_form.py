@@ -24,7 +24,6 @@ class ModelVisualizationForm(BaseDockWidget):
         self.setWindowTitle(self.title)
         
         self.createUI()
-        self.updateFromViewer()
 
     def createUI(self):
         self.ui = Ui_DialogModelVisualization()
@@ -44,40 +43,7 @@ class ModelVisualizationForm(BaseDockWidget):
         self.connect(self.ui.doubleSpinBoxLocationY, QtCore.SIGNAL("editingFinished ()"), self.locationChanged)
         self.connect(self.ui.doubleSpinBoxLocationZ, QtCore.SIGNAL("editingFinished ()"), self.locationChanged)
                                                  
-    def updateFromViewer(self):
-        self.ui.pushButtonModelColor.setColor(self.viewer.getModelColor())
-        self.ui.pushButtonBoundingBoxColor.setColor(self.viewer.getBoundingBoxColor())
-        self.ui.checkBoxBoundingBox.setChecked(self.viewer.showBox)
-        self.ui.checkBoxModelVisible.setChecked(self.viewer.modelVisible)
-         
-        if(self.viewer.displayStyle == self.viewer.DisplayStyleWireframe):
-            self.ui.radioButtonWireframe.setChecked(True)
-        elif(self.viewer.displayStyle == self.viewer.DisplayStyleFlat):
-            self.ui.radioButtonFlat.setChecked(True)
-        else:
-            self.ui.radioButtonSmooth.setChecked(True)
-            
-        self.ui.doubleSpinBoxSizeX.setValue(self.viewer.renderer.getSpacingX())
-        self.ui.doubleSpinBoxSizeY.setValue(self.viewer.renderer.getSpacingY())
-        self.ui.doubleSpinBoxSizeZ.setValue(self.viewer.renderer.getSpacingZ())
-        self.ui.doubleSpinBoxLocationX.setValue(self.viewer.renderer.getOriginX())
-        self.ui.doubleSpinBoxLocationY.setValue(self.viewer.renderer.getOriginY())
-        self.ui.doubleSpinBoxLocationZ.setValue(self.viewer.renderer.getOriginZ())
-        self.ui.labelModelSize.setText("{" +
-                                       str(round(self.viewer.renderer.getMax(0) - self.viewer.renderer.getMin(0),2)) + ", " +
-                                       str(round(self.viewer.renderer.getMax(1) - self.viewer.renderer.getMin(1),2)) + ", " +
-                                       str(round(self.viewer.renderer.getMax(2) - self.viewer.renderer.getMin(2),2)) + "}")
-        if(len(self.viewer.fileName) > 0):
-            names = self.viewer.fileName.split('\\')
-            name = names[len(names)-1];
-            names = name.split('/')
-            name = names[len(names)-1];
-            self.ui.labelModelName.setText(name)
-        else:
-            self.ui.labelModelName.setText("")
-            
     def modelLoaded(self):
-        self.updateFromViewer()
         self.showWidget(True)
     
     def setModelColor(self):
