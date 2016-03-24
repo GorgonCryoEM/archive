@@ -14,16 +14,11 @@ class BaseDockWidget(QtGui.QWidget):
         self.dock = QtGui.QDockWidget(self.tr(title), self.app)
         self.dock.setAllowedAreas(allowedAreas)
         self.dock.setWidget(self)
-        self.dock.close()
    
-    def loadWidget(self):
-        self.showWidget(True)
-
-    def showWidget(self, show):
-        if(show):
-            self.app.addDockWidget(self.defaultArea, self.dock)
-            self.dock.show()
-            self.bringToFront()
+    def showWidget(self):
+        self.app.addDockWidget(self.defaultArea, self.dock)
+        self.dock.show()
+        self.bringToFront()
     
     def bringToFront(self):
         self.dock.raise_()
