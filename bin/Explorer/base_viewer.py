@@ -119,7 +119,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
         glEnable (GL_BLEND);
         glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         
-        self.setDisplayStyle(None)
+        self.setDisplayStyle(self.displayStyle)
         
     def unInitializeGLDisplayType(self):
         glPopAttrib()
