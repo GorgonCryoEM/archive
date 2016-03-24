@@ -4,6 +4,8 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
+from ui_common import Ui_Common
+
 
 class Cube(Shape):
     
@@ -19,6 +21,9 @@ class Cube(Shape):
         
         self.L = 10
         
+        self.dock = Ui_Common()
+        self.dock.setupUi(self.app)
+
     def draw(self):
         self.setMaterials(self.color)
         glLineWidth(5.)
