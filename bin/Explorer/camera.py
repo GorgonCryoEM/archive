@@ -434,5 +434,13 @@ class Camera(QtOpenGL.QGLWidget):
         self.updateGL()
 
     def mouseDoubleClickEvent(self, event):
-        pass
-#         self.updateGL()
+        s = self.shapes[self.selectedShape]
+        print "  In: mouseDoubleClickEvent", s
+        print s.displayStyle
+        if s.displayStyle == s.DisplayStyleWireframe:
+            s.setDisplayStyle(s.DisplayStyleSmooth)
+        else:
+            s.setDisplayStyle(s.DisplayStyleWireframe)
+        self.updateGL()
+#         s.initializeGLDisplayType()
+#         s.draw()
