@@ -39,7 +39,7 @@ class ModelVisualizationForm(BaseDockWidget):
         self.connect(self.ui.doubleSpinBoxLocationZ, QtCore.SIGNAL("editingFinished ()"), self.locationChanged)
                                                  
     def modelLoaded(self):
-        self.showWidget(True)
+        self.showWidget()
     
     def setModelColor(self):
         self.viewer.setModelColor(self.ui.pushButtonModelColor.color())
