@@ -15,7 +15,7 @@ class ModelVisualizationForm(BaseDockWidget):
                                 QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea | QtCore.Qt.BottomDockWidgetArea,
                                 QtCore.Qt.RightDockWidgetArea)
 
-        self.connect(self.viewer, QtCore.SIGNAL("modelLoaded()"), self.modelLoaded)
+        self.connect(self.viewer, QtCore.SIGNAL("modelLoaded()"), self.show)
         self.setWindowTitle(self.title)
         
         self.createUI()
@@ -38,9 +38,6 @@ class ModelVisualizationForm(BaseDockWidget):
         self.connect(self.ui.doubleSpinBoxLocationY, QtCore.SIGNAL("editingFinished ()"), self.locationChanged)
         self.connect(self.ui.doubleSpinBoxLocationZ, QtCore.SIGNAL("editingFinished ()"), self.locationChanged)
                                                  
-    def modelLoaded(self):
-        self.showWidget()
-    
     def setModelColor(self):
         self.viewer.setModelColor(self.ui.pushButtonModelColor.color())
     
