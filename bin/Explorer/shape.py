@@ -18,8 +18,12 @@ class Shape(BaseViewer):
         self.renderer = Display()
         self.s = RendererBase()
         
-#         self.dock = Ui_Common()
-#         self.dock.setupUi(main)
+#         self.ui = Ui_Common()
+#         self.ui.setupUi(self)
+#
+#         self.dock = QtGui.QDockWidget("Common", self)
+#         main.addDockWidget(QtCore.Qt.RightDockWidgetArea, self.dock)
+#         self.dock.setWidget(self.ui)
 #         self.dock.setVisible(True)
 #         self.show()
 
