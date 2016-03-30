@@ -21,6 +21,7 @@ class ModelVisualizationForm(BaseDockWidget):
         
         self.ui = Ui_DialogModelVisualization()
         self.ui.setupUi(self)
+        
         self.setSignals()
 
     def setSignals(self):
