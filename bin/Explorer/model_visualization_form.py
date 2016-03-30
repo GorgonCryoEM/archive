@@ -19,9 +19,6 @@ class ModelVisualizationForm(BaseDockWidget):
         self.connect(self.viewer, QtCore.SIGNAL("modelLoaded()"), self.show)
         self.setWindowTitle(self.title)
         
-        self.createUI()
-
-    def createUI(self):
         self.ui = Ui_DialogModelVisualization()
         self.ui.setupUi(self)
         self.connect(self.ui.radioButtonWireframe,   QtCore.SIGNAL("toggled (bool)"),     self.setDisplayStyle)
