@@ -21,6 +21,9 @@ class ModelVisualizationForm(BaseDockWidget):
         
         self.ui = Ui_DialogModelVisualization()
         self.ui.setupUi(self)
+        self.setSignals()
+
+    def setSignals(self):
         self.connect(self.ui.radioButtonWireframe,   QtCore.SIGNAL("toggled (bool)"),     self.setDisplayStyle)
         self.connect(self.ui.radioButtonFlat,        QtCore.SIGNAL("toggled (bool)"),     self.setDisplayStyle)
         self.connect(self.ui.radioButtonSmooth,      QtCore.SIGNAL("toggled (bool)"),     self.setDisplayStyle)
