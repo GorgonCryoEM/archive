@@ -32,12 +32,12 @@ class ModelVisualizationForm(BaseDockWidget):
         self.connect(self.ui.pushButtonModelColor,   QtCore.SIGNAL("colorChanged ()"),    self.setModelColor)
         self.connect(self.ui.pushButtonCenter,       QtCore.SIGNAL("pressed ()"),         self.viewer.emitViewerSetCenterLocal)
         self.connect(self.ui.pushButtonClose,        QtCore.SIGNAL("pressed ()"),         self.viewer.unload)
-        self.connect(self.ui.doubleSpinBoxSizeX,     QtCore.SIGNAL("editingFinished ()"), self.scaleChanged)
-        self.connect(self.ui.doubleSpinBoxSizeY,     QtCore.SIGNAL("editingFinished ()"), self.scaleChanged)
-        self.connect(self.ui.doubleSpinBoxSizeZ,     QtCore.SIGNAL("editingFinished ()"), self.scaleChanged)
-        self.connect(self.ui.doubleSpinBoxLocationX, QtCore.SIGNAL("editingFinished ()"), self.locationChanged)
-        self.connect(self.ui.doubleSpinBoxLocationY, QtCore.SIGNAL("editingFinished ()"), self.locationChanged)
-        self.connect(self.ui.doubleSpinBoxLocationZ, QtCore.SIGNAL("editingFinished ()"), self.locationChanged)
+        self.connect(self.ui.doubleSpinBoxSizeX,     QtCore.SIGNAL("editingFinished ()"), self.viewer.setScale)
+        self.connect(self.ui.doubleSpinBoxSizeY,     QtCore.SIGNAL("editingFinished ()"), self.viewer.setScale)
+        self.connect(self.ui.doubleSpinBoxSizeZ,     QtCore.SIGNAL("editingFinished ()"), self.viewer.setScale)
+        self.connect(self.ui.doubleSpinBoxLocationX, QtCore.SIGNAL("editingFinished ()"), self.viewer.setLocation)
+        self.connect(self.ui.doubleSpinBoxLocationY, QtCore.SIGNAL("editingFinished ()"), self.viewer.setLocation)
+        self.connect(self.ui.doubleSpinBoxLocationZ, QtCore.SIGNAL("editingFinished ()"), self.viewer.setLocation)
                                                  
     def setModelColor(self):
         self.viewer.setModelColor(self.ui.pushButtonModelColor.color())
@@ -50,9 +50,3 @@ class ModelVisualizationForm(BaseDockWidget):
         elif(self.ui.radioButtonSmooth.isChecked()):
             displayStyle = self.viewer.DisplayStyleSmooth
         self.viewer.setDisplayStyle(displayStyle)
-                                                  
-    def scaleChanged(self):
-        self.viewer.setScale(1, 1, 1)
-    
-    def locationChanged(self):
-        self.viewer.setLocation(0, 0, 0)
