@@ -1,2 +1,2 @@
 from libs import Vec3
-from .main_window_form import MainWindow
+from Explorer.main_window import MainWindow
