@@ -12,8 +12,8 @@ from OpenGL.GLUT import *
 
 class Shape(BaseViewer):
 
-    def __init__(self, main):
-        super(Shape, self).__init__(main)
+    def __init__(self, ):
+        super(Shape, self).__init__(None)
         
         self.renderer = Display()
         self.s = RendererBase()
