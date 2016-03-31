@@ -1,5 +1,6 @@
 from PyQt4 import QtGui
 from camera import Camera
+from scene import Scene
 
 import sys, os
 
@@ -11,6 +12,7 @@ class MainWindow(QtGui.QMainWindow):
 
         self.mainCamera = Camera([], self)
         self.setCentralWidget(self.mainCamera)
+        self.scenes = Scene()
         
         self.statusBar().showMessage(self.tr("Gorgon: Protein Visualization Suite"))
         self.setWindowTitle(self.tr("Gorgon Explorer - v" + version))
