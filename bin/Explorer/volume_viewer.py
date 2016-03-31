@@ -5,6 +5,8 @@ from volume_surface_editor_form import VolumeSurfaceEditorForm
 from model_visualization_form import ModelVisualizationForm
 from string import split, upper
 
+from sphere import Sphere
+
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
@@ -21,6 +23,7 @@ class VolumeViewer(BaseViewer):
         self.loaded = False
         self.surfaceEditor = VolumeSurfaceEditorForm(self.app, self)
         self.initVisualizationOptions(ModelVisualizationForm(self.app, self))
+#         self.sphere = Sphere(self.app, self)
                       
     def processMouseWheel(self, amount, event):
         if(event.modifiers() & QtCore.Qt.CTRL):
