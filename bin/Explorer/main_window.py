@@ -10,9 +10,9 @@ class MainWindow(QtGui.QMainWindow):
     def __init__(self, version):
         super(MainWindow, self).__init__()
 
-        self.mainCamera = Camera([], self)
-        self.setCentralWidget(self.mainCamera)
         self.scenes = Scene()
+        self.camera = Camera(self.scenes.getShapes(), self)
+        self.setCentralWidget(self.camera)
         
         self.statusBar().showMessage(self.tr("Gorgon: Protein Visualization Suite"))
         self.setWindowTitle(self.tr("Gorgon Explorer - v" + version))

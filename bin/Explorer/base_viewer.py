@@ -45,7 +45,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
     
     def setScale(self, x, y, z):
         self.renderer.setSpacing(x, y, z)
-        self.app.mainCamera.updateGL()
+        self.app.camera.updateGL()
 
     def setDisplayStyle(self, style):
         self.displayStyle = style
@@ -164,7 +164,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
             self.preDraw()
             self.modelChanged()
 
-            self.app.mainCamera.sceneSetCenter()
+            self.app.camera.sceneSetCenter()
         except:
             QtGui.QMessageBox.critical(self, "Unable to load data file", "The file might be corrupt, or the format may not be supported.", "Ok")
 
