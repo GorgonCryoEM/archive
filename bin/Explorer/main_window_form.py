@@ -13,10 +13,10 @@ from primitive import Triangle
 from primitive import Plane
 
 
-class MainWindowForm(QtGui.QMainWindow):
+class MainWindow(QtGui.QMainWindow):
 
     def __init__(self, version):
-        super(MainWindowForm, self).__init__()
+        super(MainWindow, self).__init__()
 
 #         self.volumeViewer = VolumeViewer(self)
 #         self.skeletonViewer = SkeletonViewer(self)
