@@ -5,7 +5,7 @@ from PyQt4 import QtGui
 import sys
 import argparse
 
-from Explorer import MainWindowForm
+from Explorer import MainWindow
 
 
 def main():
@@ -17,7 +17,7 @@ def main():
 
     app = QtGui.QApplication(sys.argv)
     
-    window = MainWindowForm('2.2.3')
+    window = MainWindow('2.2.3')
     
     window.resize(800, 600)
     window.show()
