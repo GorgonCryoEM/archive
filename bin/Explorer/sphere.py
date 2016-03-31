@@ -22,8 +22,6 @@ class Sphere(BaseViewer):
 #         self.color = QtGui.QColorDialog().getColor()
         self.color = QtGui.QColor(120, 18, 80, 150)
         
-        self.selectEnabled    = True
-        self.mouseMoveEnabled = True
         
     def draw(self):
         self.setMaterials(self.color)
