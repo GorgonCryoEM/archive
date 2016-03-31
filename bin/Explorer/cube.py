@@ -26,8 +26,6 @@ class Cube(Shape):
         
         self.dock = QtGui.QDockWidget("Common: Cube", main)
         self.ui.setupUi(self.dock)
-        self.dock.setWidget(self)
-        self.show()
         main.addDockWidget(QtCore.Qt.RightDockWidgetArea, self.dock)
 
     def draw(self):
