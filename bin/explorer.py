@@ -21,7 +21,6 @@ def main():
     
     window.resize(800, 600)
     window.show()
-    window.volumeViewer1.load("vp6-96o.mrc")
     window.raise_()
     
     sys.exit(app.exec_())
