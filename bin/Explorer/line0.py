@@ -4,8 +4,8 @@ from .libs import Vec3
 
 class Line0(Line):
     
-    def __init__(self, main, p1):
-        super(Line0, self).__init__(main, p1, Vec3( 0, 0, 0))
+    def __init__(self, p1):
+        super(Line0, self).__init__(p1, Vec3( 0, 0, 0))
         
         self.title = "Line0"
         

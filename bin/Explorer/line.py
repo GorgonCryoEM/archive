@@ -7,8 +7,8 @@ from OpenGL.GLUT import *
 
 class Line(Shape):
     
-    def __init__(self, main, p1, p2):
-        super(Line, self).__init__(main)
+    def __init__(self, p1, p2):
+        super(Line, self).__init__()
         
         self.title = "Line"
         
