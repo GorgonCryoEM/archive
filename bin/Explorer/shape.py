@@ -3,6 +3,7 @@ from base_viewer import BaseViewer
 from libpytoolkit import Display
 from libpytoolkit import RendererBase
 from .libs import Vec3
+from ui_common import Ui_Common
 
 from OpenGL.GL import *
 from OpenGL.GLU import *
@@ -16,6 +17,15 @@ class Shape(BaseViewer):
         
         self.renderer = Display()
         self.s = RendererBase()
+        
+#         self.ui = Ui_Common()
+#         self.ui.setupUi(self)
+#
+#         self.dock = QtGui.QDockWidget("Common", self)
+#         main.addDockWidget(QtCore.Qt.RightDockWidgetArea, self.dock)
+#         self.dock.setWidget(self.ui)
+#         self.dock.setVisible(True)
+#         self.show()
 
     def setColor(self, r, g, b, a):
         self.color = QtGui.QColor(r, g, b, a)

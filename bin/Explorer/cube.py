@@ -1,8 +1,11 @@
+from PyQt4 import QtGui, QtCore, QtOpenGL
 from shape import Shape
 
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
+
+from ui_common import Ui_Common
 
 
 class Cube(Shape):
@@ -19,6 +22,12 @@ class Cube(Shape):
         
         self.L = 10
         
+        self.ui = Ui_Common()
+        
+        self.dock = QtGui.QDockWidget("Common: Cube", main)
+        self.ui.setupUi(self.dock)
+        main.addDockWidget(QtCore.Qt.RightDockWidgetArea, self.dock)
+
     def draw(self):
         self.setMaterials(self.color)
         glLineWidth(5.)
