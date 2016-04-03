@@ -12,8 +12,8 @@ from OpenGL.GLUT import *
 
 class Shape(BaseViewer):
 
-    def __init__(self, main):
-        super(Shape, self).__init__(main)
+    def __init__(self, ):
+        super(Shape, self).__init__(None)
         
         self.renderer = Display()
         self.s = RendererBase()
@@ -38,7 +38,7 @@ class Shape(BaseViewer):
 
     def setLocation(self, x, y, z):
         self.renderer.setOrigin(x, y, z)
-        self.app.mainCamera.updateGL()
+        self.app.camera.updateGL()
 
     def move(self, v):
         loc = Vec3(self.renderer.getOriginX(),

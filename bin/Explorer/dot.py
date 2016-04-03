@@ -3,8 +3,8 @@ from sphere import Sphere
 
 class Dot(Sphere):
     
-    def __init__(self, main):
-        super(Dot, self).__init__(main)
+    def __init__(self):
+        super(Dot, self).__init__()
         
         self.title = "Dot"
         

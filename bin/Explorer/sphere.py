@@ -5,8 +5,8 @@ from ui_common import Ui_Common
 
 class Sphere(Shape):
     
-    def __init__(self, main, R=1.0):
-        super(Sphere, self).__init__(main)
+    def __init__(self, R=1.0):
+        super(Sphere, self).__init__()
         
         self.title = "Sphere"
         self.R = R

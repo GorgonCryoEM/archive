@@ -7,9 +7,6 @@ from OpenGL.GLUT import *
 from libpytoolkit import *
 from cmath import *
 from .libs import Vec3
-from line import Line
-from line0 import Line0
-from dot import Dot
 
 
 class Camera(QtOpenGL.QGLWidget):
@@ -20,18 +17,6 @@ class Camera(QtOpenGL.QGLWidget):
         self.shapes = shapes
         self.app = main
         self.shapeID = -1
-
-        self.linecom = Line0(self.app, Vec3(100,100,100))
-        self.linecom.setColor(40, 70, 50, 150)
-        self.lineaxis = Line0(self.app, Vec3(100,100,100))
-        self.lineaxis.setColor(80, 40, 50, 150)
-        self.lineaxis.depthEnabled = True
-        self.dotcenter = Dot(self.app)
-        self.dotcom = Dot(self.app)
-        self.dotcom.setColor(0, 130, 0, 150)
-        self.shapes.append(self.lineaxis)
-        self.shapes.append(self.dotcenter)
-        self.shapes.append(self.dotcom)
         
         self.near = 0
         
