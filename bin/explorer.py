@@ -70,6 +70,7 @@ def main():
     window.resize(800, 600)
 #     window.move(300,50)
     window.show()
+    window.load()
     
     window.raise_()
 #     window1.raise_()
