@@ -22,7 +22,6 @@ namespace Visualization {
         public:
             RendererBase();
             virtual ~RendererBase();
-            virtual void drawBoundingBox();
             virtual void unload();
             virtual bool selectionRotate(Vec3F centerOfMass,
                                          Vec3F rotationAxis,
@@ -41,7 +40,6 @@ namespace Visualization {
             void static drawCylinder(Vec3F pt1, Vec3F pt2,
                                      float radius, int slices = 10, int stacks = 10);
             void static drawLine(Vec3F pt1, Vec3F pt2);
-            virtual void updateBoundingBox();
 
             void clearOtherHighlights();
 
