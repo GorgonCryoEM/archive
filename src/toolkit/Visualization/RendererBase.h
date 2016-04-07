@@ -22,7 +22,6 @@ namespace Visualization {
         public:
             RendererBase();
             virtual ~RendererBase();
-            virtual void unload();
             virtual bool selectionRotate(Vec3F centerOfMass,
                                          Vec3F rotationAxis,
                                          float angle);
