@@ -327,7 +327,6 @@ namespace Protein_Morph {
 
     void NonManifoldMesh::addEdge(int vertexId1, int vertexId2, bool tag){
         NonManifoldMeshEdge edge;
-        edge.tag = tag;
         edge.faceIds.clear();
         edge.vertexIds[0] = vertexId1;
         edge.vertexIds[1] = vertexId2;
@@ -359,7 +358,6 @@ namespace Protein_Morph {
             addEdge(vertexId3, vertexId1, newEdgeTag);
 
         NonManifoldMeshFace face;
-        face.tag = faceTag;
         face.vertexIds.clear();
         face.vertexIds.push_back(vertexId1);
         face.vertexIds.push_back(vertexId2);
@@ -409,21 +407,21 @@ namespace Protein_Morph {
             indices.push_back(addVertex(src.vertices[i]));
 
         for(unsigned int i = 0; i < src.edges.size(); i++)
-            addEdge(indices[src.edges[i].vertexIds[0]], indices[src.edges[i].vertexIds[1]], src.edges[i].tag);
+            addEdge(indices[src.edges[i].vertexIds[0]], indices[src.edges[i].vertexIds[1]], false);
 
         for(unsigned int i = 0; i < src.faces.size(); i++) {
             if(src.faces[i].vertexIds.size() == 3) {
                 TriangleMeshFace temp(indices[src.faces[i].vertexIds[0]],
                                       indices[src.faces[i].vertexIds[1]],
                                       indices[src.faces[i].vertexIds[2]]);
-                addTriangle(temp, false, src.faces[i].tag);
+                addTriangle(temp, false, false);
             }
             else if(src.faces[i].vertexIds.size() == 3)
                 addQuad(indices[src.faces[i].vertexIds[0]],
                         indices[src.faces[i].vertexIds[1]],
                         indices[src.faces[i].vertexIds[2]],
                         indices[src.faces[i].vertexIds[3]], false,
-                        src.faces[i].tag);
+                        false);
         }
     }
 

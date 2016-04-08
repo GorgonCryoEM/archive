@@ -28,7 +28,6 @@ namespace Protein_Morph {
     struct NonManifoldMeshBase {
         unsigned int id;
         bool valid;
-        bool tag;
     };
 
     struct NonManifoldMeshEdge : public NonManifoldMeshBase {

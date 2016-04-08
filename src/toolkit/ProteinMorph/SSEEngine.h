@@ -165,9 +165,6 @@ namespace Visualization {
 
     void SSEEngine::InitializePathFinder(NonManifoldMesh * mesh) {
         NonManifoldMesh pathMesh(*mesh);
-        for(unsigned int i = 0; i < pathMesh.vertices.size(); i++) {
-            pathMesh.vertices[i].tag = true;
-        }
         helixEndPoints.clear();
         pathCount++;
     }
@@ -184,7 +181,6 @@ namespace Visualization {
         for(unsigned int i = 0; i < pathMesh->vertices.size(); i++) {
             if(helix->IsInsideShape(pathMesh->vertices[i].position)) {
                 internalVertices.insert(i);
-                pathMesh->vertices[i].tag = false;
             }
         }
         vector<unsigned int> neighbors;
@@ -201,10 +197,9 @@ namespace Visualization {
                 isStart = (dist1 <= dist2);
                 if(isStart && (dist1 <= radius)) {
                     helixStartPoints[helixIndex].push_back(*i);
-                    pathMesh->vertices[*i].tag = true;
+
                 } else if (!isStart && (dist2 <= radius)) {
                     helixEndPoints[helixIndex].push_back(*i);
-                    pathMesh->vertices[*i].tag = true;
                 }
             }
         }
@@ -220,59 +215,9 @@ namespace Visualization {
     }
 
     void SSEEngine::PrunePathMesh(NonManifoldMesh * mesh, vector<unsigned int> pathVertices) {
-        for(unsigned int i = 0; i < mesh->vertices.size(); i++) {
-            mesh->vertices[i].tag = true;
-        }
-        for(unsigned int i = 0; i < pathVertices.size(); i++) {
-            mesh->vertices[pathVertices[i]].tag = false;
-        }
     }
 
     void SSEEngine::GetPathSpace(int helix1Ix, bool helix1Start, int helix2Ix, bool helix2Start) {
-        NonManifoldMesh mesh(*pathMesh);
-
-        vector<unsigned int> queue;
-        for(unsigned int i = 0; i < helixStartPoints[helix1Ix].size(); i++) {
-            queue.push_back(helixStartPoints[helix1Ix][i]);
-        }
-
-        unsigned int currIx;
-        vector<unsigned int> neighbors;
-        vector<unsigned int> pathVertices;
-        pathVertices.clear();
-        while(queue.size() > 0){
-            currIx = queue[0];
-            queue.erase(queue.begin());
-            if(mesh.vertices[currIx].tag) {
-                mesh.vertices[currIx].tag = false;
-                pathVertices.push_back(currIx);
-                neighbors = mesh.getNeighboringVertexIndices(currIx);
-                for(unsigned int i = 0; i < neighbors.size(); i++) {
-                    if(mesh.vertices[neighbors[i]].tag) {
-                        queue.push_back(neighbors[i]);
-                    }
-                }
-            }
-        }
-
-        PrunePathMesh(&mesh, pathVertices);
-
-        singlePathMesh = new NonManifoldMesh();
-        map<unsigned int, unsigned int> vertexMap;
-        for(unsigned int i=0; i < mesh.vertices.size(); i++) {
-            if(!mesh.vertices[i].tag) {
-                vertexMap[i] = singlePathMesh->addVertex(mesh.vertices[i]);
-            }
-        }
-
-        for(unsigned int i=0; i < mesh.edges.size(); i++) {
-            if(!mesh.vertices[mesh.edges[i].vertexIds[0]].tag && !mesh.vertices[mesh.edges[i].vertexIds[1]].tag) {
-                singlePathMesh->addEdge(vertexMap[mesh.edges[i].vertexIds[0]], vertexMap[mesh.edges[i].vertexIds[1]], mesh.edges[i].tag);
-            }
-        }
-
-        vertexMap.clear();
-        pathVertices.clear();
     }
 
     void SSEEngine::ClearPathSpace() {
