@@ -108,11 +108,11 @@ namespace Protein_Morph {
             int getEdgeIndex(int edgeId) const;
             int getEdgeIndex(int vertexId1, int vertexId2) const;
             int getClosestVertexIndex(Vec3F pos);
-            void addEdge(int vertexId1, int vertexId2, string tag = "");
+            void addEdge(int vertexId1, int vertexId2, bool tag=false);
             void addQuad(int vertexId1, int vertexId2, int vertexId3, int vertexId4,
-                         string newEdgeTag = "", string faceTag ="");
+                         bool newEdgeTag=false, bool faceTag=false);
             void addTriangle(TriangleMeshFace vertexId,
-                             string newEdgeTag = "", string faceTag = "");
+                             bool newEdgeTag=false, bool faceTag=false);
             void markFixedVertices();
             void mergeMesh(const NonManifoldMesh & srcMesh);
             void removeFace(int faceId);

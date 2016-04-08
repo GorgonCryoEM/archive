@@ -416,13 +416,13 @@ namespace Protein_Morph {
                 TriangleMeshFace temp(indices[src.faces[i].vertexIds[0]],
                                       indices[src.faces[i].vertexIds[1]],
                                       indices[src.faces[i].vertexIds[2]]);
-                addTriangle(temp, NULL, src.faces[i].tag);
+                addTriangle(temp, false, src.faces[i].tag);
             }
             else if(src.faces[i].vertexIds.size() == 3)
                 addQuad(indices[src.faces[i].vertexIds[0]],
                         indices[src.faces[i].vertexIds[1]],
                         indices[src.faces[i].vertexIds[2]],
-                        indices[src.faces[i].vertexIds[3]], NULL,
+                        indices[src.faces[i].vertexIds[3]], false,
                         src.faces[i].tag);
         }
     }
