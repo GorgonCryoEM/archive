@@ -28,12 +28,12 @@ namespace Protein_Morph {
     struct NonManifoldMeshBase {
         unsigned int id;
         bool valid;
+        string tag;
     };
 
     struct NonManifoldMeshEdge : public NonManifoldMeshBase {
         unsigned int vertexIds[2];
         vector<unsigned int> faceIds;
-        string tag;
     };
 
     inline ostream& operator<<(ostream& out, const NonManifoldMeshEdge& obj){
@@ -46,7 +46,6 @@ namespace Protein_Morph {
     struct NonManifoldMeshFace : public NonManifoldMeshBase {
         vector<unsigned int> edgeIds;
         vector<unsigned int> vertexIds;
-        string tag;
     };
 
     inline ostream& operator<<(ostream& out, const NonManifoldMeshFace& obj){
@@ -60,7 +59,6 @@ namespace Protein_Morph {
     struct NonManifoldMeshVertex : public NonManifoldMeshBase {
         Vec3F position;
         vector<unsigned int> edgeIds;
-        bool tag;
     };
 
     inline ostream& operator<<(ostream& out, const NonManifoldMeshVertex& obj){
