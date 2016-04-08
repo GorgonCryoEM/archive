@@ -325,7 +325,7 @@ namespace Protein_Morph {
         return edgeId;
     }
 
-    void NonManifoldMesh::addEdge(int vertexId1, int vertexId2, string tag){
+    void NonManifoldMesh::addEdge(int vertexId1, int vertexId2, bool tag){
         NonManifoldMeshEdge edge;
         edge.tag = tag;
         edge.faceIds.clear();
@@ -336,7 +336,7 @@ namespace Protein_Morph {
         vertices[getVertexIndex(vertexId2)].edgeIds.push_back(edgeId);
     }
 
-    void NonManifoldMesh::addQuad(int vertexId1, int vertexId2, int vertexId3, int vertexId4, string newEdgeTag, string faceTag) {
+    void NonManifoldMesh::addQuad(int vertexId1, int vertexId2, int vertexId3, int vertexId4, bool newEdgeTag, bool faceTag) {
         TriangleMeshFace v123(vertexId1, vertexId2, vertexId3);
         addTriangle(v123, newEdgeTag, faceTag);
 
@@ -344,7 +344,7 @@ namespace Protein_Morph {
         addTriangle(v134, newEdgeTag, faceTag);
     }
 
-    void NonManifoldMesh::addTriangle(TriangleMeshFace vertexId, string newEdgeTag, string faceTag) {
+    void NonManifoldMesh::addTriangle(TriangleMeshFace vertexId, bool newEdgeTag, bool faceTag) {
         int vertexId1 = vertexId[0];
         int vertexId2 = vertexId[1];
         int vertexId3 = vertexId[2];
