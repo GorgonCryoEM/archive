@@ -5,7 +5,7 @@ from PyQt4 import QtGui, QtCore
 # from seq_model.findHelixCalphas import helixEndpointsToCAlphaPositions
 # from seq_model.Helix import Helix
 # import math
-# from vector_lib import *
+from Explorer.libs import *
 # from calpha_structure_editor_command_place_helix import CAlphaStructureEditorCommandPlaceHelix
 # from calpha_structure_editor_command_atom_placement import CAlphaStructureEditorCommandAtomPlacement
 # from calpha_structure_editor_command_change_position import CAlphaStructureEditorCommandChangePosition
@@ -295,8 +295,8 @@ given by self.helixNtermSpinBox and self.helixCtermSpinBox.
         moveEnd = 1.5*(stopIndex - predHelix.stopIndex)
         midpoint = observedHelix.getMidpoint()
         unitVector = observedHelix.getUnitVector()
-        structPredCoord1 = vectorAdd( midpoint, vectorScalarMultiply(-1*predHelix.getLengthInAngstroms()/2, unitVector) )
-        structPredCoord2 = vectorAdd( midpoint, vectorScalarMultiply(predHelix.getLengthInAngstroms()/2, unitVector) )
+        structPredCoord1 = midpoint + unitVector * (-predHelix.getLengthInAngstroms()/2)
+        structPredCoord2 = midpoint + unitVector * ( predHelix.getLengthInAngstroms()/2)
                 
         if direction == 0:
             startMoveVector = vectorScalarMultiply( moveStart, unitVector)
