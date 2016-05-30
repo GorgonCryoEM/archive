@@ -111,7 +111,7 @@ if the user clicks accept.
             #return
         atomPos = atom.getPosition()
         atomPosMeshCoords =  skeletonViewer.worldToObjectCoordinates(self.CAlphaViewer.objectToWorldCoordinates([atomPos.x(), atomPos.y(), atomPos.z()]))
-        atomPosMeshCoords = Vector3DFloat(atomPosMeshCoords[0], atomPosMeshCoords[1], atomPosMeshCoords[2])
+        atomPosMeshCoords = Vec3(atomPosMeshCoords[0], atomPosMeshCoords[1], atomPosMeshCoords[2])
          
         if skeletonViewer.loaded:
             assert skeletonViewer.renderer.getSpacingX() == skeletonViewer.renderer.getSpacingY()
@@ -128,7 +128,7 @@ if the user clicks accept.
             for i in range(numIntersections):
                 pos = meshRenderer.getIntersectionPoint(i)
                 pos = self.CAlphaViewer.worldToObjectCoordinates(skeletonViewer.objectToWorldCoordinates([pos.x(), pos.y(), pos.z()]))
-                pos = Vector3DFloat(pos[0], pos[1], pos[2])
+                pos = Vec3(pos[0], pos[1], pos[2])
                 possiblePositionsList.append(pos)
             for i in range(len(possiblePositionsList)):
                 pos = possiblePositionsList[i]
@@ -443,7 +443,7 @@ This translates the selection on the x-axis.
             newX = self.posMoveDict['x'].value()
             moveX =  newX - oldX
             self.x = newX
-            translateVector = Vector3DFloat(moveX, 0, 0)
+            translateVector = Vec3(moveX, 0, 0)
             command = CAlphaStructureEditorCommandChangePosition(self.CAlphaViewer, self, True, translateVector, False, None, None, oldX, newX, 'x')
             self.undoStack.push(command)
 
@@ -456,7 +456,7 @@ This translates the selection on the y-axis.
             newY = self.posMoveDict['y'].value()
             moveY =  newY - oldY
             self.y = newY
-            translateVector = Vector3DFloat(0, moveY, 0)
+            translateVector = Vec3(0, moveY, 0)
             command = CAlphaStructureEditorCommandChangePosition(self.CAlphaViewer, self, True, translateVector, False, None, None, oldY, newY, 'y')
             self.undoStack.push(command)
           
@@ -469,7 +469,7 @@ This translates the selection on the z-axis.
             newZ = self.posMoveDict['z'].value()
             moveZ = newZ - oldZ
             self.z = newZ
-            translateVector = Vector3DFloat(0, 0, moveZ)
+            translateVector = Vec3(0, 0, moveZ)
             command = CAlphaStructureEditorCommandChangePosition(self.CAlphaViewer, self, True, translateVector, False, None, None, oldZ, newZ, 'z')
             self.undoStack.push(command)
        
@@ -483,7 +483,7 @@ screen.
             axis = self.CAlphaViewer.worldToObjectCoordinates(self.app.mainCamera.look)
             oldAngle = self.roll
             
-            axis = Vector3DFloat(axis[0], axis[1], axis[2])
+            axis = Vec3(axis[0], axis[1], axis[2])
             
             cm = self.CAlphaViewer.renderer.selectionCenterOfMass()
             newAngle = math.pi*angle/180
@@ -501,7 +501,7 @@ screen.
             axis = self.CAlphaViewer.worldToObjectCoordinates(self.app.mainCamera.right)
             oldAngle = self.pitch
             
-            axis = Vector3DFloat(axis[0], axis[1], axis[2])
+            axis = Vec3(axis[0], axis[1], axis[2])
             
             cm = self.CAlphaViewer.renderer.selectionCenterOfMass()
             newAngle = math.pi*angle/180
@@ -520,7 +520,7 @@ screen.
             axis = (-1*axis[0], -1*axis[1], -1*axis[2])
             oldAngle = self.yaw
             
-            axis = Vector3DFloat(axis[0], axis[1], axis[2])
+            axis = Vec3(axis[0], axis[1], axis[2])
             cm = self.CAlphaViewer.renderer.selectionCenterOfMass()
             newAngle = math.pi*angle/180
             command = CAlphaStructureEditorCommandChangePosition(self.CAlphaViewer, self, False, None, True, cm, axis, oldAngle, angle, 'yaw')
