@@ -23,6 +23,7 @@ class MainWindowForm4(QtGui.QMainWindow):
         self.volumeViewer = VolumeViewer(self)
         self.skeletonViewer = SkeletonViewer(self)
         self.sseViewer    = SSEViewer(self)
+        self.calphaViewer = CAlphaViewer(self)
         self.viewers['volume'] = self.volumeViewer
         self.viewers['skeleton'] = self.skeletonViewer
         
@@ -30,6 +31,7 @@ class MainWindowForm4(QtGui.QMainWindow):
         self.scene.append(self.volumeViewer)
         self.scene.append(self.skeletonViewer)
         self.scene.append(self.sseViewer)
+        self.scene.append(self.calphaViewer)
         
         self.mainCamera = Camera(self.scene, self)
         self.setCentralWidget(self.mainCamera)
@@ -46,6 +48,7 @@ class MainWindowForm4(QtGui.QMainWindow):
         self.volumeViewer.load(self.args.volume)
         self.skeletonViewer.load(self.args.skeleton)
         self.sseViewer.loadHelixDataFromFile(self.args.helix)
+        self.calphaViewer.loadSeq(self.args.sequence)
 
         self.form.ui.lineEditSkeletonFile.setText(self.args.skeleton)
         self.form.ui.lineEditSequenceFile.setText(self.args.sequence)
