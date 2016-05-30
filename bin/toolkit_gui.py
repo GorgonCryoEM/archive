@@ -38,7 +38,7 @@ def main():
         window.resize(800, 600)
     #     window.move(300,50)
         window.show()
-        window.showMaximized()
+#         window.showMaximized()
         window.raise_()
         
         window.load()
