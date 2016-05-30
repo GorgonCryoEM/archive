@@ -6,7 +6,7 @@ from PyQt4 import QtGui, QtCore
 # from seq_model.Helix import Helix
 # import math
 from Explorer.libs import *
-# from calpha_structure_editor_command_place_helix import CAlphaStructureEditorCommandPlaceHelix
+from .calpha_structure_editor_command_place_helix import CAlphaStructureEditorCommandPlaceHelix
 # from calpha_structure_editor_command_atom_placement import CAlphaStructureEditorCommandAtomPlacement
 # from calpha_structure_editor_command_change_position import CAlphaStructureEditorCommandChangePosition
 
