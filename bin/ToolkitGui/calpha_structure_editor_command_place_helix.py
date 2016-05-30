@@ -1,8 +1,8 @@
 from PyQt4 import QtGui, QtCore
-# from libpytoolkit import PDBAtom, PDBBond, Vector3DFloat
+from libpytoolkit import PDBAtom, PDBBond
 # from calpha_interactive_loop_builder import CAlphaInteractiveLoopBuilder
-# from Toolkit.sse.seq_model.findHelixCalphas import helixEndpointsToCAlphaPositions
-# from Toolkit.sse.seq_model.Helix import Helix
+from Toolkit.sse.seq_model.findHelixCalphas import helixEndpointsToCAlphaPositions
+from Toolkit.sse.seq_model.Helix import Helix
 # import math
 # from vector_lib import *
 
