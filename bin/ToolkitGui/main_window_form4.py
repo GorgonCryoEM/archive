@@ -26,6 +26,8 @@ class MainWindowForm4(QtGui.QMainWindow):
         self.calphaViewer = CAlphaViewer(self)
         self.viewers['volume'] = self.volumeViewer
         self.viewers['skeleton'] = self.skeletonViewer
+        self.viewers['sse'] = self.sseViewer
+        self.viewers['calpha'] = self.calphaViewer
         
         self.scene = []
         self.scene.append(self.volumeViewer)
