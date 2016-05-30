@@ -293,21 +293,21 @@ given by self.helixNtermSpinBox and self.helixCtermSpinBox.
             
         moveStart = 1.5*(startIndex - predHelix.startIndex)
         moveEnd = 1.5*(stopIndex - predHelix.stopIndex)
-        midpoint = observedHelix.getMidpoint()
-        unitVector = observedHelix.getUnitVector()
+        midpoint   = Vec3(observedHelix.getMidpoint()   )
+        unitVector = Vec3(observedHelix.getUnitVector() )
         structPredCoord1 = midpoint + unitVector * (-predHelix.getLengthInAngstroms()/2)
         structPredCoord2 = midpoint + unitVector * ( predHelix.getLengthInAngstroms()/2)
                 
         if direction == 0:
-            startMoveVector = vectorScalarMultiply( moveStart, unitVector)
-            endMoveVector = vectorScalarMultiply( moveEnd, unitVector)
-            coord1 = vectorAdd(structPredCoord1, startMoveVector)
-            coord2 = vectorAdd(structPredCoord2, endMoveVector)
+            startMoveVector = unitVector * moveStart
+            endMoveVector   = unitVector * moveEnd
+            coord1 = structPredCoord1 + startMoveVector
+            coord2 = structPredCoord2 + endMoveVector
         elif direction == 1:
-            startMoveVector = vectorScalarMultiply( -1*moveStart, unitVector)
-            endMoveVector = vectorScalarMultiply( -1*moveEnd, unitVector)
-            coord1 = vectorAdd(structPredCoord1, endMoveVector)
-            coord2 = vectorAdd(structPredCoord2, startMoveVector)
+            startMoveVector = unitVector * (-1*moveStart)
+            endMoveVector   = unitVector * (-1*moveEnd  )
+            coord1 = structPredCoord1 + endMoveVector
+            coord2 = structPredCoord2 + startMoveVector
                 
         command = CAlphaStructureEditorCommandPlaceHelix(self.currentChainModel, predHelix, startIndex, stopIndex, coord1, coord2, self, self.app.sseViewer.currentMatch.predicted, description = "Create C-alpha helix")
         self.undoStack.push(command)
