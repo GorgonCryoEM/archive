@@ -309,6 +309,9 @@ given by self.helixNtermSpinBox and self.helixCtermSpinBox.
             coord1 = structPredCoord1 + endMoveVector
             coord2 = structPredCoord2 + startMoveVector
                 
+        command = CAlphaStructureEditorCommandPlaceHelix(self.currentChainModel, predHelix, startIndex, stopIndex, coord1, coord2, self, self.app.sseViewer.currentMatch.predicted, description = "Create C-alpha helix")
+        self.undoStack.push(command)
+        self.bringToFront()
         
     def bringToFront(self):
         self.dock.raise_()
