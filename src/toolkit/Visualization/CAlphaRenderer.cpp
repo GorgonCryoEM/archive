@@ -75,12 +75,12 @@ namespace Visualization {
             for (AtomMapType::iterator it = atoms.begin(); it != atoms.end(); it++) {
                 if(it->second.GetName() == "CA") {
                     glPushAttrib(GL_LIGHTING_BIT);
-                    if(it->second.GetSelected()) {
-                        glMaterialfv(GL_FRONT, GL_EMISSION, emissionColor);
-                        glMaterialfv(GL_BACK, GL_EMISSION, emissionColor);
-                    } else {
+//                    if(it->second.GetSelected()) {
+//                        glMaterialfv(GL_FRONT, GL_EMISSION, emissionColor);
+//                        glMaterialfv(GL_BACK, GL_EMISSION, emissionColor);
+//                    } else {
                         OpenGLUtils::SetColor(it->second.GetColorR(), it->second.GetColorG(), it->second.GetColorB(), it->second.GetColorA());
-                    }
+//                    }
 
                     if(selectEnabled){
                         //TODO: possibly implement mouse picking using ray intersection
@@ -186,7 +186,6 @@ namespace Visualization {
                 map<int, Vec3F >::iterator iter = helixColors.begin();
                 iter = helixColors.find(i);
                 if(iter != helixColors.end()){
-
                     OpenGLUtils::SetColor(helixColors[i][0], helixColors[i][1], helixColors[i][2], 1.0);
                 }else{
                     OpenGLUtils::SetColor(0.8,0.8,0.8,1.0);
