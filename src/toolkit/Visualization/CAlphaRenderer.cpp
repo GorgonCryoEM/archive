@@ -89,6 +89,7 @@ namespace Visualization {
                     }
                     if(1) {
                         cout<<".........drawSphere: "<<it->second.GetPosition()<<"\t"<<it->second.GetAtomRadius()<<endl;
+                        OpenGLUtils::SetColor(.7, .4, .2, .8);
                         drawSphere(it->second.GetPosition(), it->second.GetAtomRadius() * 0.3);
                     }
 
@@ -126,6 +127,7 @@ namespace Visualization {
 
                 if(1) {
                     cout<<".........drawCylinder: "<<atoms[bonds[i].GetAtom0Ix()].GetPosition()<<"\t"<<atoms[bonds[i].GetAtom1Ix()].GetPosition()<<endl;
+                    OpenGLUtils::SetColor(.7, .4, .2, .8);
                     drawCylinder(atoms[bonds[i].GetAtom0Ix()].GetPosition(), atoms[bonds[i].GetAtom1Ix()].GetPosition(), 0.1, 10, 2);
                 }
                 glPopAttrib();
@@ -138,6 +140,7 @@ namespace Visualization {
             for(AtomMapType::iterator i = atoms.begin(); i != atoms.end(); i++) {
                 if(1) {
                     cout<<".........drawSphere: "<<i->second.GetPosition()<<endl;
+                    OpenGLUtils::SetColor(.7, .4, .2, .8);
                     drawSphere(i->second.GetPosition(), 0.1);
                 }
             }
