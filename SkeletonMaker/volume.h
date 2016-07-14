@@ -5,6 +5,8 @@
 
 #ifndef SKELETON_MAKER_VOLUME_H
 #define SKELETON_MAKER_VOLUME_H
+#ifndef BOOST_MATH_TOOLS_SERIES_INCLUDED
+#define BOOST_MATH_TOOLS_SERIES_INCLUDED
 
 #define MAX_SHEETS 100000
 #define MAX_QUEUELEN 5000000
@@ -11307,5 +11309,5 @@ namespace wustl_mm {
 
 	}
 }
-
+#endif
 #endif

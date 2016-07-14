@@ -59,7 +59,7 @@ class ThemeManager(QtGui.QWidget):
                                 
         return self.colorList[tag]
         
-    def addColor(self, tag, color):    
+    def addColor(self, tag, color):
         if(not(tag in self.colorList) or (self.colorList[tag] != color)):               
            self.colorList[tag] = color
         
@@ -71,5 +71,6 @@ class ThemeManager(QtGui.QWidget):
             self.colorList[tag] = QtGui.QColor.fromRgb(r, g, b, a)      
             
     def emitThemeChanged(self):
+        print "emitThemeChanged"
         self.emit(QtCore.SIGNAL("themeChanged()"))         
     

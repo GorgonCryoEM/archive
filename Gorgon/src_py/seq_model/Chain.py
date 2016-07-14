@@ -142,7 +142,7 @@ object. If no chain ID is specified, it loads the first chain.
         result = Chain('', qparent=qparent)
     else:
         result = Chain('')
-    
+   
     header = open(filename, 'U')
     headerLine = header.read()
     if headerLine[:6] == 'HEADER':

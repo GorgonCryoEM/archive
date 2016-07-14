@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>588</width>
-    <height>784</height>
+    <width>651</width>
+    <height>1079</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,7 +20,7 @@
       <enum>QTabWidget::North</enum>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>3</number>
      </property>
      <property name="elideMode">
       <enum>Qt::ElideRight</enum>
@@ -51,6 +51,13 @@
         <widget class="QPushButton" name="pushButtonLoadFilesSkeleton">
          <property name="text">
           <string>Skeleton</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButtonLoadCorrespondence">
+         <property name="text">
+          <string>Correspondence</string>
          </property>
         </widget>
        </item>
@@ -642,19 +649,15 @@
           <string>Flexible Fitting</string>
          </property>
          <layout class="QGridLayout" name="gridLayout">
-          <item row="3" column="0">
-           <widget class="QPushButton" name="pushButtonDeformationFlexibleDeform">
-            <property name="text">
-             <string>Flexible Deform</string>
-            </property>
-           </widget>
-          </item>
           <item row="0" column="0">
            <widget class="QGroupBox" name="groupBoxFlexibleDeformationGlobalOptions">
             <property name="title">
              <string>Global Options</string>
             </property>
             <layout class="QFormLayout" name="formLayout_2">
+             <property name="fieldGrowthPolicy">
+              <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+             </property>
              <item row="0" column="0">
               <widget class="QLabel" name="labelLaplacianNeighborhoodSize">
                <property name="text">
@@ -689,32 +692,7 @@
             </layout>
            </widget>
           </item>
-          <item row="1" column="0">
-           <widget class="QGroupBox" name="groupBoxFlexibleDeformationCorrespondenceFitting">
-            <property name="title">
-             <string>Correspondence Fitting Options</string>
-            </property>
-            <layout class="QFormLayout" name="formLayout_3">
-             <property name="formAlignment">
-              <set>Qt::AlignCenter</set>
-             </property>
-             <item row="0" column="0">
-              <widget class="QCheckBox" name="checkBoxRigidInitialization">
-               <property name="text">
-                <string>Rigid Initialization</string>
-               </property>
-               <property name="checked">
-                <bool>true</bool>
-               </property>
-               <property name="tristate">
-                <bool>false</bool>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </item>
-          <item row="2" column="0">
+          <item row="3" column="0">
            <widget class="QGroupBox" name="groupBoxFlexibleDeformationSkeletonFitting">
             <property name="title">
              <string>Skeleton Fitting Options</string>
@@ -730,7 +708,7 @@
              <item row="0" column="1">
               <widget class="QSpinBox" name="spinBoxSkeletonFittingIterations">
                <property name="value">
-                <number>5</number>
+                <number>10</number>
                </property>
               </widget>
              </item>
@@ -794,6 +772,107 @@
                </property>
                <property name="value">
                 <double>1.000000000000000</double>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QPushButton" name="pushButtonDeformationFlexibleDeform">
+            <property name="text">
+             <string>Flexible Deform</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0" rowspan="2">
+           <widget class="QGroupBox" name="groupBoxFlexibleDeformationCorrespondenceFitting">
+            <property name="title">
+             <string>Correspondence Fitting Options</string>
+            </property>
+            <layout class="QFormLayout" name="formLayout_3">
+             <property name="fieldGrowthPolicy">
+              <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+             </property>
+             <property name="formAlignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+             <item row="3" column="0">
+              <widget class="QLabel" name="labelBoundingBoxRatio">
+               <property name="text">
+                <string>BoudingBoxRatio</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="1">
+              <widget class="QDoubleSpinBox" name="doubleSpinBoxBoudingBoxRatio">
+               <property name="suffix">
+                <string> </string>
+               </property>
+               <property name="minimum">
+                <double>0.010000000000000</double>
+               </property>
+               <property name="maximum">
+                <double>1.000000000000000</double>
+               </property>
+               <property name="singleStep">
+                <double>0.100000000000000</double>
+               </property>
+               <property name="value">
+                <double>0.300000000000000</double>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="0">
+              <widget class="QCheckBox" name="checkBoxRigidInitialization">
+               <property name="text">
+                <string>Rigid Initialization</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+               <property name="tristate">
+                <bool>false</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="1">
+              <widget class="QCheckBox" name="checkBoxWSVD">
+               <property name="text">
+                <string>WSVD</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="0">
+              <widget class="QCheckBox" name="checkBoxAutoStop">
+               <property name="text">
+                <string>AutoStop</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="label">
+               <property name="text">
+                <string>StopThreshold</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QDoubleSpinBox" name="doubleSpinBoxStopThreshold">
+               <property name="suffix">
+                <string> Å</string>
+               </property>
+               <property name="maximum">
+                <double>5.000000000000000</double>
+               </property>
+               <property name="value">
+                <double>0.100000000000000</double>
                </property>
               </widget>
              </item>

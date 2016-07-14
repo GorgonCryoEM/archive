@@ -629,7 +629,11 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
         self.ui.tabWidget.setCurrentIndex(4)
         # clear the correspondence list
         corrList = []
-        
+
+        #print "keys in the dict: "
+        #for key, value in library.structurePrediction.secelDict.iteritems():
+        #    print key, value
+
         # iterate over all results from correspondence algorithm
         #print "Iterating over results."
         for i in range(self.resultCount):                                
@@ -642,10 +646,18 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
             isSecondHelixNode = False
             helicesPassed = 0
             for j in range(result.getNodeCount()):
+
                 if not isSecondHelixNode:
                     direction = Match.FORWARD
 
                     # predicted helix or strand in sequence graph
+                    #print "key: ", j - helicesPassed
+                    tempKey = j - helicesPassed
+                    if tempKey not in library.structurePrediction.secelDict:
+                        print "Error: invalid sequence node key: ", tempKey
+                        helicesPassed += 1
+                        continue
+
                     predicted = library.structurePrediction.secelDict[j - helicesPassed]
                     predictedType = library.structurePrediction.secelType[j - helicesPassed] # 'helix' or 'strand'
                     if predictedType == 'helix':
@@ -740,6 +752,7 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
         includeStrands = self.viewer.correspondenceEngine.getConstantInt("INCLUDE_STRANDS")
         structPred = StructurePrediction.load(self.sequenceFileName, self.app, includeStrands)
         print "after calling StructurePrediction.load"
+
         cAlphaViewer = self.app.viewers['calpha']
         sseViewer = self.app.viewers['sse']
         skeletonViewer = self.app.viewers['skeleton']
@@ -754,7 +767,9 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
         helixCount = 0
         observedSheets = {}
         sheetCount = 0
+        #print "bla bal bla"
         sseCount = self.viewer.correspondenceEngine.getSkeletonSSECount()
+        #print "ahahahah"
 
         print "adding helices to list of observed helices"
         for sseIx in range(sseCount):
@@ -794,7 +809,7 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
         structObserv = StructureObservation(helixDict = observedHelices, sheetDict = observedSheets)
         print "writing to correspondenceLibrary"
 
-        # create a new python CorrespondenceLibrary object 
+        # create a new python CorrespondenceLibrary object
         self.viewer.correspondenceLibrary = CorrespondenceLibrary(sp = structPred, so = structObserv)          
                
         self.setCursor(oldCursor)
@@ -851,7 +866,7 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
         self.viewer.emitModelChanged()
         self.ui.tabWidget.setCurrentIndex(4)         
         print "done with search"
-                
+
     def reject(self):  
         self.executed = False
         self.app.actions.getAction("perform_SSEFindHelixCorrespondences").trigger()

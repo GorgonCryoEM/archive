@@ -88,6 +88,7 @@ namespace wustl_mm {
 			} else {
 				return -1;
 			}
+
 		}
 
 		StandardGraph * SkeletonReader::ReadFile(char * volumeFile, char * helixFile, char * sseFile, char * sheetFile) {
@@ -159,6 +160,13 @@ namespace wustl_mm {
 				}
 			}
 
+            // Hang: add volume coordinate information to each helix for assigning graph node id
+            for (int i = 0; i < (int)helixes.size(); i++) 
+            {
+                helixes[i]->internalToRealOrigin = Vector3DFloat(vol->getOriginX(), vol->getOriginY(), vol->getOriginZ());
+                helixes[i]->internalToRealScale  = Vector3DFloat(vol->getSpacingX(), vol->getSpacingY(), vol->getSpacingZ());
+            }
+
 			Volume* sheetClusters = getSheetsNoThreshold(vol, MINIMUM_SHEET_SIZE);
 
 			// make the offset and scale of sheetClusters volume match the vol volume
@@ -213,11 +221,17 @@ namespace wustl_mm {
 			}
 #endif // VERBOSE
 
+            //cout << "sheetDistance: " << sheetDistance.size() << "\n";
+            //cout << "numSkeletonSheets: " << numSkeletonSheets << "\n";
+            //cout << "(int)sheets.size(): " << (int)sheets.size() << "\n";
+
 			vector<int> sseSheetMapping(numSkeletonSheets+1, -1);
 			vector<int> helixesMapping(numSkeletonSheets+1, -1);
 			for (int i = 1; i <= numSkeletonSheets; i++) { 
 				double minDist = MAXIMUM_DISTANCE_SHEET_SKELETON;
-				for (int j = 0; j < (int)sheets.size(); j++) { 
+				for (int j = 0; j < (int)sheets.size(); j++) {
+                    cout << "i,j: " << i << "," << j << "\n";
+                    cout << "sheetDistance[i]: " << sheetDistance[i].size() << "\n";
 					if (sheets[j]->geometricShapeType == GRAPHEDGE_SHEET && sheetDistance[i][j] < minDist) {
 						minDist = sheetDistance[i][j];
 						sseSheetMapping[i] = j;
@@ -237,6 +251,7 @@ namespace wustl_mm {
 					helixesMapping[i] = helixes.size() - 1;
 				}
 			}
+
 
 			// Add all points in each sheet to the helixes data structure
 			// for each point (x,y,z)
@@ -277,6 +292,7 @@ namespace wustl_mm {
 				skeletonSheets.push_back(singleSheet);
 			}
 
+
 #ifdef VERBOSE
 			printf("Finished finding points inside helices and sheets.\n");
 #endif // VERBOSE
@@ -297,8 +313,10 @@ namespace wustl_mm {
 			// create a graph with one node per helix end point and with edges connecting nodes that
 			// are connected along the volume.
 			//cout << "adding " << (int)helixes.size() << " helices and sheets to adjacency matrix" << endl;
-			for(unsigned int i = 0; i < (int)helixes.size(); i++) {
-				if(helixes[i]->geometricShapeType == GRAPHEDGE_HELIX) {
+			for(unsigned int i = 0; i < (int)helixes.size(); i++) 
+            {
+				if(helixes[i]->geometricShapeType == GRAPHEDGE_HELIX) 
+                {
 					// assign node numbers for helix ends
 					int node1 = (i*2)+1;
 					int node2 = (i*2)+2;
@@ -306,13 +324,13 @@ namespace wustl_mm {
 					// find the two corner cells in this helix
 					helixes[i]->FindCornerCellsInHelix();
 					//cout << "helix " << i << " has " << helixes[i]->cornerCells.size() << " corners." << endl;
-					for (unsigned int j = 0; j < helixes[i]->cornerCells.size(); j++) {
+					//for (unsigned int j = 0; j < helixes[i]->cornerCells.size(); j++) {
 						//cout << "corner " << j << " is associated with node " << helixes[i]->cornerCells[j].node << endl;
-					}
+					//}
 
 					// length of this helix
 					float length = helixes[i]->length;
-
+                    
 					// populate adjacency matrix
 					// no cost to go from a helix end back to itself
 					graph->SetCost(node1, node1, 0);
@@ -326,7 +344,9 @@ namespace wustl_mm {
 					// same for reverse direction
 					graph->SetCost(node2, node1, length);
 					graph->SetType(node2, node1, helixes[i]->geometricShapeType);
-				} else if (helixes[i]->geometricShapeType == GRAPHEDGE_SHEET) {
+				} 
+                else if (helixes[i]->geometricShapeType == GRAPHEDGE_SHEET) 
+                {
 					// assign node number this sheet
 					int sheetNode = numH + i + 1; // each helix takes two nodes
 
@@ -337,8 +357,11 @@ namespace wustl_mm {
 					graph->SetCost(sheetNode, sheetNode, SHEET_SELF_LOOP_LENGTH); // nonzero so it shows up as edge in StandardGraph::EdgeExists
 					graph->SetType(sheetNode, sheetNode, GRAPHNODE_SHEET); 
 				}
-
 			}	
+
+            //cout << "B, bla bla bla\n";
+            //exit(0);
+
 			//cout << "adding sheet sizes as sheet node costs" << endl;
 			for (unsigned int s = 0; s < skeletonSheets.size(); s++) {
 				int sseSheetNum = helixesMapping[s];
@@ -351,6 +374,7 @@ namespace wustl_mm {
 					//cout << "adding sheet " << sseSheetNum << "(s=" << s << ") with size " << sheetSize << " as node " << sheetNode << endl;
 				}
 			}
+
 #ifdef VERBOSE
 			for (int i = 0; i < graph->GetNodeCount(); i++) {
 				cout << "cost of node " << i << " is " << graph->nodeWeights[i] << endl;
@@ -376,7 +400,7 @@ namespace wustl_mm {
 					FindSizes(i, j, helixes, vol, paintedVol, graph);
 				}
 			}
-			
+
 #ifdef VERBOSE
 			printf("Finished running FindSizes2.\n");
 #endif // VERBOSE
@@ -420,7 +444,6 @@ namespace wustl_mm {
 			printf("Done merging pairs of sheets.\n");
 #endif // VERBOSE
 
-
 			return graph;
 		}
 
@@ -447,7 +470,8 @@ namespace wustl_mm {
 #ifdef VERBOSE
 			printf("Start clustering...\n" ) ;
 #endif // VERBOSE
-			int ox, oy, oz ;
+			int ox, oy, oz;
+            
 			for ( i = 0 ; i < vol->getSizeX() ; i ++ )
 				for ( j = 0 ; j < vol->getSizeY() ; j ++ )
 					for ( k = 0 ; k < vol->getSizeZ() ; k ++ )
@@ -783,6 +807,7 @@ namespace wustl_mm {
 			Volume * visited = new Volume(vol->getSizeX(), vol->getSizeY(), vol->getSizeZ());
 
 			int helixCount = graph->GetHelixCount();
+            //cout << "helixCount in flooding: " << helixCount << "\n";
 
 			bool expand;
 

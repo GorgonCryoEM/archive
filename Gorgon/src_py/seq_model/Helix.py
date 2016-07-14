@@ -35,7 +35,7 @@ to the chain.
         chainID     =         line[19:20].strip()
         start     =         int(line[21:25].strip())
         stop     =         int(line[33:37].strip())
-    
+  
         if chainID != whichChainID:
             return
         

@@ -14,6 +14,10 @@ namespace wustl_mm {
 
 		class LinkedNodeStub {
 		public:
+
+            // Hang change for debug
+            //double nodeCost;
+
 			char n1Node;
 			char n2Node;
 			LinkedNodeStub * parentNode;
@@ -27,12 +31,16 @@ namespace wustl_mm {
 			n1Node = 0;
 			n2Node = 0;
 			parentNode = NULL;
+
+            //nodeCost = 0.0;
 		}
 
 		LinkedNodeStub::LinkedNodeStub(LinkedNodeStub * oldNode) {
 			n1Node = oldNode->n1Node;
 			n2Node = oldNode->n2Node;
 			parentNode = oldNode->parentNode;
+
+            //nodeCost = oldNode->nodeCost;
 		}
 
 		LinkedNodeStub::~LinkedNodeStub() {

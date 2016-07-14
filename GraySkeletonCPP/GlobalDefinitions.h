@@ -106,4 +106,5 @@ namespace wustl_mm {
 	}
 }
 
+#undef round
 #endif

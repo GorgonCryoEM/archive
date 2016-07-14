@@ -81,8 +81,10 @@ namespace wustl_mm {
 			Vector3DFloat internalToRealOrigin;
 
 		private:
+            // Hang: all right, this two matrices should name conversely
 			Matrix4 worldToObject;
 			Matrix4 objectToWorld;
+
 			Point3	centerPoint;
 			double  radius;
 			double  height;
@@ -279,13 +281,13 @@ namespace wustl_mm {
 			d[3][0] = 0;		d[3][1] = 1;		d[3][2] = 0;
 			d[4][0] = -1;		d[4][1] = 0;		d[4][2] = 0;
 			d[5][0] = 1;		d[5][1] = 0;		d[5][2] = 0;
-			
-			// counter of number of neighbor cells are inside the helix
-			int insideCounter;
-
+/*
 			// for each cell inside the helix
-			for(unsigned int i = 0; i < internalCells.size(); i++) {
-				insideCounter = 0;
+			for(unsigned int i = 0; i < internalCells.size(); i++) 
+            {
+                // counter of number of neighbor cells are inside the helix
+				int insideCounter = 0;
+
 				// count the number of neighbor cells inside the helix
 				for(int j = 0; j < 6; j++) {
 					if(GetLocationInVector(internalCells, Point3Int(internalCells[i].x + d[j][0], internalCells[i].y + d[j][1], internalCells[i].z + d[j][2], 0)) >= 0) {
@@ -297,15 +299,72 @@ namespace wustl_mm {
 					cornerCells.push_back(internalCells[i]);
 				}
 			}
+*/           
+            // Hang change: why not take all the internal celles into consideration
+            for (unsigned int i = 0; i < internalCells.size(); i++)
+            {
+                cornerCells.push_back(internalCells[i]);
+            }
+/*
+            // Right way to do: keep the longest connected component voxels
+            std::vector<Point3Int> maxComponent;
+            std::vector<bool> internalCellsComponentMask(internalCells.size(), false);
+            for (unsigned int i = 0; i < internalCells.size(); ++i)
+            {
+                if (internalCellsComponentMask[i]) continue;
 
-			// abort if more than two corner cells were found
-			assert(cornerCells.size() >= 2);
+                std::vector<Point3Int> currentComponent;
+
+                std::vector<int> componentStack;
+                componentStack.push_back(i);
+
+                // Mark the root of this flooding round to be visited
+                internalCellsComponentMask[i] = true;
+
+                while (!componentStack.empty())
+                {
+                    int currentIndex = componentStack.back();
+                    componentStack.pop_back();
+
+                    currentComponent.push_back(internalCells[currentIndex]);
+
+                    // Check current voxel's neighbors
+                    for (int j = 0; j < 6; j++)
+                    {
+                        int nieghborIndex = GetLocationInVector(internalCells, Point3Int(internalCells[currentIndex].x + d[j][0], internalCells[currentIndex].y + d[j][1], internalCells[currentIndex].z + d[j][2], 0));
+                        if (nieghborIndex >= 0 && !internalCellsComponentMask[nieghborIndex])
+                        {
+                            internalCellsComponentMask[nieghborIndex] = true;
+                            componentStack.push_back(nieghborIndex);
+                        }
+                    }
+                } // end while
+
+                if (maxComponent.size() < currentComponent.size())
+                    maxComponent = currentComponent;
+            }
+
+            // Pick the longest connected component voxels to serve as corner cells
+            for (int i = 0; i < maxComponent.size(); ++i)
+                cornerCells.push_back(maxComponent[i]);
+*/
+			// abort if less than two corner cells were found
+            // In this case, the detected volume helices may sit too far away from the skeleton. We also set the length of this helix to be zero
+			//assert(cornerCells.size() >= 2);
+            if (cornerCells.size() < 2)
+            {
+                printf("error cornercells.size() < 2 at pos 1: %d, %d.\n", cornerCells.size(), internalCells.size());
+                this->length = 0;
+                //exit(0);
+                return;
+            }            
 
 			double maxDistance = -1;
 			double dist1, dist2;
 			int corner1 = 0;
 			int corner2 = cornerCells.size() - 1;
 
+            // Find the two cells furthest away from each other. Assign as corner 1 and corner 2.
 			for(int i = 0; i < (int)cornerCells.size() - 1; i++){
 				for(unsigned int j = i+1; j < cornerCells.size(); j++) {
 					dist1 = Point3Int::EuclideanDistance(cornerCells[i], cornerCells[j]);
@@ -317,12 +376,12 @@ namespace wustl_mm {
 				}
 			}
 
+            // World space coordinate of the bottom point of this helix
 			Vector3DFloat actualCorner1 = GetCornerCell3(1);
-			Vector3DFloat actualCorner2 = GetCornerCell3(2);
+			//Vector3DFloat actualCorner2 = GetCornerCell3(2);
 
+            // World space coordinate of the two corner voxels
 			Vector3DFloat c1, c2;
-			
-
 			c1 = Vector3DFloat(
 				internalToRealOrigin.X() + (float)cornerCells[corner1].x * internalToRealScale.X(),
 				internalToRealOrigin.Y() + (float)cornerCells[corner1].y * internalToRealScale.Y(),
@@ -331,7 +390,18 @@ namespace wustl_mm {
 				internalToRealOrigin.X() + (float)cornerCells[corner2].x * internalToRealScale.X(),
 				internalToRealOrigin.Y() + (float)cornerCells[corner2].y * internalToRealScale.Y(),
 				internalToRealOrigin.Z() + (float)cornerCells[corner2].z * internalToRealScale.Z());			
-			
+	
+            //c1 = Vector3DFloat( (float)cornerCells[corner1].x, (float)cornerCells[corner1].y, (float)cornerCells[corner1].z );
+            //c2 = Vector3DFloat( (float)cornerCells[corner2].x, (float)cornerCells[corner2].y, (float)cornerCells[corner2].z );
+            //c0 = Vector3DFloat(0.5*(c1.X() + c2.X()), 0.5*(c1.Y() + c2.Y()), 0.5*(c1.Z() + c2.Z()));
+
+            //std::cout << "cornerCells:\n";
+            //std::cout << c1.X() << " " << c1.Y() << " " << c1.Z() << "\n";
+            //std::cout << c2.X() << " " << c2.Y() << " " << c2.Z() << "\n";
+            //std::cout << cornerCells[corner1].x << " " << cornerCells[corner1].y << " " << cornerCells[corner1].z << "\n";
+            //std::cout << cornerCells[corner2].x << " " << cornerCells[corner2].y << " " << cornerCells[corner2].z << "\n";
+            //std::cout << actualCorner1.X() << " " << actualCorner1.Y() << " " << actualCorner1.Z() << "\n";
+
 			if((actualCorner1-c1).Length() > (actualCorner1-c2).Length()) {
 				int temp = corner1;
 				corner1 = corner2;
@@ -341,7 +411,10 @@ namespace wustl_mm {
 			cornerCells[corner1].node = 1;
 			cornerCells[corner2].node = 2;
 
+            // Divide cells into two groups based on corner1 and corner2
+            // Eliminate cells that are too far away from corner1 and corner2
 			for(unsigned int i = 0; i < cornerCells.size(); i++) {
+
 				dist1 = Point3Int::EuclideanDistance(cornerCells[corner1], cornerCells[i]);
 				dist2 = Point3Int::EuclideanDistance(cornerCells[corner2], cornerCells[i]);
 				if((dist1 > BORDER_MARGIN_THRESHOLD) && (dist2 > BORDER_MARGIN_THRESHOLD)) {
@@ -362,7 +435,12 @@ namespace wustl_mm {
 				printf("Error <GeometricShape, FindCornerCellsInHelix>: 2 corner cells not found\n");
 			}
 
-			assert(cornerCells.size() >= 2);
+			//assert(cornerCells.size() >= 2);
+            if(cornerCells.size() < 2)
+            {
+                printf("Error cornerCells.size() < 2 at pos 2. %d.\n", cornerCells.size());
+                return;
+            }
 		}
 
 		double GeometricShape::GetCornerCellsMaxLength() {

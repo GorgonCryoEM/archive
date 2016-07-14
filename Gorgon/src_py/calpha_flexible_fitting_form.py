@@ -2,8 +2,69 @@
 # Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 # Description:   A widget to fit a calpha backbone to the density
 
+# CVS Meta Information: 
+#   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/src_py/calpha_flexible_fitting_form.py,v $
+#   $Revision: 1.17 $
+#   $Date: 2012/06/17 13:27:00 $
+#   $Author: burrowsd $
+#   $State: Exp $
+#
+# History Log: 
+#   $Log: calpha_flexible_fitting_form.py,v $
+#   Revision 1.17  2012/06/18 13:27:00  burrowsd
+#   Complete re-write of flexible fitting plugin
+#
+#   Revision 1.16  2010/08/19 23:05:08  chenb
+#   Cleaned and commented ribbon diagram code
+#
+#   Revision 1.15  2010/07/23 18:18:33  heiderp
+#   Side chains now transform correctly.  PDB helices now color correctly and rigid initialization bug is fixed
+#
+#   Revision 1.14  2010/07/22 21:09:07  heiderp
+#   Minor updates. Mostly commenting and removing extra material from CurveDeformer.h
+#
+#   Revision 1.13  2010/07/19 17:29:02  heiderp
+#   LARGE update.  Added flexible fitting functionality, lots of logic in FlexibleFittingEngine.h
+#
+#   Revision 1.12  2010/06/23 19:11:51  ssa1
+#   Adding simple ribbon rendering and associated events for flexible fitting
+#
+#   Revision 1.11  2010/06/23 13:02:56  ssa1
+#   Allowing users to reset a flexible fitting if need be.
+#
+#   Revision 1.10  2010/06/17 19:42:38  ssa1
+#   Generic method for setting object specific coloring
+#
+#   Revision 1.9  2010/06/17 19:31:47  ssa1
+#   Visually displaying flexible fitting clusters.
+#
+#   Revision 1.8  2010/05/27 05:19:31  ssa1
+#   Moving all atoms when performing fitting instead of a single atom.
+#
+#   Revision 1.7  2010/05/26 21:53:21  ssa1
+#   Adding in display styles for atom rendering.
+#
+#   Revision 1.6  2010/05/21 16:33:21  ssa1
+#   Flexible fitting implemented in Gorgon
+#
+#   Revision 1.5  2010/05/21 16:11:45  ssa1
+#   Flexible fitting implemented in Gorgon
+#
+#   Revision 1.4  2010/05/21 15:46:11  ssa1
+#   Flexible fitting implemented in Gorgon
+#
+#   Revision 1.3  2010/05/21 15:45:16  ssa1
+#   Flexible fitting implemented in Gorgon
+#
+#   Revision 1.2  2010/05/20 21:55:53  ssa1
+#   Rigid body alignment based on largest flexible cluster
+#
+#   Revision 1.1  2010/05/20 19:15:15  ssa1
+#   Flexible fitting interface.
+#
 
-from math import sqrt
+import time
+from math import sqrt, exp
 from PyQt4 import QtCore, QtGui
 from seq_model.Chain import Chain
 from base_dock_widget import BaseDockWidget
@@ -43,6 +104,11 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
 
         self.createUI()
 
+        # We need to load the correspondence
+        self.correspondenceLoaded = False
+        # pIndex, qIndex, isForward
+        self.correspondence = {'pIndex':[], 'qIndex':[], 'isForward':[]}
+
         self.stage = "loadFiles"
         self.updateVisibility()
 
@@ -60,7 +126,10 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
         self.connect(self.pushButtonLoadFilesHelixAnnotations, QtCore.SIGNAL("clicked (bool)"), self.loadHelixAnnotations)
         self.connect(self.pushButtonLoadFilesSkeleton, QtCore.SIGNAL("clicked (bool)"), self.loadSkeleton)
         self.connect(self.pushButtonRigidDeformationPrincipalComponentTarget, QtCore.SIGNAL("clicked (bool)"), self.loadPrincipalComponentTargetChain)
-    
+
+        # For ground truth correspondence
+        self.connect(self.pushButtonLoadCorrespondence, QtCore.SIGNAL("clicked (bool)"), self.loadCorrespondence)
+
         # Calculate Correspondence
         self.connect(self.pushButtonCorrespondenceOptionsCalculate, QtCore.SIGNAL("clicked (bool)"), self.calculateCorrespondences)
 
@@ -99,9 +168,16 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
             self.pushButtonLoadFilesCAlphaAtoms.setEnabled(not self.calphaViewer.loaded)
             self.pushButtonLoadFilesHelixAnnotations.setEnabled(not self.sseViewer.loaded)
             self.pushButtonLoadFilesSkeleton.setEnabled(not self.skeletonViewer.loaded)
+            # The correspondence does not come from any viewer.
+            self.pushButtonLoadCorrespondence.setEnabled(not self.correspondenceLoaded)
 
             self.tabLoadFiles.setEnabled(True)
-            self.tabCorrespondenceOptions.setEnabled(False)
+
+            if self.calphaViewer.loaded and self.sseViewer.loaded and self.skeletonViewer.loaded:
+                self.tabCorrespondenceOptions.setEnabled(True)
+            else:
+                self.tabCorrespondenceOptions.setEnabled(False)
+
             self.tabCorrespondences.setEnabled(False)
             self.tabDeformation.setEnabled(False)
             self.tabDeformation.setEnabled(False)
@@ -150,6 +226,33 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
             self.calphaViewer.setStrandVisibility(True)
             self.calphaViewer.setLoopVisibility(True)
 
+    def loadCorrespondence(self, temp):
+
+        filename = unicode(QtGui.QFileDialog.getOpenFileName(self, self.tr("Open Data"), "", self.tr('Atom Positions (*.cor)')))
+        extension = filename.split('.')[-1].lower()
+        if extension == 'cor':
+            for line in open(filename, 'U'):
+                line = line.split(' ')
+                if line[0] =='pIndex':
+                    for i in line[1:]:
+                        self.correspondence['pIndex'].append(int(i))
+                elif line[0] == 'qIndex':
+                    for i in line[1:]:
+                        self.correspondence['qIndex'].append(int(i))
+                elif line[0] == 'isForward':
+                    for i in line[1:]:
+                        self.correspondence['isForward'].append(bool(int(i)))
+                else:
+                    raise IOError, 'Invalid prefix in correspondence file...'
+                    sys.exit(0)
+        else:
+            raise IOError, 'Wrong extention for correspondence file'
+            sys.exit(0)
+
+        self.correspondenceLoaded = True
+
+        self.fileLoaded()
+
     def loadCalphaAtoms(self, temp):
         self.app.actions.getAction("load_CAlpha").trigger()
         self.fileLoaded()
@@ -180,7 +283,7 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
             self.principalComponentTargetChain = Chain.load(filename, None, chainID)
        
     def fileLoaded(self):
-        if not self.calphaViewer.loaded or not self.sseViewer.loaded or not self.skeletonViewer.loaded:
+        if not self.calphaViewer.loaded or not self.sseViewer.loaded or not self.skeletonViewer.loaded or not self.correspondenceLoaded:
             self.stage = "loadFiles"
         else:
             self.stage = "correspondenceOptions"
@@ -213,11 +316,17 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
                 # Add to Engine
                 self.flexibleFittingEngine.addCorrespondenceSourceFeature(startPosition, endPosition)
 
+                # print helixIndex,' (start, end):',startPosition.x(),',',startPosition.y(),',',startPosition.z()
+                # print '                ',endPosition.x(),',',endPosition.y(),',',endPosition.z()
+
         # Load Helix Annotations
         for helixIndex in range(self.sseViewer.renderer.getHelixCount()):
             # Get Volume Helix Line
             startPosition = self.sseViewer.renderer.getHelixCorner(helixIndex, 0)
             endPosition   = self.sseViewer.renderer.getHelixCorner(helixIndex, 1)
+
+            # print helixIndex,' (start, end):',startPosition.x(),',',startPosition.y(),',',startPosition.z()
+            # print '                ',endPosition.x(),',',endPosition.y(),',',endPosition.z()
 
             # Add to Engine
             self.flexibleFittingEngine.addCorrespondenceTargetFeature(startPosition, endPosition)
@@ -231,8 +340,22 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
             self.spinBoxDihedralAngleDifference.value()
         )
 
+        print "source helix", correspondenceIndex
+        print "target helix", self.sseViewer.renderer.getHelixCount()
+
+        # Set weighted svd weight range
+        self.flexibleFittingEngine.setWSVDOptions(self.doubleSpinBoxBoudingBoxRatio.value())
+
         # Calculate Correspondences
-        self.flexibleFittingEngine.calculateCorrespondences()
+        # Well, suppose we have done correspondences clear somewhere before
+        # If loaded correspondence, then just use the loaded data : one alignment, one cluster and correspondence
+        if self.correspondenceLoaded:
+            for i in range(len(self.correspondence['pIndex'])):
+                self.flexibleFittingEngine.addCorrespondencesByReadIn(self.correspondence['pIndex'][i], self.correspondence['qIndex'][i], self.correspondence['isForward'][i])
+        else:
+            self.flexibleFittingEngine.calculateCorrespondences()
+
+        # print 'helix dir:', self.correspondence['isForward']
 
         # Update Correspondences Display
         self.updateCorrespondencesDisplay()
@@ -316,15 +439,19 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
                         direction = "Backward"
 
                     # Update Helix Colors
+                    tempColorScale = 3.0
                     self.calphaViewer.renderer.setHelixColor(rendererCalphaHelixIndexMapping[calphaHelixIndex], clusterColor.redF(), clusterColor.greenF(), clusterColor.blueF())
-                    self.sseViewer.renderer.setHelixColor(volumeHelixIndex, clusterColor.redF(), clusterColor.greenF(), clusterColor.blueF(), 1.0)
-            
+                    self.sseViewer.renderer.setHelixColor(volumeHelixIndex, tempColorScale*clusterColor.redF(), tempColorScale*clusterColor.greenF(), tempColorScale*clusterColor.blueF(), 1.0)
+
+                    # print "helix color: ", calphaHelixIndex, volumeHelixIndex, ":", clusterColor.redF(), clusterColor.greenF(), clusterColor.blueF()
+
                     # Insert Table Row 
                     self.tableWidgetCorrespondences.insertRow(correspondenceIndex)
                    
                     # Create Table Items
                     clusterIndexItem     = QtGui.QTableWidgetItem(str(clusterIndex))
-                    calphaHelixIndexItem = QtGui.QTableWidgetItem(str(calphaHelixIndex))
+                    # Now the helix index display also starts from 0
+                    calphaHelixIndexItem = QtGui.QTableWidgetItem(str(calphaHelixIndex-1))
                     volumeHelixIndexItem = QtGui.QTableWidgetItem(str(volumeHelixIndex))
                     directionItem        = QtGui.QTableWidgetItem(str(direction))
 
@@ -555,9 +682,11 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
         # Backup Chain
         self.backupChain()
         
-        # Calculate Missing Residue Indices 
+        # Calculate Missing Residue Indices
         (missingResidueIndices, missingResidueIndexMapping) = self.calculateMissingResidueIndices()
-        
+
+        # print "missingResidueIndices: ", missingResidueIndices
+
         # Calculate Missing Residue Bonds
         missingResidueBonds = []
         for currentResidueIndex, nextResidueIndex in self.ntuples(self.chain.residueRange(), 2):
@@ -565,8 +694,13 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
             if bond not in self.chain.bonds and currentResidueIndex not in missingResidueIndices and nextResidueIndex not in missingResidueIndices:
                 missingResidueBonds.append(bond)
 
-        # Calculate Correspondence Transformations 
-        (correspondences, correspondenceTransformations, correspondenceTargets) = self.calculateCorrespondenceTransformations()
+        # Calculate Correspondence Transformations
+        # self.calculateCorrespondenceTransformationsWithClusterWSVD()
+        # (correspondences, correspondenceTransformations, correspondenceTargets) = self.calculateCorrespondenceTransformations()
+        if self.checkBoxWSVD.isChecked():
+            (correspondences, correspondenceTransformations, correspondenceTargets) = self.calculateCorrespondenceTransformationsWithClusterWSVD()
+        else:
+            (correspondences, correspondenceTransformations, correspondenceTargets) = self.calculateCorrespondenceTransformations()
 
         ### Global Fitting Options ###
 
@@ -577,25 +711,47 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
         for residueIndex in self.chain.residueRange():
             if residueIndex not in missingResidueIndices: 
                 self.flexibleFittingEngine.addDeformationOriginalVertex(self.chain[residueIndex].getAtom('CA').getPosition())
+                # print self.chain[residueIndex].getAtom('CA').getPosition().x()
 
         # Add Deformation Edges and Calculate Neighbor Vertex Indices Cache
         numResidues      = len(self.chain) - len(missingResidueIndices)
         deformationEdges = set()
         for bond in self.chain.bonds:
             deformationEdges.add((missingResidueIndexMapping[bond[0]], missingResidueIndexMapping[bond[1]]))
+            #if bond[0] == 130 or bond[1] == 130 or bond[0] == 129 or bond[1] == 129 or bond[0] == 131 or bond[1] == 131:
+                #tbs = self.chain[bond[0]].getAtom('CA').getPosition()
+                #tbe = self.chain[bond[1]].getAtom('CA').getPosition()
+                #print "helix", tbs.x(),",",tbs.y(),",",tbs.z(),",",tbe.x(),",",tbe.y(),",",tbe.z()
+            #if bond[0] == 252 or bond[1] == 252 or bond[0] == 251 or bond[1] == 251 or bond[0] == 253 or bond[1] == 253:
+                #tbs = self.chain[bond[0]].getAtom('CA').getPosition()
+                #tbe = self.chain[bond[1]].getAtom('CA').getPosition()
+                #print "loop: ", tbs.x(),",",tbs.y(),",",tbs.z(),",",tbe.x(),",",tbe.y(),",",tbe.z()
+            #if bond[0] == 172 or bond[1] == 172 or bond[0] == 171 or bond[1] == 171 or bond[0] == 173 or bond[1] == 173 or bond[0] == 142 or bond[1] == 142 or bond[0] == 140 or bond[1] == 140:
+                #tbs = self.chain[bond[0]].getAtom('CA').getPosition()
+                #tbe = self.chain[bond[1]].getAtom('CA').getPosition()
+                #print "sheet: ", tbs.x(),",",tbs.y(),",",tbs.z(),",",tbe.x(),",",tbe.y(),",",tbe.z()
+
         for bond in missingResidueBonds:
             deformationEdges.add((missingResidueIndexMapping[bond[0]], missingResidueIndexMapping[bond[1]]))
+
         for sheet in self.chain.sheets.values():
             for bond in sheet.bonds:
                 deformationEdges.add((missingResidueIndexMapping[bond[0]], missingResidueIndexMapping[bond[1]]))
+                #tbs = self.chain[bond[0]].getAtom('CA').getPosition()
+                #tbe = self.chain[bond[1]].getAtom('CA').getPosition()
+                #print "sheet: ", tbs.x(),",",tbs.y(),",",tbs.z(),",",tbe.x(),",",tbe.y(),",",tbe.z()
+
         for deformationEdge in deformationEdges:
             self.flexibleFittingEngine.addDeformationEdge(deformationEdge[0], deformationEdge[1])
+
         self.flexibleFittingEngine.calculateNeighborVertexIndicesCaches(numResidues)
 
         ### Start Helix Fitting ###
 
         # Set Deformation Vertices
         self.flexibleFittingEngine.setDeformationVerticesToOriginalVertices()
+
+        start = time.clock()
 
         # Calculate and Add Rigid Initialization Transformations
         self.flexibleFittingEngine.setDeformationRigidInitialization(self.checkBoxRigidInitialization.isChecked())
@@ -605,17 +761,24 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
             for residueIndex in self.chain.residueRange():
                 if residueIndex not in missingResidueIndices:
                     self.flexibleFittingEngine.addDeformationRigidInitializationTransformation(rigidInitializationTransformations[residueIndex])
-      
+
         # Add Deformation Handles
         for calphaHelixIndex in sorted(correspondenceTargets.keys()):
+            #print calphaHelixIndex
             for residueIndex in sorted(correspondenceTargets[calphaHelixIndex].keys()):
                 self.flexibleFittingEngine.addDeformationHandle(missingResidueIndexMapping[residueIndex], correspondenceTargets[calphaHelixIndex][residueIndex])
+                #tv = self.chain[residueIndex].getAtom('CA').getPosition()
+                #print tv.x(),",",tv.y(),",",tv.z()
 
         # Perform Deformation
         self.flexibleFittingEngine.deformLaplacian()
-      
+        #self.flexibleFittingEngine.deformWSVD()
+
+        elapsed = (time.clock() - start)
+        print "helix-guided time: ", elapsed
+
         ### End Helix Fitting ###
-        
+
         ### Start Skeleton Fitting ###
         
         # Set Deformation Parameters
@@ -628,7 +791,15 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
         originalSkeletonNonSurfaceVertices = skeletonMesh.getNonSurfaceVertices()
         skeletonFittingIterations          = self.spinBoxSkeletonFittingIterations.value()
         skeletonFittingDistanceThreshold   = self.spinBoxSkeletonFittingDistanceThreshold.value()
+
+        realIterationRound = 0;
+        start = time.clock()
+
+        # skeletonFittingIterations serves as the most iteration round if "auto stop" box is checked
         for skeletonFittingIteration in range(skeletonFittingIterations):
+
+            realIterationRound +=1
+
             # Get Deformed Vertices
             deformedCalphaPositions = self.flexibleFittingEngine.getDeformedVertices()
 
@@ -676,7 +847,50 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
             # Perform Deformation
             self.flexibleFittingEngine.deformLaplacian()
 
+            # If RMSD difference between deformed and pre-deformed model is below the threshold, stop
+            if self.checkBoxAutoStop.isChecked() and self.flexibleFittingEngine.getShapeDistance() < self.doubleSpinBoxStopThreshold.value():
+                break
+
+        elapsed = (time.clock() - start)
+        print "skeleton-guided time: ", elapsed
+        print "skeleton iteration round: ", realIterationRound
+
         ### End Skeleton Fitting ###
+
+        '''
+        ### Start Final Helix Fitting --- Enforce helix overlap --- deprecated ###
+        ### Right way to do: maybe we need adaptive distortion term for each atom ###
+        ### High fitting for helix atoms and high distortion for others ###
+        ### Maybe we only deform helix atoms ###
+
+        self.flexibleFittingEngine.setDeformationRigidInitialization(False)
+        currentFittingWeight = 0.9
+        tempIteration = 2
+        weightDelta = (1.0 - currentFittingWeight) / float(tempIteration)
+        weightEpsilon = 0.01
+        for i in range(tempIteration):
+            # Set Fitting and Distortion weight
+            self.flexibleFittingEngine.setDeformationWeights(currentFittingWeight, 1.0 - currentFittingWeight + weightEpsilon)
+
+            # Set Deformation Vertices
+            self.flexibleFittingEngine.setDeformationVerticesToDeformedVertices()
+
+            # Clear Deformation Handles
+            self.flexibleFittingEngine.resetDeformationHandles()
+            # Set Deformation Handles
+            for calphaHelixIndex in sorted(correspondenceTargets.keys()):
+                for residueIndex in sorted(correspondenceTargets[calphaHelixIndex].keys()):
+                    self.flexibleFittingEngine.addDeformationHandle(missingResidueIndexMapping[residueIndex], correspondenceTargets[calphaHelixIndex][residueIndex])
+
+            # Perform Deformation
+            self.flexibleFittingEngine.deformLaplacian()
+            # Update Deformation weight
+            currentFittingWeight += weightDelta
+
+        ### End Final Helix Fitting ###
+        '''
+
+        start = time.clock()
 
         # Calculate Deformation Transformations
         self.flexibleFittingEngine.calculateDeformationTransformations(numResidues)
@@ -686,6 +900,9 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
             deformationTransformation = self.flexibleFittingEngine.getDeformationTransformation(missingResidueIndexMapping[residueIndex])
             for atomName in self.chain[residueIndex].getAtomNames():
                 self.chain[residueIndex].getAtom(atomName).transform(deformationTransformation)
+
+        elapsed = (time.clock() - start)
+        print "side-chain time: ", elapsed
 
         # Rerender
         self.calphaViewer.emitModelChanged()
@@ -950,6 +1167,46 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
 
         return (correspondences, correspondenceTransformations, correspondenceTargets)
 
+    def calculateCorrespondenceTransformationsWithClusterWSVD(self):
+        correspondences               = {}
+        correspondenceTransformations = {}
+        correspondenceTargets         = {}
+        selectedAlignmentIndex = int(self.comboBoxAlignment.currentText())
+        clusterCount = self.flexibleFittingEngine.getCorrespondenceClusterCount(selectedAlignmentIndex)
+
+        # Precompute the weight list for each correspondence
+        self.flexibleFittingEngine.computeCorrespondencePairWiseWeight(selectedAlignmentIndex)
+
+        for clusterIndex in range(clusterCount):
+            featureCount = self.flexibleFittingEngine.getCorrespondenceFeatureCount(selectedAlignmentIndex, clusterIndex)
+            for featureIndex in range(featureCount):
+                # Get Correspondence
+                correspondence = self.flexibleFittingEngine.getCorrespondence(selectedAlignmentIndex, clusterIndex, featureIndex)
+
+                # Get Indices
+                calphaHelixIndex = self.correspondencePIndexToCalphaHelixIndex[correspondence.getPIndex()]
+                volumeHelixIndex = correspondence.getQIndex()
+
+                # Get Transformation
+                correspondenceTransformation = self.flexibleFittingEngine.getCorrespondenceFeatureTransformationWSVD(selectedAlignmentIndex, clusterIndex, featureIndex)
+
+                # Cache Correpondence
+                correspondences[calphaHelixIndex] = volumeHelixIndex
+
+                # Cache Correspondence Transformation
+                correspondenceTransformations[calphaHelixIndex] = correspondenceTransformation
+
+                # Cache Correspondence Targets
+                helix = self.chain.helices[calphaHelixIndex]
+                for residueIndex in range(helix.startIndex, helix.stopIndex + 1):
+                    if residueIndex in self.chain.residueRange():
+                        if calphaHelixIndex not in correspondenceTargets:
+                            correspondenceTargets[calphaHelixIndex] = {}
+
+                        correspondenceTargets[calphaHelixIndex][residueIndex] = self.chain[residueIndex].getAtom('CA').getPosition().Transform(correspondenceTransformation)
+
+        return (correspondences, correspondenceTransformations, correspondenceTargets)
+
     def calculateRigidInitializationTransformations(self, correspondences, correspondenceTransformations, correspondenceTargets, missingResidueIndexMapping):
         rigidInitializationTransformations = {}
         
@@ -972,7 +1229,7 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
                 if nextResidueIndex in self.chain.residueRange():
                     sourceCalphaHelixPositions.append(self.chain[nextResidueIndex].getAtom('CA').getPosition())
                     targetCalphaHelixPositions.append(correspondenceTargets[nextCalphaHelixIndex][nextResidueIndex])
-          
+
             # Calculate Rigid Initialization Transformation
             rigidInitializationTransformation = self.linearSolver.findRotationTranslation(sourceCalphaHelixPositions, targetCalphaHelixPositions)
 
@@ -1097,3 +1354,15 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
         tuples.pop()
 
         return tuples
+
+    def computeEuclideanDistance(p1, p2):
+        # The Euclidean distance between two n dime points. Two input should have the same dim.
+        distance = 0
+        for i in range(0, len(p1)):
+            distance += (p1[i] - p2[i])**2
+
+        return distance**0.5
+
+    def computeMidPoint(p1, p2):
+        # The midpoint of p1 and p2.
+        return [sum(x)*0.5 for x in zip(p1, p2)]

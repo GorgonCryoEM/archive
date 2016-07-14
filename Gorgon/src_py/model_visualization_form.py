@@ -12,7 +12,6 @@ class ModelVisualizationForm(BaseDockWidget):
         self.app = main
         self.viewer = viewer
         self.title = viewer.title + " Visualization Options"
-        
         BaseDockWidget.__init__(self, 
                                 main, 
                                 self.title, 

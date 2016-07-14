@@ -29,6 +29,10 @@ namespace wustl_mm {
 			int GetSheetCount();
 			int GetSkeletonNode(int sequenceNode);
 			int NodeToHelix(int nodeId);
+
+            // My change
+            //const std::vector<int> & GetCorrespondence() { return correspondence; }
+
 		private:
 			vector<int> correspondence;
 			double cost;
